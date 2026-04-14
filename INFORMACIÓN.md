@@ -5,4 +5,7 @@
 **spring.datasource.username=${DB_USERNAME}**
 **spring.datasource.password=${DB_PASSWORD}**
 
-`coloquen sus usuarios y contraseñas de postgreSQL`git
+`coloquen sus usuarios y contraseñas de postgreSQL`
+
+# RECORDAR CAMBIAR LOS PERMISOS DE SecurityConfig
+# TENER PRECAUCION CON EL MODELO DE LA IA, GEMMA 4 EN application.properties
