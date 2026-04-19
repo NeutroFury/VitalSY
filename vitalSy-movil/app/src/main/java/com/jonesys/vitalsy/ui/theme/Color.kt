@@ -20,3 +20,10 @@ val ColorCard = Color(0xFFF6E0F2)
 
 val ColorBotonRosa = Color(0xFFE87A9A)
 val ColorTitulos = Color(0xFF7C3A2D)
+val AIPurple = Color(0xFF9D4EDD)
+val ClinicalGreen = Color(0xFF00875A)
+
+val CyberLime = Color(0xFFB3FF66)
+val DeepBlack = Color(0xFF000000)
+val PureWhite = Color(0xFFFFFFFF)
+val SoftDarkGris = Color(0xFF121212)
