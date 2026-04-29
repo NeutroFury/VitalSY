@@ -105,8 +105,8 @@ Frontend:
 
 ## 👨‍💻 Autores
 
--   Joaquín Andrés Santana Castillo\
--   Gabriel Hernández\
+-   Joaquín Andrés Santana Castillo
+-   Gabriel Hernández
 -   Gabriel Nercelles
 
 ------------------------------------------------------------------------
