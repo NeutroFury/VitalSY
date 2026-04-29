@@ -17,7 +17,6 @@
 -   [🧠 IA Predictiva](#-ia-predictiva)
 -   [✨ Características](#-características)
 -   [🛠️ Stack Tecnológico](#️-stack-tecnológico)
--   [📸 Demo](#-demo)
 -   [📋 Metodología](#-metodología)
 -   [⚙️ Instalación](#️-instalación)
 -   [👨‍💻 Autores](#-autores)
