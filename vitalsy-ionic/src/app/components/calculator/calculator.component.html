@@ -1,0 +1,101 @@
+<ion-content [fullscreen]="true" class="bg-[#050505]">
+  <div class="px-6 py-8 flex flex-col gap-6 min-h-full pb-32">
+    
+    <app-header [showBack]="true" [showGreeting]="false" title="Calculadora"></app-header>
+
+    <!-- Tarjeta Principal de Cálculo -->
+    <div class="bg-gradient-to-br from-neon-green/10 to-transparent border border-neon-green/30 rounded-2xl p-5 relative overflow-hidden animate-fade-in-up">
+      
+      <!-- Overlay Sincronizando Sensor -->
+      @if (isSyncing) {
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md z-20 flex flex-col items-center justify-center gap-4">
+          <div class="w-24 h-24 rounded-full border-2 border-neon-green flex items-center justify-center neon-glow scanner-pulse">
+            <ion-icon name="radio-outline" class="text-[48px] text-neon-green"></ion-icon>
+          </div>
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white animate-pulse italic text-center px-4 m-0">Sincronizando con Sensor...</p>
+        </div>
+      }
+
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="bg-neon-green p-2 rounded-xl flex items-center justify-center">
+            <ion-icon name="calculator-outline" class="text-xl text-black"></ion-icon>
+          </div>
+          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-300">Dosis Recomendada</span>
+        </div>
+        <button 
+          type="button"
+          (click)="handleSyncSensor()"
+          [disabled]="isSyncing"
+          class="flex items-center gap-2 px-3 py-2 bg-neon-green/10 border border-neon-green/30 rounded-xl hover:bg-neon-green/20 transition-all active:scale-95 group disabled:opacity-50"
+        >
+          <ion-icon name="radio-outline" class="text-[14px] text-neon-green group-hover:animate-bounce"></ion-icon>
+          <span class="text-[9px] font-black text-neon-green uppercase tracking-wider">Usar Sensor</span>
+        </button>
+      </div>
+      
+      <div class="flex items-baseline gap-3 mb-4">
+        <span class="text-7xl font-black italic text-white leading-none">{{ totalDose }}</span>
+        <span class="text-neon-green font-black italic text-2xl uppercase tracking-tighter">Units</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+        <div>
+          <p class="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-1 mt-0">Corrección</p>
+          <p class="text-xl font-black text-white italic m-0">{{ correctionDose }} U</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-1 mt-0">Carbohidratos</p>
+          <p class="text-xl font-black text-white italic m-0">{{ carbohydrateDose }} U</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs de Parámetros -->
+    <section class="space-y-4 animate-fade-in-up" style="animation-delay: 0.1s; opacity: 0;">
+      <h3 class="text-xs font-black uppercase tracking-widest text-white/40 ml-2 mt-0">Parámetros de Cálculo</h3>
+      <div class="grid grid-cols-2 gap-4">
+        
+        <!-- Input Glucosa Actual -->
+        <div class="flex flex-col gap-1.5 w-full">
+          <label class="text-zinc-500 text-[10px] ml-1 uppercase font-bold tracking-widest">Glucosa Actual</label>
+          <input
+            type="number"
+            [(ngModel)]="currentGlucose"
+            class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-lg font-black text-center w-full"
+          />
+        </div>
+
+        <!-- Input Carbohidratos -->
+        <div class="flex flex-col gap-1.5 w-full">
+          <label class="text-zinc-500 text-[10px] ml-1 uppercase font-bold tracking-widest">Carbohidratos</label>
+          <input
+            type="number"
+            [(ngModel)]="carbsToConsume"
+            class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-lg font-black text-center w-full"
+          />
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- Info Box -->
+    <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 animate-fade-in-up" style="animation-delay: 0.2s; opacity: 0;">
+      <ion-icon name="information-circle-outline" class="text-xl text-white/40 shrink-0 mt-0.5"></ion-icon>
+      <p class="text-[10px] leading-relaxed text-white/40 font-medium italic m-0">
+        Este cálculo es estimativo. Verifica siempre con tu profesional de salud antes de administrar insulina.
+      </p>
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- Botón de Confirmar Dosis -->
+<div class="absolute bottom-6 left-6 right-6 z-50 animate-fade-in-up" style="animation-delay: 0.3s; opacity: 0;">
+  <button 
+    (click)="confirmDose()"
+    class="w-full h-16 text-lg font-black uppercase tracking-[0.2em] bg-neon-green text-black neon-glow rounded-2xl hover:opacity-90 active:scale-95 transition-all"
+  >
+    Confirmar Dosis
+  </button>
+</div>

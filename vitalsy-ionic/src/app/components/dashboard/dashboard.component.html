@@ -1,0 +1,137 @@
+<div class="flex flex-col gap-6 w-full animate-fade-in-up pb-10">
+  
+  <app-header [showBack]="false" [showGreeting]="true" [showActions]="true"></app-header>
+
+  <!-- Barra de Navegación de Iconos -->
+  <div class="flex justify-between items-center px-6 py-4">
+    <button (click)="navigateTo('dashboard')" class="flex flex-col items-center gap-1 text-neon-green active:scale-95 transition-transform">
+      <div class="w-12 h-12 rounded-2xl bg-neon-green/10 flex items-center justify-center">
+        <ion-icon name="pulse-outline" class="text-2xl"></ion-icon>
+      </div>
+    </button>
+    <button (click)="navigateTo('history')" class="flex flex-col items-center gap-1 text-zinc-500 hover:text-white active:scale-95 transition-all">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center">
+        <ion-icon name="time-outline" class="text-2xl"></ion-icon>
+      </div>
+    </button>
+    <button (click)="navigateTo('registro')" class="flex flex-col items-center gap-1 text-zinc-500 hover:text-white active:scale-95 transition-all">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center">
+        <ion-icon name="add-outline" class="text-2xl"></ion-icon>
+      </div>
+    </button>
+    <button (click)="navigateTo('calculator')" class="flex flex-col items-center gap-1 text-zinc-500 hover:text-white active:scale-95 transition-all">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center">
+        <ion-icon name="calculator-outline" class="text-2xl"></ion-icon>
+      </div>
+    </button>
+    <button class="flex flex-col items-center gap-1 text-zinc-500 hover:text-white active:scale-95 transition-all">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center">
+        <ion-icon name="hardware-chip-outline" class="text-2xl"></ion-icon>
+      </div>
+    </button>
+  </div>
+
+  <!-- Tarjeta de Estado Actual -->
+  <div class="bg-[#111111] rounded-[32px] p-6 relative overflow-hidden group">
+    <div class="flex justify-between items-start mb-6 relative z-10">
+      <div class="flex flex-col">
+        <span class="text-[11px] uppercase text-zinc-500 tracking-widest font-black mb-1">Estado Actual</span>
+        <div class="flex items-baseline space-x-1">
+          <span class="text-[56px] font-black text-white italic leading-none">110</span>
+          <span class="text-sm text-zinc-400 italic font-black">mg/dL</span>
+        </div>
+      </div>
+      <div class="px-3 py-1 mt-1 text-neon-green text-[10px] rounded uppercase font-black border border-neon-green">
+        Estable
+      </div>
+    </div>
+    
+    <!-- Gráfico Contenedor -->
+    <div class="relative z-10 mt-6">
+      <!-- Y-Axis -->
+      <div class="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-zinc-600 font-bold">
+        <span>200</span>
+        <span>150</span>
+        <span>100</span>
+        <span>50</span>
+        <span>0</span>
+      </div>
+      
+      <!-- Gráfico SVG Onda Neón -->
+      <div class="h-32 w-full pl-8 relative z-10 opacity-90 group-hover:opacity-100 transition-opacity">
+        <svg viewBox="0 0 400 100" class="w-full h-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="neonGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ccff00" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#ccff00" stop-opacity="0" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <path d="M0 80 Q 50 20, 100 60 T 200 40 T 300 70 T 400 30 L 400 100 L 0 100 Z" fill="url(#neonGradient)" />
+          <path d="M0 80 Q 50 20, 100 60 T 200 40 T 300 70 T 400 30" fill="none" stroke="#ccff00" stroke-width="3" filter="url(#glow)" />
+        </svg>
+      </div>
+      
+      <!-- X-Axis (Detailed) -->
+      <div class="flex justify-between text-[10px] text-zinc-600 mt-3 font-bold tracking-tight pl-8 pr-2">
+        <span>08:00</span>
+        <span>10:00</span>
+        <span>12:00</span>
+        <span>14:00</span>
+        <span>16:00</span>
+        <span>18:00</span>
+        <span>20:00</span>
+      </div>
+    </div>
+    
+    <!-- X-Axis (Summary) -->
+    <div class="flex justify-between text-[11px] text-zinc-500 mt-8 font-bold uppercase tracking-widest relative z-10 px-1">
+      <span>08:00</span>
+      <span>14:00</span>
+      <span>Ahora</span>
+    </div>
+  </div>
+
+  <!-- Grid de Acciones Rápidas -->
+  <div class="grid grid-cols-2 gap-4">
+    <div (click)="navigateTo('registro')" class="bg-neon-green rounded-[32px] p-6 flex flex-col justify-between h-36 cursor-pointer active:scale-95 transition-all group">
+      <span class="text-black font-black text-sm uppercase tracking-widest">Registrar</span>
+      <div class="text-black self-end transform group-hover:rotate-90 transition-transform duration-300">
+        <ion-icon name="add-outline" class="text-4xl font-black"></ion-icon>
+      </div>
+    </div>
+    <div (click)="navigateTo('calculator')" class="bg-[#111111] rounded-[32px] p-6 flex flex-col justify-between h-36 cursor-pointer active:scale-95 transition-all">
+      <span class="text-white font-black text-sm uppercase tracking-widest leading-tight">Calculadora</span>
+      <div class="text-neon-green self-end">
+        <ion-icon name="calculator-outline" class="text-3xl"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjeta Gemma 4 Analysis -->
+  <div class="p-6 bg-[#111111] rounded-[32px] relative overflow-hidden cursor-pointer active:scale-95 transition-all">
+    <div class="flex items-center space-x-3 mb-4 relative z-10">
+      <div class="p-1">
+        <ion-icon name="hardware-chip-outline" class="text-2xl text-neon-green"></ion-icon>
+      </div>
+      <span class="text-[12px] font-black tracking-widest text-white uppercase italic">Gemma 4 Analysis</span>
+    </div>
+    <p class="text-sm text-zinc-400 leading-relaxed italic relative z-10 mb-6">
+      "Basado en tu última comida, tu glucosa podría subir a <span class="text-white font-black">145 mg/dL</span> en 2 horas. Te recomendamos 2 unidades de correctiva."
+    </p>
+    
+    <div class="w-full border-t border-dashed border-zinc-700 relative z-10"></div>
+    
+    <!-- Icono de fondo gigante tenue -->
+    <div class="absolute top-1/2 -translate-y-1/2 -right-4 opacity-[0.03] pointer-events-none">
+      <ion-icon name="hardware-chip-outline" class="text-[180px] text-neon-green"></ion-icon>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,105 @@
+<ion-content [fullscreen]="true" class="bg-[#050505]">
+  <div class="px-6 py-8 flex flex-col gap-6 min-h-full animate-fade-in-up pb-24">
+    
+    <app-header [showBack]="true" [showGreeting]="false" title="Registro"></app-header>
+    
+    <!-- Contenedor Flex para Glucosa y Carbohidratos -->
+    <div class="flex gap-4">
+      <!-- Tarjeta de Glucosa -->
+      <ion-card class="bg-[#111111] backdrop-blur-sm shadow-none rounded-3xl m-0 p-5 flex-1 relative overflow-hidden">
+        <div class="flex items-center gap-3 mb-4 relative z-10">
+          <div class="bg-zinc-800 p-2 rounded-xl">
+            <ion-icon name="water-outline" class="text-xl text-neon-green"></ion-icon>
+          </div>
+          <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-500 m-0">Glucosa</h3>
+        </div>
+        <div class="flex items-baseline gap-2 relative z-10">
+          <input 
+            type="number" 
+            [(ngModel)]="glucose"
+            placeholder="0"
+            class="bg-transparent text-5xl font-black italic text-white placeholder:text-zinc-800 w-full outline-none"
+          />
+          <span class="text-zinc-600 font-black italic text-sm uppercase">mg/dL</span>
+        </div>
+      </ion-card>
+
+      <!-- Tarjeta de Carbohidratos -->
+      <ion-card class="bg-[#111111] backdrop-blur-sm shadow-none rounded-3xl m-0 p-5 flex-1 relative overflow-hidden">
+        <div class="flex items-center gap-3 mb-4 relative z-10">
+          <div class="bg-zinc-800 p-2 rounded-xl">
+            <ion-icon name="nutrition-outline" class="text-xl text-zinc-400"></ion-icon>
+          </div>
+          <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-500 m-0">Carbos</h3>
+        </div>
+        <div class="flex items-baseline gap-2 relative z-10">
+          <input 
+            type="number" 
+            [(ngModel)]="carbs"
+            placeholder="0.0"
+            class="bg-transparent text-5xl font-black italic text-white placeholder:text-zinc-800 w-full outline-none"
+          />
+          <span class="text-zinc-600 font-black italic text-sm uppercase">g</span>
+        </div>
+      </ion-card>
+    </div>
+
+    <!-- Selector de Fecha y Hora -->
+    <div class="space-y-2">
+      <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">
+        Fecha y Hora
+      </label>
+      <input 
+        type="datetime-local" 
+        [(ngModel)]="date"
+        class="w-full bg-transparent border-b border-zinc-800 py-3 text-white outline-none focus:border-neon-green uppercase font-black tracking-widest text-[11px] transition-colors"
+      />
+    </div>
+    
+    <!-- Selector de Momento del Registro -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-500 m-0">Momento del Registro</h3>
+        <span class="text-[8px] font-black text-[#ccff00] uppercase tracking-wider bg-[#ccff00]/10 px-2 py-1 rounded">Recomendado</span>
+      </div>
+      
+      <!-- Contenedor con scroll horizontal para los botones -->
+      <div class="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide">
+        @for (label of moments; track label) {
+          <button 
+            type="button"
+            (click)="selectMoment(label)"
+            [ngClass]="{
+              'bg-[#ccff00] text-black border-[#ccff00] font-black': selectedMoment === label,
+              'bg-[#111111] border-[#1a1a1a] text-zinc-500 font-bold hover:border-zinc-800': selectedMoment !== label
+            }"
+            class="px-6 py-4 rounded-2xl text-[10px] uppercase tracking-widest transition-all whitespace-nowrap snap-start border"
+          >
+            {{ label }}
+          </button>
+        }
+      </div>
+      <!-- Barra de scroll visual (indicador de la imagen) -->
+      <div class="w-16 h-2 bg-[#222222] rounded-full mt-1 ml-1"></div>
+    </div>
+
+    <!-- Notas Adicionales -->
+    <div class="space-y-3 mt-2">
+      <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1 m-0">Notas Adicionales (Opcional)</h3>
+      <textarea 
+        [(ngModel)]="notes"
+        placeholder="Ej: Sentí un poco de mareo antes de medir, o comida fuera de lo habitual..."
+        class="w-full bg-[#111111] border border-[#1a1a1a] rounded-3xl p-5 text-sm text-zinc-400 italic placeholder:text-zinc-600 outline-none min-h-[120px] resize-none focus:border-zinc-700 transition-colors"
+      ></textarea>
+    </div>
+
+    <!-- Botón Guardar -->
+    <button 
+      (click)="saveRecord()"
+      class="w-full bg-[#ccff00] text-black font-black text-sm uppercase tracking-widest py-5 rounded-2xl mt-4 active:scale-95 transition-transform"
+    >
+      Guardar Registro
+    </button>
+
+  </div>
+</ion-content>

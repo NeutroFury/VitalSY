@@ -1,0 +1,39 @@
+<div class="flex items-center justify-between w-full">
+  
+  <!-- Izquierda: Atrás o Saludo -->
+  <div class="flex items-center gap-4">
+    @if (showBack) {
+      <button (click)="goBack()" class="w-10 h-10 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white active:scale-95 transition-all backdrop-blur-md">
+        <ion-icon name="chevron-back-outline" class="text-xl"></ion-icon>
+      </button>
+    }
+    
+    @if (showGreeting) {
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 m-0">Bienvenido,</p>
+        <h2 class="text-xl font-black text-white italic uppercase tracking-wider m-0">Usuario</h2>
+      </div>
+    } @else {
+      <h2 class="text-lg font-black text-white uppercase tracking-widest m-0">{{ title }}</h2>
+    }
+  </div>
+
+  <!-- Derecha: Logo y Acciones -->
+  <div class="flex items-center gap-3">
+    @if (showActions) {
+      <button class="w-10 h-10 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white active:scale-95 transition-colors backdrop-blur-md">
+        <ion-icon name="notifications-outline" class="text-lg"></ion-icon>
+      </button>
+      <button (click)="navigateTo('profile')" class="w-10 h-10 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white active:scale-95 transition-colors backdrop-blur-md">
+        <ion-icon name="settings-outline" class="text-lg"></ion-icon>
+      </button>
+    }
+    <div class="flex flex-col items-center">
+      <div class="w-8 h-8 bg-neon-green rounded-xl flex items-center justify-center neon-glow">
+        <ion-icon name="pulse" class="text-lg text-black font-black"></ion-icon>
+      </div>
+      <span class="text-[8px] font-black tracking-tighter text-white uppercase italic leading-none mt-1">VITAL<span class="text-neon-green">SY</span></span>
+    </div>
+  </div>
+
+</div>
