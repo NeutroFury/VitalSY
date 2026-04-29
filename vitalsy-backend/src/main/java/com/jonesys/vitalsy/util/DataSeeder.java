@@ -20,12 +20,12 @@ public class DataSeeder implements CommandLineRunner {
         // Solo insertamos datos si la tabla está vacía para no duplicar
         if (repository.count() == 0) {
             GlucoseReading lectura1 = new GlucoseReading();
-            lectura1.setValorMgdl(110.0);
+            lectura1.setValorMgdl(110);
             lectura1.setTendencia("Stable");
             lectura1.setAnalisisIa("Simulación de lectura normal inicial.");
 
             GlucoseReading lectura2 = new GlucoseReading();
-            lectura2.setValorMgdl(185.5);
+            lectura2.setValorMgdl(186);
             lectura2.setTendencia("Rising");
             lectura2.setAnalisisIa("Simulación de alerta por glucosa alta.");
 

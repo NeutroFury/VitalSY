@@ -18,13 +18,13 @@ public class IaController {
     }
 
     @PostMapping("/analizar/{id}")
-    public GlucoseReading procesarLectura(@PathVariable Long id) {
+    public GlucoseReading procesarLectura(@PathVariable Integer id) {
         // 1. Buscamos la lectura que insertó el DataSeeder
         GlucoseReading lectura = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lectura no encontrada"));
 
         // 2. Le pedimos a Gemma 4 que la analice
-        String analisis = iaService.analizarGlucosa(lectura.getValorMgdl(), lectura.getTendencia());
+        String analisis = iaService.analizarGlucosa(lectura.getValorMgdl().doubleValue(), lectura.getTendencia());
 
         // 3. Guardamos el análisis en la base de datos
         lectura.setAnalisisIa(analisis);
