@@ -115,19 +115,70 @@
   </div>
 
   <!-- Tarjeta Gemma 4 Analysis -->
-  <div class="p-6 bg-[#111111] rounded-[32px] relative overflow-hidden cursor-pointer active:scale-95 transition-all">
-    <div class="flex items-center space-x-3 mb-4 relative z-10">
-      <div class="p-1">
-        <ion-icon name="hardware-chip-outline" class="text-2xl text-neon-green"></ion-icon>
+  <div class="p-8 bg-[#111111] rounded-[32px] relative overflow-hidden active:scale-95 transition-all border border-[#1a1a1a]">
+    <div class="flex items-center justify-between mb-6 relative z-10">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-neon-green/10 flex items-center justify-center border border-neon-green/20">
+          <ion-icon name="hardware-chip-outline" class="text-xl text-neon-green animate-pulse"></ion-icon>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[12px] font-black tracking-widest text-white uppercase italic leading-none">Gemma 4 Analysis</span>
+          <span class="text-[8px] text-zinc-500 font-bold uppercase tracking-tighter mt-1">IA Predictiva</span>
+        </div>
       </div>
-      <span class="text-[12px] font-black tracking-widest text-white uppercase italic">Gemma 4 Analysis</span>
+      
+      <div class="flex items-center gap-2">
+        <!-- Botón de Actualizar -->
+        <button (click)="runAiAnalysis()" [disabled]="isIaLoading" 
+                class="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center text-neon-green border border-zinc-800 active:scale-90 transition-all disabled:opacity-50">
+          <ion-icon name="refresh-outline" [class.animate-spin]="isIaLoading" class="text-lg"></ion-icon>
+        </button>
+        
+        <!-- Badge de Riesgo -->
+        @if (iaAnalysis) {
+        <div [ngClass]="{
+          'bg-neon-green/10 text-neon-green border-neon-green/30': iaAnalysis.nivel_de_riesgo === 'Bajo',
+          'bg-yellow-500/10 text-yellow-500 border-yellow-500/30': iaAnalysis.nivel_de_riesgo === 'Medio',
+          'bg-orange-500/10 text-orange-500 border-orange-500/30': iaAnalysis.nivel_de_riesgo === 'Alto',
+          'bg-red-500/10 text-red-500 border-red-500/30': iaAnalysis.nivel_de_riesgo === 'Crítico'
+        }" class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border">
+          Riesgo {{ iaAnalysis.nivel_de_riesgo }}
+        </div>
+      }
     </div>
-    <p class="text-sm text-zinc-400 leading-relaxed italic relative z-10 mb-6">
-      "Basado en tu última comida, tu glucosa podría subir a <span class="text-white font-black">145 mg/dL</span> en 2 horas. Te recomendamos 2 unidades de correctiva."
-    </p>
-    
-    <div class="w-full border-t border-dashed border-zinc-700 relative z-10"></div>
-    
+
+    <!-- State: Loading -->
+    @if (isIaLoading) {
+      <div class="space-y-3 relative z-10 animate-pulse">
+        <div class="h-4 bg-zinc-800 rounded-full w-3/4"></div>
+        <div class="h-4 bg-zinc-800 rounded-full w-full"></div>
+        <div class="h-4 bg-zinc-800 rounded-full w-1/2"></div>
+      </div>
+    }
+
+    <!-- State: Error -->
+    @if (iaError && !isIaLoading) {
+      <div class="flex flex-col gap-2 relative z-10">
+        <p class="text-xs text-zinc-500 font-bold uppercase tracking-wider">{{ iaError }}</p>
+        <button (click)="runAiAnalysis()" class="text-[10px] text-neon-green uppercase font-black tracking-widest text-left hover:underline">
+          Reintentar análisis
+        </button>
+      </div>
+    }
+
+    <!-- State: Success -->
+    @if (iaAnalysis && !isIaLoading) {
+      <div class="relative z-10 space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Tendencia:</span>
+          <span class="text-xs text-white font-black italic uppercase">{{ iaAnalysis.tendencia }}</span>
+        </div>
+        <p class="text-sm text-zinc-400 leading-relaxed italic border-l-2 border-neon-green pl-4">
+          "{{ iaAnalysis.consejo_breve }}"
+        </p>
+      </div>
+    }
+
     <!-- Icono de fondo gigante tenue -->
     <div class="absolute top-1/2 -translate-y-1/2 -right-4 opacity-[0.03] pointer-events-none">
       <ion-icon name="hardware-chip-outline" class="text-[180px] text-neon-green"></ion-icon>

@@ -1,5 +1,7 @@
 package com.jonesys.vitalsy.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
@@ -7,18 +9,31 @@ import org.springframework.stereotype.Service;
 public class IaService {
 
     private final ChatClient chatClient;
+    private final ObjectMapper objectMapper;
 
     public IaService(ChatClient.Builder builder) {
         this.chatClient = builder.build();
+        this.objectMapper = new ObjectMapper(); // Instanciación manual
     }
 
-    public String analizarGlucosa(Double valor, String tendencia) {
-        String prompt = String.format(
-                "Actúa como un experto en diabetes. El paciente tiene una glucosa de %.1f mg/dL y la tendencia es '%s'. "
-                        +
-                        "¿Qué riesgos ves y qué recomendación breve darías? Responde de forma humana.",
-                valor, tendencia);
-
-        return chatClient.prompt(prompt).call().content();
+    public IaAnalysisResponse analizarGlucosa(Double valor, String tendencia) {
+        try {
+            String rawResponse = chatClient.prompt()
+                    .system("Responde estrictamente en formato JSON. No incluyas texto explicativo.")
+                    .user(String.format("Glucosa: %.1f, Tendencia: %s. Formato JSON: {\"tendencia\":\"...\",\"nivel_de_riesgo\":\"...\",\"consejo_breve\":\"...\"}", valor, tendencia))
+                    .call()
+                    .content();
+            
+            System.out.println("IA_RAW_RESPONSE: " + rawResponse);
+            
+            // Limpiar posibles etiquetas de markdown
+            String cleanJson = rawResponse.replaceAll("(?s).*?\\{", "{").replaceAll("(?s)\\}.*", "}");
+            
+            return objectMapper.readValue(cleanJson, IaAnalysisResponse.class);
+            
+        } catch (Exception e) {
+            System.err.println("IA_ERROR: " + e.getMessage());
+            throw new RuntimeException("IA_SERVER_UNAVAILABLE");
+        }
     }
 }

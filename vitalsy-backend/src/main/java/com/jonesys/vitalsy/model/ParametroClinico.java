@@ -21,10 +21,10 @@ public class ParametroClinico {
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
     
-    @Column(name = "ratio_carbohidratos", precision = 5, scale = 2, nullable = false)
+    @Column(name = "ratio_carbohidratos", nullable = false)
     private Double ratioCarbohidratos; // IC (Insulin-to-Carb ratio)
-    
-    @Column(name = "factor_sensibilidad", precision = 5, scale = 2, nullable = false)
+
+    @Column(name = "factor_sensibilidad", nullable = false)
     private Double factorSensibilidad; // IS (Insulin Sensitivity Factor)
     
     @Column(name = "objetivo_glucemia_min")
