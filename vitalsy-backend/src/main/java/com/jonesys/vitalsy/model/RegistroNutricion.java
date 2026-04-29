@@ -24,13 +24,13 @@ public class RegistroNutricion {
     @Column(name = "descripcion_comida", length = 255)
     private String descripcionComida;
     
-    @Column(name = "carbohidratos_gr", precision = 6, scale = 2, nullable = false)
+    @Column(name = "carbohidratos_gr", nullable = false)
     private Double carbohidratosGr;
-    
-    @Column(name = "proteinas_gr", precision = 6, scale = 2)
+
+    @Column(name = "proteinas_gr")
     private Double proteinasGr;
-    
-    @Column(name = "grasas_gr", precision = 6, scale = 2)
+
+    @Column(name = "grasas_gr")
     private Double grasasGr;
     
     @Column(name = "calorias_kcal")

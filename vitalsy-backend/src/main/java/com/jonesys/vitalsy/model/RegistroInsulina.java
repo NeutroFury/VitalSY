@@ -21,10 +21,10 @@ public class RegistroInsulina {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
     
-    @Column(name = "unidades_sugeridas", precision = 5, scale = 2)
+    @Column(name = "unidades_sugeridas")
     private Double unidadesSugeridas;
-    
-    @Column(name = "unidades_aplicadas", precision = 5, scale = 2, nullable = false)
+
+    @Column(name = "unidades_aplicadas", nullable = false)
     private Double unidadesAplicadas;
     
     @Column(name = "tipo_insulina", length = 50)

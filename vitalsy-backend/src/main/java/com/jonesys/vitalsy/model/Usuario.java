@@ -33,7 +33,7 @@ public class Usuario {
     @Column(length = 20)
     private String genero;
     
-    @Column(name = "peso_actual", precision = 5, scale = 2)
+    @Column(name = "peso_actual")
     private Double pesoActual;
     
     @Column(length = 20)

@@ -24,7 +24,7 @@ public class AlertaPrediccion {
     @Column(name = "tipo_alerta", length = 50)
     private String tipoAlerta; // PREDICCION_HIPO, PREDICCION_HIPER
     
-    @Column(precision = 3, scale = 2)
+    @Column
     private Double probabilidad; // 0.00 a 1.00
     
     @Column(name = "mensaje_notificacion", columnDefinition = "TEXT")

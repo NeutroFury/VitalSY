@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { pulse } from 'ionicons/icons';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,26 +17,39 @@ import { pulse } from 'ionicons/icons';
 export class LoginComponent {
   email = '';
   password = '';
+  
+  private authService = inject(AuthService);
+  private navCtrl = inject(NavController);
+  private router = inject(Router);
 
-  constructor(private navCtrl: NavController) {
+  constructor() {
     addIcons({ pulse });
   }
 
   onSubmit() {
     if (this.email && this.password) {
-      console.log('Login attempt with:', { email: this.email, password: this.password });
-      // Aquí iría la lógica real de autenticación
-      
-      // Navegación suave estilo nativo al Dashboard
-      this.navCtrl.navigateRoot('/dashboard', { 
-        animated: true, 
-        animationDirection: 'forward' 
+      const credentials = {
+        email: this.email,
+        password: this.password
+      };
+
+      this.authService.login(credentials).subscribe({
+        next: (res) => {
+          console.log('Login successful', res);
+          this.navCtrl.navigateRoot('/dashboard', { 
+            animated: true, 
+            animationDirection: 'forward' 
+          });
+        },
+        error: (err) => {
+          console.error('Login failed', err);
+          // Here you could add a toast notification for the user
+        }
       });
     }
   }
 
   goToSignup() {
-    console.log('Navegar a registro');
-    // Implementar navegación a /signup
+    this.router.navigate(['/register']);
   }
 }
