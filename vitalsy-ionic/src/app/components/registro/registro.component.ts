@@ -13,6 +13,7 @@ import { LoadingController, AlertController } from '@ionic/angular';
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
+  styleUrls: ['./registro.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, HeaderComponent]
 })
@@ -29,9 +30,12 @@ export class RegistroComponent {
   private alertCtrl = inject(AlertController);
 
   moments: string[] = [
-    'Ayunas', 'Pre-Desayuno', 'Post-Desayuno', 
-    'Pre-Almuerzo', 'Post-Almuerzo', 'Merienda', 
-    'Pre-Cena', 'Post-Cena', 'Ejercicio', 'Antes de Dormir'
+    'Ayunas', 
+    'Pre-Desayuno', 'Desayuno', 'Post-Desayuno', 
+    'Pre-Almuerzo', 'Almuerzo', 'Post-Almuerzo', 
+    'Merienda', 
+    'Pre-Cena', 'Cena', 'Post-Cena', 
+    'Ejercicio', 'Antes de Dormir'
   ];
 
   constructor() {
@@ -62,11 +66,16 @@ export class RegistroComponent {
 
     const tendencia = this.glucose > 180 ? 'Rising' : (this.glucose < 70 ? 'Falling' : 'Stable');
     
-    this.glucoseService.saveReading(this.glucose, tendencia).subscribe({
+    this.glucoseService.registrarGlucosa({ 
+      valorMgdl: this.glucose, 
+      carbohidratos: this.carbs,
+      comentarios: this.notes,
+      tendencia 
+    }).subscribe({
       next: async () => {
         console.log('REGISTRO: Lectura guardada con éxito');
         await loader.dismiss();
-        this.navCtrl.navigateBack('/dashboard');
+        this.navCtrl.navigateRoot('/dashboard', { animated: true, animationDirection: 'back' });
       },
       error: async (err) => {
         console.error('REGISTRO: Error al guardar lectura', err);

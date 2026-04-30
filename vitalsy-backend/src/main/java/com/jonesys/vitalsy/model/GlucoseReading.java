@@ -19,6 +19,7 @@ public class GlucoseReading {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Usuario usuario;
     
     @Column(name = "valor_mgdl", nullable = false)
@@ -26,6 +27,9 @@ public class GlucoseReading {
     
     @Column(name = "tipo_registro", length = 20, nullable = false)
     private String tipoRegistro; // MANUAL, SENSOR_NFC, SENSOR_BLE
+
+    @Column(name = "carbohidratos")
+    private Integer carbohidratos; // Gramos de carbohidratos consumidos
     
     @Column(length = 20)
     private String tendencia; // TrendType: Stable, Rising, Falling, etc.

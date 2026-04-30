@@ -1,107 +1,231 @@
-<ion-content [fullscreen]="true" class="bg-[#050505]">
-  <div class="px-6 py-8 flex flex-col gap-6 min-h-full pb-32">
+<ion-content class="bg-black">
+  <div class="px-6 py-8 flex flex-col gap-6 min-h-full pb-32 animate-fade-in" [formGroup]="profileForm">
     
-    <app-header [showBack]="true" [showGreeting]="false" title="Perfil"></app-header>
+    <app-header [showBack]="true" [showGreeting]="false" title="Centro de Perfil"></app-header>
     
-    <!-- Información Personal -->
-    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4">Información Personal</h3>
-    <div class="bg-zinc-900/60 backdrop-blur-md rounded-2xl p-5 border border-neon-green/10 animate-fade-in-up" style="opacity: 0; animation-delay: 0s;">
+    <!-- MAIN PROFILE CARD -->
+    <div class="bg-[#0c0c0c] rounded-[32px] p-6 flex flex-col gap-8 border border-zinc-900 shadow-2xl relative overflow-hidden group">
       
-      <div class="flex items-center gap-4 mb-4">
-        <div class="p-3 bg-zinc-800 rounded-2xl flex items-center justify-center">
-          <ion-icon name="person-outline" class="text-xl text-neon-green"></ion-icon>
-        </div>
-        <div class="w-full">
-          <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 m-0">Nombre</p>
-          <input type="text" [(ngModel)]="userName" class="bg-transparent text-lg font-black text-white italic outline-none w-full p-0 border-b border-transparent focus:border-neon-green transition-colors" />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800/50">
-        <div class="space-y-1">
-          <div class="flex items-center gap-2 text-zinc-500">
-            <ion-icon name="person-outline" class="text-sm"></ion-icon>
-            <span class="text-[9px] font-black uppercase tracking-wider">Edad</span>
-          </div>
-          <input type="number" [(ngModel)]="userAge" class="bg-transparent text-xl font-black text-white border-b border-zinc-800 focus:border-neon-green outline-none w-full py-1" />
-        </div>
-        <div class="space-y-1">
-          <div class="flex items-center gap-2 text-zinc-500">
-            <ion-icon name="fitness-outline" class="text-sm"></ion-icon>
-            <span class="text-[9px] font-black uppercase tracking-wider">Peso (kg)</span>
-          </div>
-          <input type="number" [(ngModel)]="weightProgress" class="bg-transparent text-xl font-black text-white border-b border-zinc-800 focus:border-neon-green outline-none w-full py-1" />
-        </div>
-      </div>
-      
-      <div class="pt-4 mt-4 border-t border-zinc-800/50 space-y-1">
-        <div class="flex items-center gap-2 text-zinc-500">
-          <ion-icon name="fitness-outline" class="text-sm"></ion-icon>
-          <span class="text-[9px] font-black uppercase tracking-wider">Dieta Actual</span>
-        </div>
-        <select [(ngModel)]="dietType" class="bg-zinc-900/50 text-sm font-black text-white p-3 rounded-xl w-full border border-zinc-800 outline-none focus:border-neon-green appearance-none mt-2">
-          <option>Keto</option>
-          <option>Low-Carb</option>
-          <option>Estándar</option>
-          <option>Vegana</option>
-        </select>
-      </div>
-
-    </div>
-
-    <!-- Vinculación con Abbott -->
-    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-2">Integraciones Médicas</h3>
-    <div class="bg-zinc-900/60 backdrop-blur-md rounded-2xl p-5 border border-neon-green/10 flex items-center justify-between animate-fade-in-up" style="opacity: 0; animation-delay: 0.1s;">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-zinc-800 rounded-xl flex items-center justify-center">
-          <ion-icon name="link-outline" class="text-lg text-neon-green"></ion-icon>
+      <!-- Identity Section -->
+      <div class="flex items-center gap-4 relative z-10">
+        <div class="w-16 h-16 bg-neon-green/10 rounded-[24px] flex items-center justify-center border border-neon-green/20">
+          <ion-icon name="person-outline" class="text-3xl text-neon-green"></ion-icon>
         </div>
         <div class="flex flex-col">
-          <span class="text-[10px] font-black uppercase tracking-widest text-white">LibreLinkUp (Abbott)</span>
-          <span class="text-[9px] font-black uppercase tracking-wider" [ngClass]="isAbbottConnected ? 'text-neon-green' : 'text-zinc-500'">
-            {{ isAbbottConnected ? 'Conectado' : 'Desconectado' }}
-          </span>
+          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-600">Usuario VitalSY</span>
+          <span class="text-2xl font-black text-white italic uppercase tracking-tighter">{{ username }}</span>
         </div>
       </div>
+
+      <div class="w-full h-[1px] bg-zinc-900/50 relative z-10"></div>
+
+      <!-- Biometric Grid -->
+      <div class="grid grid-cols-2 gap-8 relative z-10">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+              <ion-icon name="scale-outline" class="text-[10px] text-neon-green"></ion-icon>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Peso (Kg)</span>
+          </div>
+          <input type="number" formControlName="pesoActual" 
+                 class="bg-transparent text-3xl font-black text-white italic outline-none border-b border-zinc-900 focus:border-neon-green pb-1 transition-all" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+              <ion-icon name="resize-outline" class="text-[10px] text-neon-green"></ion-icon>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Altura (Cm)</span>
+          </div>
+          <input type="number" formControlName="altura" 
+                 class="bg-transparent text-3xl font-black text-white italic outline-none border-b border-zinc-900 focus:border-neon-green pb-1 transition-all" />
+        </div>
+      </div>
+
+      <!-- Insulin Type Selector -->
+      <div class="flex flex-col gap-2 relative z-10">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+            <ion-icon name="water-outline" class="text-[10px] text-neon-green"></ion-icon>
+          </div>
+          <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Tipo de Insulina</span>
+        </div>
+        <div (click)="isInsulinModalOpen = true" 
+             class="bg-black/40 border border-zinc-900 rounded-2xl p-4 flex items-center justify-between group active:border-neon-green/30 transition-all custom-select-trigger relative">
+          <div class="flex flex-col">
+            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Configurado</span>
+            <span class="text-base font-black text-white italic">{{ profileForm.get('tipoInsulina')?.value || 'Seleccionar' }}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-neon-green shadow-[0_0_8px_#d4ff00]"></div>
+            <ion-icon name="chevron-forward-outline" class="text-neon-green text-xl"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metabolic Metrics Grid -->
+      <div class="grid grid-cols-2 gap-8 relative z-10">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+              <ion-icon name="calculator-outline" class="text-[10px] text-neon-green"></ion-icon>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Ratio IC (G/U)</span>
+          </div>
+          <input type="number" formControlName="ratioIc" 
+                 class="bg-transparent text-3xl font-black text-white italic outline-none border-b border-zinc-900 focus:border-neon-green pb-1 transition-all" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+              <ion-icon name="pulse-outline" class="text-[10px] text-neon-green"></ion-icon>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Factor IS (Mg/U)</span>
+          </div>
+          <input type="number" formControlName="factorIs" 
+                 class="bg-transparent text-3xl font-black text-white italic outline-none border-b border-zinc-900 focus:border-neon-green pb-1 transition-all" />
+        </div>
+      </div>
+    </div>
+
+    <!-- PREFERENCES SECTION -->
+    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4 px-2">Preferencias de Sistema</h3>
+    <div class="bg-[#0c0c0c] rounded-[32px] p-6 flex flex-col gap-6 border border-zinc-900 shadow-xl">
       
-      <!-- Custom Toggle Neón -->
-      <button (click)="toggleAbbott()" class="w-12 h-6 rounded-full relative transition-colors duration-300" [ngClass]="isAbbottConnected ? 'bg-neon-green shadow-neon' : 'bg-zinc-800 border border-zinc-700'">
-        <div class="absolute top-1 w-4 h-4 rounded-full transition-transform duration-300" 
-             [ngClass]="isAbbottConnected ? 'bg-black translate-x-7' : 'bg-zinc-500 translate-x-1'"></div>
+      <!-- Glucose Alerts -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-9 h-9 rounded-xl bg-zinc-900 flex items-center justify-center border border-zinc-800">
+            <ion-icon name="notifications-outline" class="text-base text-zinc-500"></ion-icon>
+          </div>
+          <span class="text-[11px] font-black text-white uppercase tracking-widest italic">Alertas de Glucosa</span>
+        </div>
+        <button (click)="profileForm.get('alertasGlucosa')?.setValue(!profileForm.get('alertasGlucosa')?.value)" 
+                class="w-14 h-7 rounded-full relative transition-all duration-300"
+                [ngClass]="profileForm.get('alertasGlucosa')?.value ? 'bg-neon-green shadow-[0_0_20px_rgba(212,255,0,0.4)]' : 'bg-zinc-800'">
+          <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-black"
+               [ngClass]="profileForm.get('alertasGlucosa')?.value ? 'translate-x-8' : 'translate-x-1.5'"></div>
+        </button>
+      </div>
+
+      <div class="w-full h-[1px] bg-zinc-900/50"></div>
+
+      <!-- Meal Reminders -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-9 h-9 rounded-xl bg-zinc-900 flex items-center justify-center border border-zinc-800">
+            <ion-icon name="alarm-outline" class="text-base text-zinc-500"></ion-icon>
+          </div>
+          <span class="text-[11px] font-black text-white uppercase tracking-widest italic">Recordatorio Comidas</span>
+        </div>
+        <button (click)="recordatorioComidasToggle()" 
+                class="w-14 h-7 rounded-full relative transition-all duration-300"
+                [ngClass]="profileForm.get('recordatorioComidas')?.value ? 'bg-neon-green shadow-[0_0_20px_rgba(212,255,0,0.4)]' : 'bg-zinc-800'">
+          <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-black"
+               [ngClass]="profileForm.get('recordatorioComidas')?.value ? 'translate-x-8' : 'translate-x-1.5'"></div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="flex flex-col gap-4 mt-4">
+      <button (click)="saveProfile()" [disabled]="profileForm.invalid || isLoading" 
+              class="w-full h-16 bg-neon-green text-black rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-neon disabled:opacity-50">
+        <ion-icon name="cloud-upload-outline" class="text-2xl"></ion-icon>
+        <span>{{ isLoading ? 'Sincronizando...' : 'Guardar Configuración' }}</span>
       </button>
-    </div>
 
-    <!-- Metas de Glucosa -->
-    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-2">Rango Objetivo de Glucosa</h3>
-    <div class="bg-zinc-900/60 backdrop-blur-md rounded-2xl p-5 border border-neon-green/10 animate-fade-in-up" style="opacity: 0; animation-delay: 0.2s;">
-      
-      <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-2">
-          <div class="flex items-center gap-2 text-zinc-500">
-            <ion-icon name="settings-outline" class="text-sm"></ion-icon>
-            <span class="text-[9px] font-black uppercase tracking-wider">Mínimo (mg/dL)</span>
-          </div>
-          <input type="number" [(ngModel)]="glucoseMin" class="bg-transparent text-3xl font-black text-white italic border-b border-zinc-800 focus:border-neon-green outline-none w-full text-center py-2" />
-        </div>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2 text-zinc-500">
-            <ion-icon name="settings-outline" class="text-sm"></ion-icon>
-            <span class="text-[9px] font-black uppercase tracking-wider">Máximo (mg/dL)</span>
-          </div>
-          <input type="number" [(ngModel)]="glucoseMax" class="bg-transparent text-3xl font-black text-white italic border-b border-zinc-800 focus:border-neon-green outline-none w-full text-center py-2" />
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Cerrar Sesión -->
-    <div class="pt-6 pb-6 animate-fade-in-up" style="opacity: 0; animation-delay: 0.3s;">
-      <button (click)="logout()" class="w-full h-16 bg-transparent border border-red-500/30 text-red-500 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest hover:bg-red-500/10 active:scale-95 transition-all shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-        <ion-icon name="log-out-outline" class="text-xl"></ion-icon>
-        Cerrar Sesión
+      <button (click)="logout()" class="w-full h-14 bg-transparent border border-red-500/20 rounded-2xl flex items-center justify-center gap-3 group active:bg-red-500/10 transition-all border-dotted">
+        <ion-icon name="log-out-outline" class="text-xl text-red-500/70"></ion-icon>
+        <span class="text-[10px] font-black text-red-500/70 uppercase tracking-[0.4em] italic">Terminar Sesión</span>
       </button>
     </div>
 
   </div>
+
+  <!-- SELECCIÓN DE TIPO DE INSULINA MODAL -->
+  <ion-modal [isOpen]="isInsulinModalOpen" (didDismiss)="isInsulinModalOpen = false" 
+             class="insulin-modal">
+    <ng-template>
+      <div class="flex flex-col h-full bg-[#050505] p-6 pt-8">
+        <h2 class="text-[11px] font-black text-white uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
+          <ion-icon name="water-outline" class="text-neon-green"></ion-icon>
+          SELECCIÓN DE TIPO DE INSULINA
+        </h2>
+        
+        <ion-list class="bg-transparent p-0">
+          <!-- ULTRA-RÁPIDA -->
+          <ion-item-group class="mb-8">
+            <ion-list-header>ACCIÓN ULTRA-RÁPIDA</ion-list-header>
+            
+            <ion-item button (click)="selectInsulin('Fiasp')" class="insulin-item">
+              <ion-icon name="flash-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Fiasp</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+            
+            <ion-item button (click)="selectInsulin('Lyumjev')" class="insulin-item">
+              <ion-icon name="flash-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Lyumjev</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+          </ion-item-group>
+
+          <!-- RÁPIDA (BOLUS) -->
+          <ion-item-group class="mb-8">
+            <ion-list-header>ACCIÓN RÁPIDA (BOLUS)</ion-list-header>
+            
+            <ion-item button (click)="selectInsulin('Humalog (Lispro)')" class="insulin-item">
+              <ion-icon name="water-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Humalog (Lispro)</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+            
+            <ion-item button (click)="selectInsulin('NovoRapid (Asparta)')" class="insulin-item">
+              <ion-icon name="water-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">NovoRapid (Asparta)</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+
+            <ion-item button (click)="selectInsulin('Apidra (Glulisina)')" class="insulin-item">
+              <ion-icon name="water-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Apidra (Glulisina)</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+          </ion-item-group>
+
+          <!-- PROLONGADA (BASAL) -->
+          <ion-item-group class="mb-8">
+            <ion-list-header>ACCIÓN PROLONGADA (BASAL)</ion-list-header>
+            
+            <ion-item button (click)="selectInsulin('Lantus (Glargina)')" class="insulin-item">
+              <ion-icon name="time-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Lantus (Glargina)</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+            
+            <ion-item button (click)="selectInsulin('Tresiba (Degludec)')" class="insulin-item">
+              <ion-icon name="time-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Tresiba (Degludec)</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+
+            <ion-item button (click)="selectInsulin('Toujeo')" class="insulin-item">
+              <ion-icon name="time-outline" slot="start" class="text-neon-green mr-4"></ion-icon>
+              <ion-label class="font-bold text-white tracking-wide">Toujeo</ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end" class="text-zinc-800 text-xs"></ion-icon>
+            </ion-item>
+          </ion-item-group>
+        </ion-list>
+        
+        <button (click)="isInsulinModalOpen = false" 
+                class="w-full py-5 mt-4 text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em] border border-zinc-900 rounded-2xl active:bg-zinc-900 active:text-white transition-all">
+          CANCELAR
+        </button>
+      </div>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>
