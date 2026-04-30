@@ -36,6 +36,24 @@ public class Usuario {
     @Column(name = "peso_actual")
     private Double pesoActual;
     
+    @Column(name = "altura")
+    private Double altura;
+    
+    @Column(name = "tipo_insulina", length = 50)
+    private String tipoInsulina;
+    
+    @Column(name = "ratio_ic")
+    private Double ratioIc; // Insulin-to-Carb
+    
+    @Column(name = "factor_is")
+    private Double factorIs; // Insulin Sensitivity
+    
+    @Column(name = "alertas_glucosa")
+    private Boolean alertasGlucosa = true;
+    
+    @Column(name = "recordatorio_comidas")
+    private Boolean recordatorioComidas = false;
+    
     @Column(length = 20)
     private String rol = "PACIENTE";
     

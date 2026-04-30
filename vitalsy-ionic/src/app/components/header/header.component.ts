@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { pulse, chevronBackOutline, notificationsOutline, settingsOutline } from 'ionicons/icons';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -16,8 +17,12 @@ export class HeaderComponent {
   @Input() showActions: boolean = false;
   @Input() title: string = '';
 
+  private authService = inject(AuthService);
+  username: string = '';
+
   constructor(private navCtrl: NavController) {
     addIcons({ pulse, chevronBackOutline, notificationsOutline, settingsOutline });
+    this.username = this.authService.getUsername();
   }
 
   goBack() {

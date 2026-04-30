@@ -29,7 +29,7 @@ public class IaController {
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        GlucoseReading lectura = repository.findLatestByUsuario(usuario);
+        GlucoseReading lectura = repository.findTop1ByUsuarioOrderByFechaHoraDesc(usuario);
         
         System.out.println("DEBUG: Solicitando análisis para el usuario: " + usuario.getEmail());
         

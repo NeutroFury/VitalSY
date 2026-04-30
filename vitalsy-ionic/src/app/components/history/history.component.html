@@ -1,68 +1,111 @@
-<ion-content [fullscreen]="true" class="bg-[#050505]">
-  <div class="px-6 py-8 flex flex-col gap-6 min-h-full pb-32">
-    
+<ion-content class="bg-black">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      [pullingIcon]="'chevron-down-circle-outline'"
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Sincronizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="min-h-full bg-black p-6 flex flex-col gap-6 pt-2 relative">
     <app-header [showBack]="true" [showGreeting]="false" title="Historial"></app-header>
-    
-    <!-- Lista de Registros -->
-    @for (log of logs; track log.id; let i = $index) {
-      <div 
-        class="bg-zinc-900/60 backdrop-blur-md rounded-2xl p-5 border border-neon-green/10 hover:border-neon-green/30 transition-colors group relative overflow-hidden animate-fade-in-up"
-        [style.animation-delay]="(i * 0.1) + 's'"
-        style="opacity: 0;"
+
+    <!-- Logs Container -->
+    <div class="flex-1 space-y-4 overflow-y-auto pb-48 pr-1 mt-4">
+      
+      @for (group of groupedHistory; track group.dateLabel) {
+        <div class="space-y-4">
+          <!-- Separador de día opcional o agrupador -->
+          <div class="flex items-center gap-2 mb-2">
+            <div class="h-[1px] flex-1 bg-zinc-900"></div>
+            <span class="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-700 italic">{{ group.dateLabel }}</span>
+            <div class="h-[1px] flex-1 bg-zinc-900"></div>
+          </div>
+
+          @for (reading of group.readings; track reading.id; let i = $index) {
+            <div 
+              class="border border-zinc-900 rounded-[24px] hover:border-zinc-700 transition-all p-5 group bg-zinc-900/10 active:scale-[0.98]"
+            >
+              <!-- Card Header -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0.5">
+                    {{ formatDateShort(reading.fechaHora) }}
+                  </span>
+                  <span class="text-xs font-black text-zinc-200 italic uppercase tracking-wider">
+                    {{ reading.tipoRegistro }}
+                  </span>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-zinc-800">
+                  {{ formatTime(reading.fechaHora) }}
+                </span>
+              </div>
+
+              <!-- Card Content: Glucose & Carbs (Simulated or mapped) -->
+              <div class="flex gap-4">
+                <!-- Box Glucosa -->
+                <div class="flex-1 flex items-center gap-3 bg-zinc-900/50 p-3 rounded-2xl border border-zinc-800/50">
+                  <ion-icon name="water-outline" class="text-neon-green text-lg"></ion-icon>
+                  <div class="flex items-baseline gap-1">
+                    <span class="font-black text-white text-xl">{{ reading.valorMgdl }}</span>
+                    <span class="text-[8px] font-black uppercase text-neon-green/60">mg/dL</span>
+                  </div>
+                </div>
+
+                <!-- Box Carbs -->
+                <div class="flex-1 flex items-center gap-3 bg-zinc-900/50 p-3 rounded-2xl border border-zinc-800/50">
+                  <ion-icon name="fast-food-outline" class="text-zinc-600 text-lg"></ion-icon>
+                  <div class="flex items-baseline gap-1">
+                    <span class="font-black text-white text-xl">{{ reading.carbohidratos || 0 }}</span>
+                    <span class="text-[8px] font-black uppercase text-zinc-700">gramos</span>
+                  </div>
+                </div>
+
+                <!-- Action Button (Hidden until hover/active) -->
+                <button class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity">
+                  <ion-icon name="arrow-forward-outline" class="text-zinc-600 text-xl"></ion-icon>
+                </button>
+              </div>
+
+              <!-- Nota / Comentario -->
+              <!-- Nota / Comentario / Análisis IA -->
+              @if (reading.analisisIa || reading.comentarios) {
+                <div class="mt-4 pt-4 border-t border-zinc-800/30">
+                  <div class="flex gap-2">
+                    <ion-icon [name]="reading.analisisIa ? 'hardware-chip-outline' : 'chatbubble-outline'" 
+                              class="text-zinc-700 text-xs mt-0.5"></ion-icon>
+                    <p class="text-[10px] text-zinc-500 italic font-medium leading-relaxed">
+                      " {{ reading.analisisIa || reading.comentarios }} "
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (groupedHistory.length === 0 && !isLoading) {
+        <div class="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
+          <div class="w-16 h-16 bg-zinc-900 rounded-3xl flex items-center justify-center border border-zinc-800">
+            <ion-icon name="calendar-outline" class="text-3xl text-zinc-700"></ion-icon>
+          </div>
+          <p class="text-xs text-zinc-500 font-black uppercase tracking-widest italic">No hay registros aún</p>
+        </div>
+      }
+    </div>
+
+    <!-- Botón de Acción Fijo Inferior -->
+    <div class="absolute bottom-10 left-6 right-6 z-50">
+      <button 
+        (click)="exportData()"
+        class="w-full h-16 bg-neon-green text-black shadow-2xl flex items-center justify-center gap-3 text-sm font-black uppercase tracking-[0.2em] rounded-2xl active:scale-95 transition-all neon-glow"
       >
-        <!-- Encabezado de la tarjeta -->
-        <div class="flex items-center justify-between mb-5">
-          <div class="flex flex-col">
-            <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-0.5">{{ log.date }}</span>
-            <span class="text-xs font-black text-white italic uppercase tracking-wider">{{ log.type }}</span>
-          </div>
-          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-300">{{ log.time }}</span>
-        </div>
-
-        <!-- Métricas (Glucosa y Carbohidratos) -->
-        <div class="flex gap-4">
-          <!-- Glucosa -->
-          <div class="flex-1 flex items-center gap-3 bg-black/60 p-3 rounded-xl border border-zinc-800/50">
-            <ion-icon name="water-outline" class="text-lg text-neon-green"></ion-icon>
-            <div class="flex items-baseline gap-1">
-              <span class="font-black text-white">{{ log.glucose }}</span>
-              <span class="text-[8px] font-black uppercase text-neon-green/80">mg/dL</span>
-            </div>
-          </div>
-          
-          <!-- Carbohidratos -->
-          <div class="flex-1 flex items-center gap-3 bg-black/60 p-3 rounded-xl border border-zinc-800/50">
-            <ion-icon name="nutrition-outline" class="text-lg text-zinc-400"></ion-icon>
-            <div class="flex items-baseline gap-1">
-              <span class="font-black text-white">{{ log.carbs }}</span>
-              <span class="text-[8px] font-black uppercase text-zinc-400">g</span>
-            </div>
-          </div>
-
-          <!-- Botón de detalles (visible en hover) -->
-          <button class="w-12 h-full rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center transition-all active:scale-95 text-zinc-400 hover:text-white">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </button>
-        </div>
-
-        <!-- Notas adicionales si existen -->
-        @if (log.note) {
-          <div class="mt-5 pt-4 border-t border-zinc-800/50">
-            <p class="text-[10px] text-zinc-300 italic font-medium leading-relaxed m-0">
-              " {{ log.note }} "
-            </p>
-          </div>
-        }
-      </div>
-    }
+        <ion-icon name="download-outline" class="text-xl"></ion-icon>
+        Exportar Reporte CSV
+      </button>
+    </div>
   </div>
-
 </ion-content>
-
-<!-- Botón Flotante de Exportación Fijo al fondo -->
-<div class="absolute bottom-6 left-6 right-6 z-50">
-  <button class="w-full h-16 rounded-2xl flex items-center justify-center gap-3 text-sm font-black uppercase tracking-[0.2em] bg-neon-green text-black neon-glow active:scale-95 transition-transform shadow-2xl">
-    <ion-icon name="download-outline" class="text-xl stroke-[3px]"></ion-icon>
-    Exportar PDF de Reportes
-  </button>
-</div>

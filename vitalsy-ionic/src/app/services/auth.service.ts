@@ -31,7 +31,7 @@ export class AuthService {
   login(credentials: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(res => {
-        this.saveAuthData(res.token, res.userId);
+        this.saveAuthData(res.token, res.userId, res.username);
         this.authState.next(true);
       })
     );
@@ -41,9 +41,10 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
-  private saveAuthData(token: string, userId: string): void {
+  private saveAuthData(token: string, userId: string, username: string): void {
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
+    localStorage.setItem('username', username);
   }
 
   getToken(): string | null {
@@ -54,9 +55,14 @@ export class AuthService {
     return localStorage.getItem('userId');
   }
 
+  getUsername(): string {
+    return localStorage.getItem('username') || 'Usuario';
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
     this.authState.next(false);
   }
 }

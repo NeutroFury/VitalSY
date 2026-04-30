@@ -26,9 +26,7 @@ public class IaService {
             
             System.out.println("IA_RAW_RESPONSE: " + rawResponse);
             
-            // Limpiar posibles etiquetas de markdown
             String cleanJson = rawResponse.replaceAll("(?s).*?\\{", "{").replaceAll("(?s)\\}.*", "}");
-            
             return objectMapper.readValue(cleanJson, IaAnalysisResponse.class);
             
         } catch (Exception e) {
