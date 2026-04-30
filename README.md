@@ -1,115 +1,57 @@
-# 🚀 VitalSY 📱💉
+# 🚀 VitalSY: Ecosistema Inteligente para Diabetes Tipo 1 📱💉
 
-![Status](https://img.shields.io/badge/status-en%20desarrollo-blue)\
-![Backend](https://img.shields.io/badge/backend-Spring%20Boot%204-green)\
-![Frontend](https://img.shields.io/badge/frontend-Ionic%207%20%2B%20Angular%2017-purple)\
-![Database](https://img.shields.io/badge/database-PostgreSQL%2016-blue)\
-![AI](https://img.shields.io/badge/IA-Gemma%204-orange)\
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
-
-------------------------------------------------------------------------
+VitalSY es una plataforma de grado profesional diseñada para la gestión proactiva de la Diabetes Tipo 1. No es solo una bitácora, es un asistente clínico que utiliza IA causal para analizar tendencias y prevenir riesgos en tiempo real.
 
 ## 📌 Tabla de Contenidos
-
--   [📖 Descripción](#-descripción)
--   [🚀 Propósito](#-propósito)
--   [🏗️ Arquitectura](#️-arquitectura)
--   [🧠 IA Predictiva](#-ia-predictiva)
--   [✨ Características](#-características)
--   [🛠️ Stack Tecnológico](#️-stack-tecnológico)
--   [📋 Metodología](#-metodología)
--   [⚙️ Instalación](#️-instalación)
--   [👨‍💻 Autores](#-autores)
-
-------------------------------------------------------------------------
+- 📖 Descripción
+- 🧠 Innovación: IA Causal y Predictiva
+- 🏗️ Arquitectura del Sistema
+- ✨ Casos de Uso Implementados
+- 🛠️ Stack Tecnológico
+- 👨‍💻 Autores
 
 ## 📖 Descripción
+VitalSY centraliza el control metabólico mediante un enfoque funcional y técnico. El sistema permite:
 
-**VitalSY** es una plataforma tecnológica integral diseñada para la
-gestión de pacientes con **Diabetes Tipo 1**, centralizando:
+- Monitoreo Glucémico: Visualización de tendencias en tiempo real.
+- Gestión Antropométrica: Seguimiento de peso (progreso desde 147 kg iniciales a 107 kg actuales) y altura (1.81 m).
+- Análisis de Riesgo: Motor de IA local para detección de patrones críticos.
 
--   📊 Monitoreo glucémico\
--   🥗 Nutrición\
--   🤖 Análisis predictivo con IA
+## 🧠 Innovación: IA Causal y Predictiva
+El corazón de VitalSY es el motor Gemma 4, configurado para análisis de contexto:
 
-------------------------------------------------------------------------
+- Análisis de Causalidad: Evalúa el flujo de las últimas 3 lecturas para explicar variaciones.
+- Intervención Proactiva (C.U. 08): Alertas nativas ante umbrales de Hipoglucemia (< 60 mg/dL) e Hiperglucemia (> 250 mg/dL).
 
-## 🚀 Propósito
-
-Soporte para pacientes y profesionales clínicos con datos estructurados
-y análisis inteligente.
-
-------------------------------------------------------------------------
-
-## 🏗️ Arquitectura
-
-``` mermaid
-flowchart LR
-    A[App Ionic Angular] --> B[Backend Spring Boot]
-    B --> C[PostgreSQL]
-    B --> D[Motor IA Local Gemma 4]
+## 🏗️ Arquitectura del Sistema
+```mermaid
+graph TD
+    subgraph Frontend_Mobile
+    A[App Ionic/Angular] --> B[Alertas Locales]
+    A --> C[Dashboard Reactivo]
+    end
+    subgraph Backend_Cloud
+    D[Spring Boot API] --> E[PostgreSQL 16]
+    D --> F[Motor Gemma 4 Local]
+    end
+    A ==> D
 ```
 
-------------------------------------------------------------------------
-
-## 🧠 IA Predictiva
-
--   Gemma 4 (MoE)
--   Ejecución local
--   Predicción de riesgos
-
-------------------------------------------------------------------------
-
-## ✨ Características
-
--   Dashboard Cyberpunk\
--   Gestión Nutricional\
--   Seguridad JWT + BCrypt\
--   Arquitectura Reactiva
-
-------------------------------------------------------------------------
+## ✨ Casos de Uso Implementados
+- C.U. 01 - Autenticación: Seguridad con JWT y BCrypt.
+- C.U. 02 - Perfil Clínico: Gestión de Ratio IC, Factor de Sensibilidad (ISF) e insulinas (Lispro, Lantus, etc.).
+- C.U. 04 - Registro de Glucemia: Entrada validada con respuesta inmediata de riesgo.
+- C.U. 05 - Monitoreo (Dashboard): Interfaz táctica con gráficos dinámicos y estética Premium Dark.
+- C.U. 09 - Historial Predictivo: Línea de tiempo con análisis de causalidad por IA.
 
 ## 🛠️ Stack Tecnológico
-
-### Backend
-
--   Java 21\
--   Spring Boot 4\
--   PostgreSQL 16
-
-### Frontend
-
--   Ionic 7\
--   Angular 17\
--   Tailwind CSS
-
-------------------------------------------------------------------------
-
-## ⚙️ Instalación
-
-Backend:
-
-    git clone https://github.com/tu-repo/vitalsy-backend
-    cd vitalsy-backend
-    ./mvnw spring-boot:run
-
-Frontend:
-
-    git clone https://github.com/tu-repo/vitalsy-ionic
-    cd vitalsy-ionic
-    npm install
-    ionic serve
-
-------------------------------------------------------------------------
+- Backend: Java 21, Spring Boot 4, PostgreSQL 16.
+- Frontend: Ionic 7, Angular 17, Tailwind CSS.
+- IA: Gemma 4 (Ejecución Local).
+- Editor: Antigravity.
 
 ## 👨‍💻 Autores
+- Joaquín Santana.
+- Gabriel Hernández.
+- Gabriel Nercelles.
 
--   Joaquín Andrés Santana Castillo
--   Gabriel Hernández
--   Gabriel Nercelles
-
-------------------------------------------------------------------------
-
-## 📜 Licencia
-
-MIT
