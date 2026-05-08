@@ -1,0 +1,76 @@
+ion-content {
+  --background: #000000;
+}
+
+.insulin-modal {
+  --height: auto;
+  --max-height: 85%;
+  --border-radius: 32px 32px 0 0;
+  --background: transparent;
+  align-items: flex-end;
+
+  &::part(content) {
+    border-top: 1px solid #333;
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(25px);
+  }
+}
+
+ion-list-header {
+  color: #d4ff00 !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase;
+  min-height: 30px;
+  padding-left: 0 !important;
+  margin-top: 10px;
+  text-shadow: 0 0 8px rgba(212, 255, 0, 0.3);
+}
+
+.insulin-item {
+  --background: transparent;
+  --color: white;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --border-style: none;
+  border-bottom: 1px solid #1a1a1a;
+  transition: all 0.2s ease;
+
+  ion-label {
+    margin-left: 4px !important;
+    font-size: 15px !important;
+    letter-spacing: 0.05em;
+  }
+
+  &.ion-activated {
+    --background: rgba(212, 255, 0, 0.15);
+    border-bottom-color: #d4ff00;
+    transform: translateX(4px);
+  }
+}
+
+.custom-select-trigger {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, #d4ff00 0%, transparent 100%);
+    opacity: 0.2;
+  }
+}
+
+.vitalsy-toast {
+  --background: #111;
+  --color: white;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

@@ -1,0 +1,28 @@
+ion-content {
+  --background: #000000;
+}
+
+.shadow-neon {
+  box-shadow: 0 0 20px rgba(212, 255, 0, 0.3);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+input[type="date"], input[type="time"] {
+  color-scheme: dark;
+}
+
+input::placeholder {
+  font-style: italic;
+}
+
+textarea::placeholder {
+  font-style: italic;
+}
