@@ -20,7 +20,7 @@ VitalSY es una plataforma de grado profesional y arquitectura distribuida diseñ
 VitalSY centraliza la gestión metabólica a través de un enfoque clínico, funcional y de alta fidelidad tecnológica. La plataforma ha sido diseñada para optimizar la toma de decisiones terapéuticas diarias mediante:
 
 - **Monitoreo Glucémico en Tiempo Real:** Integración directa con datos de sensores continuos a través de la API de Abbott LibreLinkUp y visualización de tendencias dinámicas.
-- **Gestión Clínica y Antropométrica:** Registro y evolución de parámetros corporales (con un caso de uso documentado de descenso ponderal de 147 kg a 107 kg en un paciente de 1.81 m) vinculados a la modulación de la sensibilidad insulínica.
+- **Gestión Clínica y Antropométrica:** Registro y evolución de parámetros corporales vinculados a la modulación de la sensibilidad insulínica.
 - **Análisis Predictivo Local y Remoto:** Evaluación constante del comportamiento metabólico mediante algoritmos locales e inferencia cognitiva externa.
 - **Seguridad y Resiliencia Estrictas:** Mecanismos de comunicación cifrada y fallbacks automáticos ante fallas de red para asegurar la continuidad del servicio médico-asistencial.
 
