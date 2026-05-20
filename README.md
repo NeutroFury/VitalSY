@@ -115,10 +115,10 @@ Asegúrate de tener instalados los siguientes componentes antes de iniciar:
 ### Paso 1: Configurar y Levantar el Backend (Spring Boot)
 
 1. **Configurar las Variables de Entorno y Base de Datos:**
-   Asegúrate de crear una base de datos en PostgreSQL llamada `vitalsy` (o el nombre definido en tu archivo `application.properties`).
+   Asegúrate de crear una base de datos en PostgreSQL llamada `vitalsy_db` (o el nombre definido en tu archivo `application.properties`).
    Configura las siguientes variables de entorno o edita el archivo `application.properties` con tus credenciales:
    ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/vitalsy
+   spring.datasource.url=jdbc:postgresql://localhost:5432/vitalsy_db
    spring.datasource.username=tu_usuario
    spring.datasource.password=tu_contraseña
    gemini.api.key=tu_api_key_de_google_gemini
