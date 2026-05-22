@@ -1,5 +1,7 @@
 package com.jonesys.vitalsy.controller;
 
+import com.jonesys.vitalsy.dto.request.ChatRequest;
+import com.jonesys.vitalsy.dto.response.ChatResponse;
 import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
 import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
@@ -73,5 +75,16 @@ public class IaController {
         }
         
         return ResponseEntity.ok(analysis);
+    }
+
+    @PostMapping("/chat")
+    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request, Authentication authentication) {
+        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        log.info("Petición de chat IA para usuario: {}", usuario.getEmail());
+
+        ChatResponse response = iaService.chatear(usuario, request.getMensaje());
+        return ResponseEntity.ok(response);
     }
 }

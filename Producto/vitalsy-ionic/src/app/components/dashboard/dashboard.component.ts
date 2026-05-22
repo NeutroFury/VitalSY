@@ -19,12 +19,13 @@ import { HeaderComponent } from '../header/header.component';
 import { IaService, IaAnalysis } from '../../services/ia.service';
 import { GlucoseService } from '../../services/glucose.service';
 import { NotificationService } from '../../services/notification.service';
+import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   standalone: true,
-  imports: [CommonModule, IonicModule, HeaderComponent, BaseChartDirective]
+  imports: [CommonModule, IonicModule, HeaderComponent, BaseChartDirective, SafeHtmlPipe]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   
@@ -233,5 +234,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       return { text: 'HIPERGLUCEMIA', color: '#ff00ff' };
     }
+  }
+
+  formatMarkdown(text: string): string {
+    if (!text) return '';
+    return text
+      // 1. Aplicar el color neón a las negritas
+      .replace(/\*\*([\s\S]+?)\*\*/g, '<strong style="color: #c6ff00; font-weight: 900;">$1</strong>')
+      // 2. Si el texto empieza exactamente con un guion, cambiarlo por viñeta
+      .replace(/^-\s/, '• ')
+      // 3. Convertir los guiones sueltos entre palabras en saltos de línea + viñeta
+      .replace(/\s-\s/g, '<br><br>• ')
+      // 4. Respetar los saltos de línea originales (si es que la IA manda alguno)
+      .replace(/\n/g, '<br>');
   }
 }

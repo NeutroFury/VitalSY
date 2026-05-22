@@ -37,6 +37,11 @@ const routes: Routes = [
     loadComponent: () => import('./components/registro/registro.component').then(m => m.RegistroComponent)
   },
   {
+    path: 'chat',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/chat/chat.component').then(m => m.ChatComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

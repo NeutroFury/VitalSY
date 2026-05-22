@@ -1,6 +1,7 @@
 package com.jonesys.vitalsy.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jonesys.vitalsy.dto.response.ChatResponse;
 import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
 import com.jonesys.vitalsy.dto.gemini.GeminiRequest;
 import com.jonesys.vitalsy.dto.gemini.GeminiResponse;
@@ -156,7 +157,11 @@ public class IaService {
                     "  \"tendencia\": \"ESTABLE | CAYENDO | SUBIENDO\",\n" +
                     "  \"nivel_de_riesgo\": \"BAJO | MEDIO | ALTO | CRITICO\",\n" +
                     "  \"consejo_breve\": \"Escribe aquí tu explicación cercana. Ejemplo: 'Tu glucosa está bajando rápido porque la última dosis de insulina parece haber sido fuerte. Come 15g de carbohidratos de acción rápida ahora y revisa tu glucosa en 15 minutos para ver si mejora. Si no sube o te sientes mareado, busca ayuda médica de inmediato.'\"\n" +
-                    "}";
+                    "}\n\n" +
+                    "--- REGLAS ESTRICTAS DE FORMATO (CRÍTICO) ---\n" +
+                    "1. PROHIBIDO usar párrafos normales. TODA tu respuesta debe estar estructurada obligatoriamente como una lista de viñetas (-).\n" +
+                    "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
+                    "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
 
             String prompt = String.format(basePrompt, isf, ratioIc, history.toString());
             log.debug("Prompt final a enviar a Gemini:\n{}", prompt);
@@ -194,6 +199,83 @@ public class IaService {
             
         } catch (Exception e) {
             log.error("IA_ERROR: {}", e.getMessage(), e);
+            throw new RuntimeException("IA_SERVER_UNAVAILABLE");
+        }
+    }
+
+    public ChatResponse chatear(Usuario usuario, String mensajeUsuario) {
+        try {
+            ParametroClinico parametros = clinicalRepository.findByUsuario(usuario)
+                    .orElse(null);
+            
+            int isf = (parametros != null && parametros.getFactorSensibilidad() != null) ? parametros.getFactorSensibilidad().intValue() : 50;
+            int ratioIc = (parametros != null && parametros.getRatioCarbohidratos() != null) ? parametros.getRatioCarbohidratos().intValue() : 10;
+
+            List<GlucoseReading> ultimasLecturas = glucoseRepository.findTop5ByUsuarioOrderByFechaHoraDesc(usuario);
+            StringBuilder history = new StringBuilder("### HISTORIAL RECIENTE\n");
+            
+            if (ultimasLecturas.isEmpty()) {
+                history.append("No hay lecturas registradas.\n");
+            } else {
+                for (GlucoseReading r : ultimasLecturas) {
+                    history.append(String.format("- %s: %d mg/dL (Tipo: %s)\n", 
+                            r.getFechaHora().toString(), r.getValorMgdl(), r.getTipoRegistro()));
+                }
+            }
+
+            String basePrompt = "Actúa como un médico endocrinólogo experto en Diabetes Tipo 1. " +
+                    "Tu tarea es responder a la pregunta o solicitud del paciente de forma clara, " +
+                    "cercana y profesional, teniendo en cuenta su contexto clínico actual.\n\n" +
+                    "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
+                    "- Factor de Sensibilidad (ISF): %d mg/dL.\n" +
+                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n\n" +
+                    "%s\n" +
+                    "### PREGUNTA O MENSAJE DEL PACIENTE\n" +
+                    "\"%s\"\n\n" +
+                    "### FORMATO DE RESPUESTA\n" +
+                    "Responde ESTRICTAMENTE con un objeto JSON válido. " +
+                    "{\n" +
+                    "  \"respuesta\": \"Escribe aquí tu respuesta directa a la inquietud del paciente.\"\n" +
+                    "}\n\n" +
+                    "--- REGLAS ESTRICTAS DE FORMATO (CRÍTICO) ---\n" +
+                    "1. PROHIBIDO usar párrafos normales. TODA tu respuesta debe estar estructurada obligatoriamente como una lista de viñetas (-).\n" +
+                    "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
+                    "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
+
+            String prompt = String.format(basePrompt, isf, ratioIc, history.toString(), mensajeUsuario);
+            log.debug("Prompt de Chat final a enviar a Gemini:\n{}", prompt);
+
+            GeminiRequest request = new GeminiRequest(
+                    List.of(new GeminiRequest.Content(List.of(new GeminiRequest.Part(prompt)))),
+                    new GeminiRequest.GenerationConfig("application/json")
+            );
+
+            String targetUri = geminiUrl + "?key=" + geminiKey;
+            String rawJson = restClient.post()
+                    .uri(targetUri)
+                    .body(request)
+                    .retrieve()
+                    .body(String.class);
+
+            if (rawJson == null || rawJson.isEmpty()) {
+                throw new RuntimeException("Gemini no retornó respuesta al chat.");
+            }
+
+            GeminiResponse response = objectMapper.readValue(rawJson, GeminiResponse.class);
+
+            if (response == null || response.candidates() == null || response.candidates().isEmpty()) {
+                throw new RuntimeException("Gemini no retornó candidatos de chat.");
+            }
+
+            String rawResponse = response.candidates().get(0).content().parts().get(0).text();
+            
+            int firstCurly = rawResponse.indexOf('{');
+            int lastCurly = rawResponse.lastIndexOf('}');
+            String cleanJson = rawResponse.substring(firstCurly, lastCurly + 1);
+            return objectMapper.readValue(cleanJson, ChatResponse.class);
+            
+        } catch (Exception e) {
+            log.error("CHAT_IA_ERROR: {}", e.getMessage(), e);
             throw new RuntimeException("IA_SERVER_UNAVAILABLE");
         }
     }

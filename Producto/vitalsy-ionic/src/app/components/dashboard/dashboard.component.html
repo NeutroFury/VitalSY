@@ -24,7 +24,7 @@
         <ion-icon name="calculator-outline" class="text-xl"></ion-icon>
       </div>
     </button>
-    <button class="flex flex-col items-center gap-1 text-zinc-600 hover:text-white active:scale-95 transition-all">
+    <button (click)="navigateTo('chat')" class="flex flex-col items-center gap-1 text-zinc-600 hover:text-white active:scale-95 transition-all">
       <div class="w-10 h-10 rounded-2xl flex items-center justify-center">
         <ion-icon name="hardware-chip-outline" class="text-xl"></ion-icon>
       </div>
@@ -116,9 +116,7 @@
       } @else if (iaError) {
         <p class="text-xs text-zinc-500 italic">{{ iaError }}</p>
       } @else if (iaAnalysis) {
-        <p class="text-[13px] text-zinc-400 leading-relaxed italic font-medium">
-          "{{ iaAnalysis.consejo_breve }}"
-        </p>
+        <p class="text-[13px] text-zinc-400 leading-relaxed italic font-medium" [innerHTML]="formatMarkdown(iaAnalysis.consejo_breve) | safeHtml"></p>
       }
     </div>
 
