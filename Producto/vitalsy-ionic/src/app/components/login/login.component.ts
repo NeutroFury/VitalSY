@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { pulse } from 'ionicons/icons';
+import { alertCircleOutline, pulse } from 'ionicons/icons';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -17,16 +17,19 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email = '';
   password = '';
+  errorMessage: string | null = null;
   
   private authService = inject(AuthService);
   private navCtrl = inject(NavController);
   private router = inject(Router);
 
   constructor() {
-    addIcons({ pulse });
+    addIcons({ pulse, alertCircleOutline });
   }
 
+
   onSubmit() {
+    this.clearError();
     if (this.email && this.password) {
       const credentials = {
         email: this.email,
@@ -43,10 +46,16 @@ export class LoginComponent {
         },
         error: (err) => {
           console.error('Login failed', err);
-          // Here you could add a toast notification for the user
+          this.errorMessage = 'Correo o contraseña incorrectos.';
+          this.email = '';
+          this.password = '';
         }
       });
     }
+  }
+
+  clearError() {
+    this.errorMessage = null;
   }
 
   goToSignup() {
