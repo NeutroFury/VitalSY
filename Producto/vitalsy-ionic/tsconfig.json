@@ -21,12 +21,17 @@
       "dom"
     ],
     "skipLibCheck": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": []
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "capacitor.config.ts"
+  ]
 }
