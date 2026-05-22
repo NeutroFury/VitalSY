@@ -58,4 +58,12 @@ public class GlucoseReading {
             fechaHora = ZonedDateTime.now();
         }
     }
+
+    public String getMomento() {
+        return null;
+    }
+
+    public String getNotas() {
+        return comentarios;
+    }
 }

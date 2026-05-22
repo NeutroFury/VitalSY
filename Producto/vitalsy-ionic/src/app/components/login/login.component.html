@@ -16,6 +16,12 @@
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-6">
       
       <div class="space-y-4">
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="vitalsy-error-container animate-fade-in">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <!-- Input Email -->
         <div class="flex flex-col gap-1.5 w-full">
           <label class="text-zinc-500 text-[10px] ml-1 uppercase font-bold tracking-widest">Correo Electrónico</label>
@@ -23,6 +29,7 @@
             type="email"
             name="email"
             [(ngModel)]="email"
+            (input)="clearError()"
             placeholder="correo@ejemplo.com"
             required
             class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-sm w-full"
@@ -36,6 +43,7 @@
             type="password"
             name="password"
             [(ngModel)]="password"
+            (input)="clearError()"
             placeholder="••••••••"
             required
             class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-sm w-full"

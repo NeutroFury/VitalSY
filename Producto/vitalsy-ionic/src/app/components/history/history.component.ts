@@ -152,33 +152,23 @@ export class HistoryComponent implements OnInit {
   }
 
   exportData() {
-    if (this.groupedHistory.length === 0) return;
-
-    const allReadings = this.groupedHistory.reduce((acc: any[], group) => {
-      return acc.concat(group.readings);
-    }, []);
-
-    const headers = ['Fecha y Hora', 'Valor (mg/dL)', 'Tendencia', 'Tipo de Registro'];
-    
-    const csvContent = [
-      headers.join(','),
-      ...allReadings.map((r: any) => [
-        new Date(r.fechaHora).toLocaleString(),
-        r.valorMgdl,
-        r.tendencia || 'Estable',
-        r.tipoRegistro
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `VitalSY_Reporte_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    this.isLoading = true;
+    this.glucoseService.exportarPdf().subscribe({
+      next: (blob) => {
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `VitalSY_Reporte_${new Date().toISOString().split('T')[0]}.pdf`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('HISTORY: Error exporting PDF', err);
+        this.isLoading = false;
+      }
+    });
   }
 }

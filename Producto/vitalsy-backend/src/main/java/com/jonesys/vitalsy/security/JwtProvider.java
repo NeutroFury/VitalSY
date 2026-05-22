@@ -46,25 +46,29 @@ public class JwtProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims != null ? claims.getSubject() : null;
-    }
-
-    public Integer getUserIdFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims != null ? claims.get("userId", Integer.class) : null;
-    }
-
-    private Claims getClaims(String token) {
         try {
-            return Jwts.parser()
-                    .verifyWith(signingKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            Claims claims = getClaims(token);
+            return claims.getSubject();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public Integer getUserIdFromToken(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return claims.get("userId", Integer.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public long getExpirationMs() { return expirationMs; }

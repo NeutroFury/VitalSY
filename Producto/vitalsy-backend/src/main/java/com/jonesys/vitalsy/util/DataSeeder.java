@@ -17,7 +17,8 @@ public class DataSeeder implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataSeeder(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public DataSeeder(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;

@@ -33,6 +33,7 @@ const routes: Routes = [
   },
   {
     path: 'registro',
+    canActivate: [authGuard],
     loadComponent: () => import('./components/registro/registro.component').then(m => m.RegistroComponent)
   },
   {

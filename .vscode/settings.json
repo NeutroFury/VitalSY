@@ -1,5 +1,4 @@
 {
-    "git.ignoreLimitWarning": true,
     "java.project.outputPath": "build",
     "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -1,0 +1,31 @@
+# VS Code Java extension output (prevents ghost bin/ folders)
+/vitalsy-backend/
+
+# ==========================================
+# Credenciales y Variables de Entorno (.env)
+# ==========================================
+# Ignorar estrictamente archivos .env y sus variantes
+.env
+.env.*
+
+# Permitir explícitamente el archivo .env.example para que sirva como plantilla
+!.env.example
+!**/.env.example
+
+# ==========================================
+# Configuración de Editores e IDEs
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# ==========================================
+# Archivos del Sistema Operativo
+# ==========================================
+.DS_Store
+Thumbs.db
+Desktop.ini

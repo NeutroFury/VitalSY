@@ -60,4 +60,8 @@ export class GlucoseService {
   getAllReadings(): Observable<GlucoseReadingDto[]> {
     return this.http.get<GlucoseReadingDto[]>(`${this.apiUrl}/historial`);
   }
+
+  exportarPdf(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar-pdf`, { responseType: 'blob' });
+  }
 }

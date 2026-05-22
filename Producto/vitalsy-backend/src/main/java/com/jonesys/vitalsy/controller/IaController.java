@@ -6,6 +6,8 @@ import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
 import com.jonesys.vitalsy.repository.UsuarioRepository;
 import com.jonesys.vitalsy.service.IaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/ia")
 public class IaController {
+
+    private static final Logger log = LoggerFactory.getLogger(IaController.class);
 
     private final IaService iaService;
     private final GlucoseReadingRepository repository;
@@ -29,23 +33,21 @@ public class IaController {
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        log.info("Petición de análisis IA para usuario: {}", usuario.getEmail());
+
+        IaAnalysisResponse analysis = iaService.analizarGlucosa(usuario);
+        
+        // Guardar el consejo breve en la última lectura si existe
         GlucoseReading lectura = repository.findTop1ByUsuarioOrderByFechaHoraDesc(usuario);
+        if (lectura != null && analysis != null && analysis.getConsejo_breve() != null) {
+            lectura.setAnalisisIa(analysis.getConsejo_breve());
+            repository.save(lectura);
+        }
         
-        System.out.println("DEBUG: Solicitando análisis para el usuario: " + usuario.getEmail());
-        
-        if (lectura == null) {
-            System.out.println("DEBUG: No se encontró ninguna lectura para este usuario.");
+        if (analysis == null) {
             return ResponseEntity.noContent().build();
         }
 
-        System.out.println("DEBUG: Analizando lectura ID: " + lectura.getId() + " con valor: " + lectura.getValorMgdl());
-        
-        IaAnalysisResponse analysis = iaService.analizarGlucosa(lectura.getValorMgdl().doubleValue(), lectura.getTendencia());
-        
-        // Guardamos el consejo breve en la base de datos para historial
-        lectura.setAnalisisIa(analysis.getConsejo_breve());
-        repository.save(lectura);
-        
         return ResponseEntity.ok(analysis);
     }
 
@@ -59,13 +61,16 @@ public class IaController {
 
         // Verificación de propiedad
         if (!lectura.getUsuario().getId().equals(usuario.getId())) {
+            log.warn("Intento de acceso no autorizado a la lectura {} por usuario {}", id, usuario.getEmail());
             throw new RuntimeException("No autorizado para analizar esta lectura");
         }
 
-        IaAnalysisResponse analysis = iaService.analizarGlucosa(lectura.getValorMgdl().doubleValue(), lectura.getTendencia());
+        IaAnalysisResponse analysis = iaService.analizarGlucosa(usuario);
         
-        lectura.setAnalisisIa(analysis.getConsejo_breve());
-        repository.save(lectura);
+        if (analysis != null && analysis.getConsejo_breve() != null) {
+            lectura.setAnalisisIa(analysis.getConsejo_breve());
+            repository.save(lectura);
+        }
         
         return ResponseEntity.ok(analysis);
     }

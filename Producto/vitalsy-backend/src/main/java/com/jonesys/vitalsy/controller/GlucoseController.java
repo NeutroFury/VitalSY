@@ -4,10 +4,15 @@ import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
 import com.jonesys.vitalsy.repository.UsuarioRepository;
+import com.jonesys.vitalsy.service.PdfExportService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,10 +25,12 @@ public class GlucoseController {
 
     private final GlucoseReadingRepository repository;
     private final UsuarioRepository usuarioRepository;
+    private final PdfExportService pdfExportService;
 
-    public GlucoseController(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository) {
+    public GlucoseController(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository, PdfExportService pdfExportService) {
         this.repository = repository;
         this.usuarioRepository = usuarioRepository;
+        this.pdfExportService = pdfExportService;
     }
 
     @PostMapping
@@ -112,6 +119,30 @@ public class GlucoseController {
                 System.err.println("DEBUG ERROR: Fallo al recuperar historial");
                 e.printStackTrace();
                 return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
+            }
+        }
+
+        @GetMapping("/exportar-pdf")
+        public ResponseEntity<InputStreamResource> exportarPdf(Authentication authentication) {
+            System.out.println("DEBUG: Exportando PDF para: " + authentication.getName());
+            try {
+                Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+                List<GlucoseReading> readings = repository.findByUsuarioOrderByFechaHoraDesc(usuario);
+                ByteArrayInputStream bis = pdfExportService.generateGlucosePdf(usuario, readings);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis));
+            } catch (Exception e) {
+                System.err.println("DEBUG ERROR: Fallo al exportar PDF");
+                e.printStackTrace();
+                throw e;
             }
         }
 
