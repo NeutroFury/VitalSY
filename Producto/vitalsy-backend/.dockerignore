@@ -1,0 +1,18 @@
+# Build output
+build/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Documentation
+*.md
+*.http
+
+# Misc
+CheckDB.java
+vitalsy_script.sql
+.gitignore
+.gitattributes

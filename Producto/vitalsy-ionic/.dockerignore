@@ -1,0 +1,23 @@
+# Dependencies (reinstalled in container)
+node_modules/
+
+# Build output
+www/
+dist/
+
+# Angular cache
+.angular/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.md
+.gitignore
+.editorconfig
+.browserslistrc
+karma.conf.js
+tsconfig.spec.json
+.eslintrc.json
+ionic.starter.json
