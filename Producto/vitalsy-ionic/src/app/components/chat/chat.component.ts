@@ -114,7 +114,7 @@ export class ChatComponent {
         });
         this.isLoading = false;
         this.scrollToBottom();
-        this.speakResponse(res.respuesta);
+        // this.speakResponse(res.respuesta); // Lectura automática desactivada a petición del usuario
       },
       error: () => {
         this.messages.push({
@@ -186,23 +186,8 @@ export class ChatComponent {
   }
 
   async speakResponse(text: string) {
-    if (!text) return;
-    
-    // Limpiar asteriscos y etiquetas HTML para el lector
-    const cleanText = text
-      .replace(/\*\*/g, '')
-      .replace(/<br>/g, ' ')
-      .replace(/•/g, '')
-      .replace(/<[^>]*>?/gm, '');
-
-    try {
-      await TextToSpeech.speak({
-        text: cleanText,
-        lang: 'es-ES'
-      });
-    } catch (e) {
-      console.error('Error speaking text', e);
-    }
+    // Método vaciado para eliminar por completo la lectura en voz alta
+    return;
   }
 
   private scrollToBottom(): void {
