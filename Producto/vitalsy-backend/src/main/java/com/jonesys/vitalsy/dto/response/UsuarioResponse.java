@@ -20,4 +20,6 @@ public class UsuarioResponse {
     private Double factorIs;
     private Boolean alertasGlucosa;
     private Boolean recordatorioComidas;
+    private Integer rangoGlucosaMin;
+    private Integer rangoGlucosaMax;
 }

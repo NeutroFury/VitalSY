@@ -14,6 +14,8 @@ export interface UserProfile {
   factorIs: number;
   alertasGlucosa: boolean;
   recordatorioComidas: boolean;
+  rangoGlucosaMin?: number;
+  rangoGlucosaMax?: number;
 }
 
 @Injectable({

@@ -137,7 +137,6 @@ public class IaService {
             history.append(String.format("%d. Hace %d min: %d mg/dL (Momento: %s, Nota: '%s', Tendencia: %s)\n", 
                 chronologicalOrder, min, r.getValorMgdl(), momento, notas, r.getTendencia()));
         }
-
         try {
             String basePrompt = "Actúa como un médico endocrinólogo experto en Diabetes Tipo 1. " +
                     "Tu tarea es analizar la tendencia de glucosa de un paciente y darle una recomendación clara, " +
@@ -145,12 +144,14 @@ public class IaService {
                     "que cualquier persona pueda entender sin tecnicismos complejos.\n\n" +
                     "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
                     "- Factor de Sensibilidad (ISF): %d mg/dL.\n" +
-                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n\n" +
+                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n" +
+                    "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### INSTRUCCIONES DE ACCIÓN\n" +
                     "1. Analiza si la glucosa está subiendo o bajando demasiado rápido.\n" +
                     "2. Explica brevemente la posible causa (ej. 'quizás la dosis de insulina anterior fue muy alta').\n" +
-                    "3. Da una recomendación de acción inmediata (qué comer, qué observar o cuándo consultar a urgencias).\n\n" +
+                    "3. Da una recomendación de acción inmediata (qué comer, qué observar o cuándo consultar a urgencias).\n" +
+                    "4. Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.\n\n" +
                     "### FORMATO DE RESPUESTA (IMPORTANTE: MÁXIMO 4 ORACIONES)\n" +
                     "Responde ESTRICTAMENTE con un objeto JSON válido, sin markdown. " +
                     "{\n" +
@@ -163,7 +164,7 @@ public class IaService {
                     "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
                     "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
 
-            String prompt = String.format(basePrompt, isf, ratioIc, history.toString());
+            String prompt = String.format(basePrompt, isf, ratioIc, usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), history.toString());
             log.debug("Prompt final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(
@@ -228,7 +229,8 @@ public class IaService {
                     "cercana y profesional, teniendo en cuenta su contexto clínico actual.\n\n" +
                     "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
                     "- Factor de Sensibilidad (ISF): %d mg/dL.\n" +
-                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n\n" +
+                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n" +
+                    "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### PREGUNTA O MENSAJE DEL PACIENTE\n" +
                     "\"%s\"\n\n" +
@@ -240,9 +242,10 @@ public class IaService {
                     "--- REGLAS ESTRICTAS DE FORMATO (CRÍTICO) ---\n" +
                     "1. PROHIBIDO usar párrafos normales. TODA tu respuesta debe estar estructurada obligatoriamente como una lista de viñetas (-).\n" +
                     "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
-                    "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
+                    "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia. " +
+                    "Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.";
 
-            String prompt = String.format(basePrompt, isf, ratioIc, history.toString(), mensajeUsuario);
+            String prompt = String.format(basePrompt, isf, ratioIc, usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), history.toString(), mensajeUsuario);
             log.debug("Prompt de Chat final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(

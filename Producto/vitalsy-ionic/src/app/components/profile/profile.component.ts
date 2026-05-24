@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
     this.username = this.authService.getUsername();
     
     this.profileForm = this.fb.group({
-      nombre: [{ value: '', disabled: true }],
+      nombre: ['', [Validators.required]],
       pesoActual: [null, [Validators.required, Validators.min(1)]],
       altura: [null, [Validators.required, Validators.min(1)]],
       tipoInsulina: ['Humalog', [Validators.required]],
@@ -104,6 +104,16 @@ export class ProfileComponent implements OnInit {
     this.userService.getUserProfile().subscribe({
       next: (profile) => {
         this.profileForm.patchValue(profile);
+        if (profile.nombre) {
+          localStorage.setItem('username', profile.nombre);
+          this.username = profile.nombre;
+        }
+        if (profile.rangoGlucosaMin !== undefined) {
+          localStorage.setItem('rangoGlucosaMin', String(profile.rangoGlucosaMin));
+        }
+        if (profile.rangoGlucosaMax !== undefined) {
+          localStorage.setItem('rangoGlucosaMax', String(profile.rangoGlucosaMax));
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -129,8 +139,18 @@ export class ProfileComponent implements OnInit {
     if (this.profileForm.valid) {
       this.isLoading = true;
       this.userService.updateUserProfile(this.profileForm.getRawValue()).subscribe({
-        next: () => {
+        next: (updatedProfile) => {
           this.showToast('Configuración Clínica Actualizada', 'success');
+          if (updatedProfile.nombre) {
+            localStorage.setItem('username', updatedProfile.nombre);
+            this.username = updatedProfile.nombre;
+          }
+          if (updatedProfile.rangoGlucosaMin !== undefined) {
+            localStorage.setItem('rangoGlucosaMin', String(updatedProfile.rangoGlucosaMin));
+          }
+          if (updatedProfile.rangoGlucosaMax !== undefined) {
+            localStorage.setItem('rangoGlucosaMax', String(updatedProfile.rangoGlucosaMax));
+          }
           this.isLoading = false;
         },
         error: () => {

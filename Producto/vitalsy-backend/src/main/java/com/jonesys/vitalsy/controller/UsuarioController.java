@@ -1,8 +1,10 @@
 package com.jonesys.vitalsy.controller;
 
 import com.jonesys.vitalsy.dto.response.UsuarioResponse;
+import com.jonesys.vitalsy.dto.request.ParametrosClinicosDTO;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,9 @@ public class UsuarioController {
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
 
+        if (request.getNombre() != null && !request.getNombre().isBlank()) {
+            usuario.setNombre(request.getNombre());
+        }
         usuario.setPesoActual(request.getPesoActual());
         usuario.setAltura(request.getAltura());
         usuario.setTipoInsulina(request.getTipoInsulina());
@@ -43,6 +48,26 @@ public class UsuarioController {
 
         Usuario saved = usuarioRepository.save(usuario);
         System.out.println("DEBUG: Perfil actualizado con éxito para: " + saved.getEmail());
+        return ResponseEntity.ok(mapToResponse(saved));
+    }
+
+    @PutMapping("/parametros-clinicos")
+    public ResponseEntity<?> updateParametrosClinicos(@Valid @RequestBody ParametrosClinicosDTO request, Authentication authentication) {
+        System.out.println("DEBUG: Petición PUT parametros-clinicos para: " + authentication.getName());
+        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
+
+        if (request.getRangoGlucosaMin() > request.getRangoGlucosaMax()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of(
+                "mensaje", "El rango mínimo no puede ser mayor que el rango máximo."
+            ));
+        }
+
+        usuario.setRangoGlucosaMin(request.getRangoGlucosaMin());
+        usuario.setRangoGlucosaMax(request.getRangoGlucosaMax());
+
+        Usuario saved = usuarioRepository.save(usuario);
+        System.out.println("DEBUG: Parámetros clínicos actualizados con éxito para: " + saved.getEmail());
         return ResponseEntity.ok(mapToResponse(saved));
     }
 
@@ -58,6 +83,8 @@ public class UsuarioController {
                 .factorIs(u.getFactorIs())
                 .alertasGlucosa(u.getAlertasGlucosa())
                 .recordatorioComidas(u.getRecordatorioComidas())
+                .rangoGlucosaMin(u.getRangoGlucosaMin())
+                .rangoGlucosaMax(u.getRangoGlucosaMax())
                 .build();
     }
 }

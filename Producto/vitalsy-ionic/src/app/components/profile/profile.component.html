@@ -19,6 +19,18 @@
 
       <div class="w-full h-[1px] bg-zinc-900/50 relative z-10"></div>
 
+      <!-- Nombre del Paciente -->
+      <div class="flex flex-col gap-2 relative z-10">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-zinc-900 flex items-center justify-center">
+            <ion-icon name="person-outline" class="text-[10px] text-neon-green"></ion-icon>
+          </div>
+          <span class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">Nombre del Paciente</span>
+        </div>
+        <input type="text" formControlName="nombre" 
+               class="bg-transparent text-2xl font-black text-white italic outline-none border-b border-zinc-900 focus:border-neon-green pb-1 transition-all" />
+      </div>
+
       <!-- Biometric Grid -->
       <div class="grid grid-cols-2 gap-8 relative z-10">
         <div class="flex flex-col gap-2">

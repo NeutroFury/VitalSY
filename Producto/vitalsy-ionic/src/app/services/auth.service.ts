@@ -5,8 +5,9 @@ import { environment } from '../../environments/environment';
 
 export interface AuthResponse {
   token: string;
-  userId: string;
-  username: string;
+  userId: number;
+  email: string;
+  nombre: string;
 }
 
 @Injectable({
@@ -29,9 +30,10 @@ export class AuthService {
   }
 
   login(credentials: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap(res => {
-        this.saveAuthData(res.token, res.userId, res.username);
+        const displayName = res.nombre || res.email || 'Usuario';
+        this.saveAuthData(res.token, String(res.userId), displayName);
         this.authState.next(true);
       })
     );
@@ -56,7 +58,11 @@ export class AuthService {
   }
 
   getUsername(): string {
-    return localStorage.getItem('username') || 'Usuario';
+    const name = localStorage.getItem('username');
+    if (!name || name === 'undefined') {
+      return 'Usuario';
+    }
+    return name;
   }
 
   logout(): void {

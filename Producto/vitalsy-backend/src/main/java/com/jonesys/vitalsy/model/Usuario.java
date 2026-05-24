@@ -53,6 +53,20 @@ public class Usuario {
     
     @Column(name = "recordatorio_comidas")
     private Boolean recordatorioComidas = false;
+
+    @Column(name = "rango_glucosa_min")
+    private Integer rangoGlucosaMin = 70;
+    
+    @Column(name = "rango_glucosa_max")
+    private Integer rangoGlucosaMax = 180;
+
+    public Integer getRangoGlucosaMin() {
+        return rangoGlucosaMin != null ? rangoGlucosaMin : 70;
+    }
+
+    public Integer getRangoGlucosaMax() {
+        return rangoGlucosaMax != null ? rangoGlucosaMax : 180;
+    }
     
     @Column(length = 20)
     private String rol = "PACIENTE";

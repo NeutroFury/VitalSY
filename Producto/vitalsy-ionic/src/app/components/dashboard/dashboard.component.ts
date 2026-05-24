@@ -13,12 +13,20 @@ import {
   hardwareChipOutline, 
   notificationsOutline, 
   settingsOutline,
-  refreshOutline
+  refreshOutline,
+  arrowUpOutline,
+  arrowDownOutline,
+  arrowForwardOutline,
+  trendingUpOutline,
+  trendingDownOutline,
+  linkOutline
 } from 'ionicons/icons';
 import { HeaderComponent } from '../header/header.component';
 import { IaService, IaAnalysis } from '../../services/ia.service';
 import { GlucoseService } from '../../services/glucose.service';
 import { NotificationService } from '../../services/notification.service';
+import { LibreLinkUpService } from '../../services/librelinkup.service';
+import { UserService } from '../../services/user.service';
 import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
 @Component({
@@ -34,7 +42,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
   iaError: string | null = null;
   currentReading: number = 0;
   recentHistory: any[] = [];
+  
+  // Integración LibreLinkUp
+  libreConfigured = false;
+  libreLastSync = '';
+  isSyncing = false;
+  currentTendency = 'Stable';
+
+  // Métricas Tiempo en Rango
+  tirInPercentage = 0;
+  tirHighPercentage = 0;
+  tirLowPercentage = 0;
+
+  // Límites dinámicos de glucosa
+  rangoGlucosaMin = 70;
+  rangoGlucosaMax = 180;
+  private allReadingsForTir: any[] = [];
+
   private refreshSub?: Subscription;
+  private syncSub?: Subscription;
 
   lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
@@ -104,6 +130,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private glucoseService = inject(GlucoseService);
   private navCtrl = inject(NavController);
   private notificationService = inject(NotificationService);
+  private libreService = inject(LibreLinkUpService);
+  private userService = inject(UserService);
 
   constructor() {
     addIcons({ 
@@ -114,23 +142,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
       hardwareChipOutline,
       notificationsOutline,
       settingsOutline,
-      refreshOutline
+      refreshOutline,
+      arrowUpOutline,
+      arrowDownOutline,
+      arrowForwardOutline,
+      trendingUpOutline,
+      trendingDownOutline,
+      linkOutline
     });
   }
 
   ngOnInit() {
+    this.loadUserRanges();
     this.loadGlucoseChart();
     this.runAiAnalysis();
-
-    // Reaccionar a nuevos registros
+    this.loadLibreStatus();
+ 
+    // Reaccionar a nuevos registros manuales
     this.refreshSub = this.glucoseService.refreshDashboard$.subscribe(() => {
+      this.loadUserRanges();
       this.loadGlucoseChart();
       this.runAiAnalysis();
+      this.loadLibreStatus();
+    });
+
+    // Reaccionar a sync exitoso (BehaviorSubject)
+    this.syncSub = this.libreService.syncSuccess$.subscribe((res) => {
+      if (res) {
+        this.loadUserRanges();
+        this.loadGlucoseChart();
+        this.runAiAnalysis();
+        this.loadLibreStatus();
+      }
     });
   }
-
+ 
   ngOnDestroy() {
     this.refreshSub?.unsubscribe();
+    this.syncSub?.unsubscribe();
   }
 
   loadGlucoseChart() {
@@ -152,8 +201,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         // Actualizar estado actual con la última lectura
         if (readings.length > 0) {
-          this.currentReading = readings[readings.length - 1].valorMgdl;
+          const latestReading = readings[readings.length - 1];
+          this.currentReading = latestReading.valorMgdl;
+          this.currentTendency = latestReading.tendencia || 'Stable';
           this.recentHistory = [...readings].reverse().slice(0, 3);
+          this.allReadingsForTir = readings;
+          this.calculateTimeInRange(readings);
+        } else {
+          this.currentReading = 0;
+          this.currentTendency = 'Stable';
+          this.recentHistory = [];
+          this.allReadingsForTir = [];
+          this.calculateTimeInRange([]);
         }
       },
       error: () => {
@@ -167,6 +226,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
           ]
         };
+        this.currentReading = 0;
+        this.currentTendency = 'Stable';
+        this.recentHistory = [];
+        this.allReadingsForTir = [];
+        this.calculateTimeInRange([]);
       }
     });
   }
@@ -225,12 +289,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return { text: 'SIN DATOS', color: '#555555' };
     }
     
-    if (this.currentReading < 70) {
+    if (this.currentReading < this.rangoGlucosaMin) {
       return { text: 'HIPOGLUCEMIA', color: '#ff0000' };
-    } else if (this.currentReading <= 140) {
-      return { text: 'ESTABLE', color: '#d4ff00' };
-    } else if (this.currentReading <= 180) {
-      return { text: 'ALTA', color: '#ffae00' };
+    } else if (this.currentReading <= this.rangoGlucosaMax) {
+      const range = this.rangoGlucosaMax - this.rangoGlucosaMin;
+      const thresholdHigh = this.rangoGlucosaMin + (range * 0.7);
+      if (this.currentReading <= thresholdHigh) {
+        return { text: 'ESTABLE', color: '#d4ff00' };
+      } else {
+        return { text: 'ALTA', color: '#ffae00' };
+      }
     } else {
       return { text: 'HIPERGLUCEMIA', color: '#ff00ff' };
     }
@@ -247,5 +315,126 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .replace(/\s-\s/g, '<br><br>• ')
       // 4. Respetar los saltos de línea originales (si es que la IA manda alguno)
       .replace(/\n/g, '<br>');
+  }
+
+  loadLibreStatus() {
+    this.libreService.getStatus().subscribe({
+      next: (status) => {
+        this.libreConfigured = status.configurado;
+        this.libreLastSync = status.ultimoSync || 'Nunca';
+      },
+      error: () => {
+        this.libreConfigured = false;
+        this.libreLastSync = '';
+      }
+    });
+  }
+
+  loadUserRanges() {
+    const minStr = localStorage.getItem('rangoGlucosaMin');
+    const maxStr = localStorage.getItem('rangoGlucosaMax');
+
+    if (minStr) this.rangoGlucosaMin = parseInt(minStr, 10);
+    if (maxStr) this.rangoGlucosaMax = parseInt(maxStr, 10);
+
+    this.userService.getUserProfile().subscribe({
+      next: (profile) => {
+        if (profile.rangoGlucosaMin !== undefined && profile.rangoGlucosaMin !== null) {
+          this.rangoGlucosaMin = profile.rangoGlucosaMin;
+          localStorage.setItem('rangoGlucosaMin', String(profile.rangoGlucosaMin));
+        }
+        if (profile.rangoGlucosaMax !== undefined && profile.rangoGlucosaMax !== null) {
+          this.rangoGlucosaMax = profile.rangoGlucosaMax;
+          localStorage.setItem('rangoGlucosaMax', String(profile.rangoGlucosaMax));
+        }
+        if (this.allReadingsForTir.length > 0) {
+          this.calculateTimeInRange(this.allReadingsForTir);
+        }
+      },
+      error: () => {
+        console.warn('No se pudieron recuperar los rangos clínicos del servidor. Se usarán valores locales.');
+      }
+    });
+  }
+
+  syncSensor(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.isSyncing) return;
+
+    this.isSyncing = true;
+    this.libreService.forceSync().subscribe({
+      next: () => {
+        this.isSyncing = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSyncing = false;
+      }
+    });
+  }
+
+  formatLastSync(isoDate: string): string {
+    if (!isoDate || isoDate === 'Nunca') return 'Nunca';
+    const date = new Date(isoDate);
+    if (Number.isNaN(date.getTime())) return isoDate;
+    
+    const diffMs = Date.now() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'Hace un momento';
+    if (diffMins < 60) return `Hace ${diffMins} min`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `Hace ${diffHours} h`;
+    
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) + ' ' + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  getTrendArrowSymbol(): { icon: string, symbol: string, color: string } {
+    switch (this.currentTendency) {
+      case 'RisingFast':
+        return { icon: 'arrow-up-outline', symbol: '↑↑', color: '#ff00ff' };
+      case 'Rising':
+        return { icon: 'trending-up-outline', symbol: '↑', color: '#ccff00' };
+      case 'Stable':
+        return { icon: 'arrow-forward-outline', symbol: '→', color: '#ccff00' };
+      case 'Falling':
+        return { icon: 'trending-down-outline', symbol: '↓', color: '#ffae00' };
+      case 'FallingFast':
+        return { icon: 'arrow-down-outline', symbol: '↓↓', color: '#ff0000' };
+      default:
+        return { icon: 'arrow-forward-outline', symbol: '→', color: '#a1a1aa' };
+    }
+  }
+
+  calculateTimeInRange(readings: any[]) {
+    if (!readings || readings.length === 0) {
+      this.tirInPercentage = 0;
+      this.tirHighPercentage = 0;
+      this.tirLowPercentage = 0;
+      return;
+    }
+
+    const total = readings.length;
+    let inRange = 0;
+    let low = 0;
+    let high = 0;
+
+    readings.forEach((reading) => {
+      const val = reading.valorMgdl;
+      if (val < this.rangoGlucosaMin) {
+        low++;
+      } else if (val <= this.rangoGlucosaMax) {
+        inRange++;
+      } else {
+        high++;
+      }
+    });
+
+    this.tirInPercentage = Math.round((inRange / total) * 100);
+    this.tirLowPercentage = Math.round((low / total) * 100);
+    this.tirHighPercentage = Math.round((high / total) * 100);
   }
 }
