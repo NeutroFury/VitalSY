@@ -46,8 +46,9 @@ public class UsuarioController {
         usuario.setFactorIs(request.getFactorIs());
         usuario.setAlertasGlucosa(request.getAlertasGlucosa());
         usuario.setRecordatorioComidas(request.getRecordatorioComidas());
-
-        
+        if (request.getZonaHoraria() != null && !request.getZonaHoraria().isBlank()) {
+            usuario.setZonaHoraria(request.getZonaHoraria());
+        }
 
         Usuario saved = usuarioRepository.save(usuario);
         System.out.println("DEBUG: Perfil actualizado con éxito para: " + saved.getEmail());
@@ -88,6 +89,7 @@ public class UsuarioController {
                 .recordatorioComidas(u.getRecordatorioComidas())
                 .rangoGlucosaMin(u.getRangoGlucosaMin())
                 .rangoGlucosaMax(u.getRangoGlucosaMax())
+                .zonaHoraria(u.getZonaHoraria())
                 .build();
     }
 }

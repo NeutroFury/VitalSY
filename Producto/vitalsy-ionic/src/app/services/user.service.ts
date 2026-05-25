@@ -16,6 +16,7 @@ export interface UserProfile {
   recordatorioComidas: boolean;
   rangoGlucosaMin?: number;
   rangoGlucosaMax?: number;
+  zonaHoraria?: string;
 }
 
 @Injectable({

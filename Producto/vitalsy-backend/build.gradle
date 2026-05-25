@@ -56,6 +56,12 @@ dependencies {
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	
+	// Math / Statistics (For AGP)
+	implementation 'org.apache.commons:commons-math3:3.6.1'
+	
+	// JFreeChart (For PDF AGP Generation)
+	implementation 'org.jfree:jfreechart:1.5.3'
 	testImplementation 'org.testcontainers:testcontainers:1.19.3'
 	testImplementation 'com.h2database:h2'
 	testCompileOnly 'org.projectlombok:lombok'

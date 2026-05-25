@@ -26,11 +26,13 @@ public class GlucoseController {
     private final GlucoseReadingRepository repository;
     private final UsuarioRepository usuarioRepository;
     private final PdfExportService pdfExportService;
+    private final com.jonesys.vitalsy.service.AgpStatisticsService agpStatisticsService;
 
-    public GlucoseController(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository, PdfExportService pdfExportService) {
+    public GlucoseController(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository, PdfExportService pdfExportService, com.jonesys.vitalsy.service.AgpStatisticsService agpStatisticsService) {
         this.repository = repository;
         this.usuarioRepository = usuarioRepository;
         this.pdfExportService = pdfExportService;
+        this.agpStatisticsService = agpStatisticsService;
     }
 
     @PostMapping
@@ -130,7 +132,7 @@ public class GlucoseController {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                 List<GlucoseReading> readings = repository.findByUsuarioOrderByFechaHoraDesc(usuario);
-                ByteArrayInputStream bis = pdfExportService.generateGlucosePdf(usuario, readings);
+                ByteArrayInputStream bis = pdfExportService.generateGlucosePdf(usuario, readings, usuario.getZoneId());
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
@@ -156,4 +158,19 @@ public class GlucoseController {
             Integer carbohidratos,
             String comentarios
         ) {}
+
+        @GetMapping("/agp")
+        public ResponseEntity<com.jonesys.vitalsy.dto.response.AgpDataResponse> obtenerAgp(Authentication authentication) {
+            try {
+                Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                
+                com.jonesys.vitalsy.dto.response.AgpDataResponse response = agpStatisticsService.getAgpData(usuario);
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                System.err.println("DEBUG ERROR: Fallo al calcular AGP");
+                e.printStackTrace();
+                return ResponseEntity.status(500).build();
+            }
+        }
 }

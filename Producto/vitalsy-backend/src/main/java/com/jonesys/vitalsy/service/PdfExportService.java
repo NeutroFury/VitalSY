@@ -2,13 +2,24 @@ package com.jonesys.vitalsy.service;
 
 import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
+import com.jonesys.vitalsy.dto.response.AgpDataResponse;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DeviationRenderer;
+import org.jfree.data.xy.YIntervalSeries;
+import org.jfree.data.xy.YIntervalSeriesCollection;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -16,7 +27,13 @@ import java.util.List;
 @Service
 public class PdfExportService {
 
-    public ByteArrayInputStream generateGlucosePdf(Usuario usuario, List<GlucoseReading> readings) {
+    private final AgpStatisticsService agpStatisticsService;
+
+    public PdfExportService(AgpStatisticsService agpStatisticsService) {
+        this.agpStatisticsService = agpStatisticsService;
+    }
+
+    public ByteArrayInputStream generateGlucosePdf(Usuario usuario, List<GlucoseReading> readings, ZoneId userZone) {
         Document document = new Document(PageSize.A4, 36, 36, 36, 36);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -40,7 +57,7 @@ public class PdfExportService {
 
             // Subtitle / Date
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            String generationDate = ZonedDateTime.now().format(formatter);
+            String generationDate = ZonedDateTime.now(userZone).format(formatter);
             Paragraph subtitle = new Paragraph("Reporte generado el: " + generationDate, subtitleFont);
             subtitle.setAlignment(Element.ALIGN_CENTER);
             subtitle.setSpacingAfter(20);
@@ -65,6 +82,40 @@ public class PdfExportService {
             infoTable.addCell(cell2);
 
             document.add(infoTable);
+
+            // --- AGP Section ---
+            Paragraph agpTitle = new Paragraph("Perfil de Glucosa Ambulatorio (AGP)", sectionFont);
+            agpTitle.setSpacingAfter(8);
+            document.add(agpTitle);
+
+            AgpDataResponse agpData = agpStatisticsService.getAgpData(usuario);
+            if (agpData.getDiasAnalizados() != null && agpData.getDiasAnalizados() >= 3) {
+                try {
+                    Image agpImage = createAgpChartImage(agpData);
+                    agpImage.setAlignment(Element.ALIGN_CENTER);
+                    agpImage.scaleToFit(500, 250);
+                    agpImage.setSpacingAfter(20);
+                    document.add(agpImage);
+                    
+                    Paragraph agpSubtitle = new Paragraph("Análisis basado en los últimos " + agpData.getDiasAnalizados() + " días.", subtitleFont);
+                    agpSubtitle.setAlignment(Element.ALIGN_CENTER);
+                    agpSubtitle.setSpacingAfter(25);
+                    document.add(agpSubtitle);
+                } catch (Exception e) {
+                    System.err.println("Error generando imagen AGP: " + e.getMessage());
+                }
+            } else {
+                PdfPTable emptyAgpTable = new PdfPTable(1);
+                emptyAgpTable.setWidthPercentage(100);
+                emptyAgpTable.setSpacingAfter(25);
+                PdfPCell emptyCell = new PdfPCell(new Phrase("Perfil de Glucosa Ambulatorio (AGP) no disponible: Se requieren más días de registro para un análisis estadístico válido.", subtitleFont));
+                emptyCell.setBackgroundColor(new Color(247, 250, 252));
+                emptyCell.setBorderColor(new Color(226, 232, 240));
+                emptyCell.setPadding(15);
+                emptyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                emptyAgpTable.addCell(emptyCell);
+                document.add(emptyAgpTable);
+            }
 
             // Statistics Section
             ZonedDateTime thirtyDaysAgo = ZonedDateTime.now().minusDays(30);
@@ -168,15 +219,16 @@ public class PdfExportService {
             for (GlucoseReading r : readings) {
                 Color rowBg = isAlternate ? alternateColor : baseColor;
 
-                // Date
-                PdfPCell dateCell = new PdfPCell(new Phrase(r.getFechaHora().format(dateFormatter), bodyFont));
+                // Date (converted to user timezone)
+                ZonedDateTime userDateTime = r.getFechaHora().withZoneSameInstant(userZone);
+                PdfPCell dateCell = new PdfPCell(new Phrase(userDateTime.format(dateFormatter), bodyFont));
                 dateCell.setBackgroundColor(rowBg);
                 dateCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 dateCell.setPadding(6);
                 table.addCell(dateCell);
 
-                // Time
-                PdfPCell timeCell = new PdfPCell(new Phrase(r.getFechaHora().format(timeFormatter), bodyFont));
+                // Time (converted to user timezone)
+                PdfPCell timeCell = new PdfPCell(new Phrase(userDateTime.format(timeFormatter), bodyFont));
                 timeCell.setBackgroundColor(rowBg);
                 timeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 timeCell.setPadding(6);
@@ -228,5 +280,62 @@ public class PdfExportService {
         }
 
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private Image createAgpChartImage(AgpDataResponse data) throws Exception {
+        YIntervalSeries band90 = new YIntervalSeries("Rango 10-90%");
+        YIntervalSeries band50 = new YIntervalSeries("Mediana y Rango 25-75%");
+
+        List<AgpDataResponse.AgpPoint> mediana = data.getMediana();
+        List<AgpDataResponse.AgpRangePoint> rango50 = data.getRango50();
+        List<AgpDataResponse.AgpRangePoint> rango90 = data.getRango90();
+
+        for (int i = 0; i < mediana.size(); i++) {
+            double x = Double.parseDouble(mediana.get(i).getX().split(":")[0]); // "08:00" -> 8.0
+            double med = mediana.get(i).getY();
+            double[] r90 = rango90.get(i).getY();
+            double[] r50 = rango50.get(i).getY();
+
+            band90.add(x, med, r90[0], r90[1]);
+            band50.add(x, med, r50[0], r50[1]);
+        }
+
+        YIntervalSeriesCollection dataset = new YIntervalSeriesCollection();
+        dataset.addSeries(band90);
+        dataset.addSeries(band50);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "",
+                "Hora del día (0-23)",
+                "Glucosa (mg/dL)",
+                dataset
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        DeviationRenderer renderer = new DeviationRenderer(true, false);
+
+        // Series 0: band90 (translucent background, no line)
+        renderer.setSeriesStroke(0, new BasicStroke(0f));
+        renderer.setSeriesPaint(0, new Color(0, 0, 0, 0)); 
+        renderer.setSeriesFillPaint(0, new Color(46, 204, 113, 30));
+
+        // Series 1: band50 + median (solid line + shaded band)
+        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
+        renderer.setSeriesPaint(1, new Color(39, 174, 96));
+        renderer.setSeriesFillPaint(1, new Color(46, 204, 113, 80));
+
+        plot.setRenderer(renderer);
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+        plot.setOutlineVisible(false);
+
+        chart.setBackgroundPaint(Color.WHITE);
+
+        BufferedImage bufferedImage = chart.createBufferedImage(800, 400);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", baos);
+
+        return Image.getInstance(baos.toByteArray());
     }
 }

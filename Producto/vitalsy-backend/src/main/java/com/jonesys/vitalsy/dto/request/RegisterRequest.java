@@ -32,4 +32,6 @@ public class RegisterRequest {
     @DecimalMin(value = "20.0", message = "Peso debe ser mayor a 20 kg")
     @DecimalMax(value = "500.0", message = "Peso debe ser menor a 500 kg")
     private Double pesoActual;
+
+    private String zonaHoraria;
 }

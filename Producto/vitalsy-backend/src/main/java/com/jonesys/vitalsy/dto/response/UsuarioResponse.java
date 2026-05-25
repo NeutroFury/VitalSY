@@ -22,4 +22,5 @@ public class UsuarioResponse {
     private Boolean recordatorioComidas;
     private Integer rangoGlucosaMin;
     private Integer rangoGlucosaMax;
+    private String zonaHoraria;
 }
