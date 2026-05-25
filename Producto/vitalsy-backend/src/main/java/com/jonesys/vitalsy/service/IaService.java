@@ -5,11 +5,11 @@ import com.jonesys.vitalsy.dto.response.ChatResponse;
 import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
 import com.jonesys.vitalsy.dto.gemini.GeminiRequest;
 import com.jonesys.vitalsy.dto.gemini.GeminiResponse;
-import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.ParametroClinico;
+import com.jonesys.vitalsy.repository.ParametroClinicoRepository;
+import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
-import com.jonesys.vitalsy.repository.ParametroClinicoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +24,13 @@ import java.util.List;
 @Service
 public class IaService {
 
+    private final ParametroClinicoRepository clinicalRepository;
+
     private static final Logger log = LoggerFactory.getLogger(IaService.class);
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final GlucoseReadingRepository glucoseRepository;
-    private final ParametroClinicoRepository clinicalRepository;
 
     @Value("${gemini.api.url}")
     private String geminiUrl;
@@ -40,6 +41,7 @@ public class IaService {
     public IaService(GlucoseReadingRepository glucoseRepository, ParametroClinicoRepository clinicalRepository) {
         this.glucoseRepository = glucoseRepository;
         this.clinicalRepository = clinicalRepository;
+
         
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(5000);
@@ -91,19 +93,24 @@ public class IaService {
             return new IaAnalysisResponse("ESTABLE", "BAJO", "No hay datos suficientes para análisis causal.");
         }
 
-        // Recuperar perfil clínico o usar valores por defecto
-        ParametroClinico params = clinicalRepository.findByUsuario(usuario).orElse(null);
-        int isf = 50;
-        int ratioIc = 15;
-        boolean isDefault = true;
-
-        if (params != null && params.getFactorSensibilidad() != null && params.getRatioCarbohidratos() != null) {
-            isf = params.getFactorSensibilidad().intValue();
-            ratioIc = params.getRatioCarbohidratos().intValue();
-            isDefault = false;
+        double isf;
+        double ratioIc;
+        // Obtener parámetros clínicos sincronizados desde ParametroClinico
+        ParametroClinico pc = clinicalRepository.findByUsuario(usuario).orElse(null);
+        if (pc != null) {
+            isf = pc.getFactorSensibilidad() != null ? pc.getFactorSensibilidad() : 50.0;
+            ratioIc = pc.getRatioCarbohidratos() != null ? pc.getRatioCarbohidratos() : 15.0;
+        } else {
+            // Fallback a valores por defecto si no existen
+            isf = usuario.getFactorIs() != null ? usuario.getFactorIs() : 50.0;
+            ratioIc = usuario.getRatioIc() != null ? usuario.getRatioIc() : 15.0;
         }
+        double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 74.0;
+        double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
+        String tipoInsulina = usuario.getTipoInsulina() != null && !usuario.getTipoInsulina().isBlank() ? usuario.getTipoInsulina() : "Rápida";
 
-        log.info("Configuración clínica a utilizar - ISF: {} | Ratio IC: {} (Valores por defecto: {})", isf, ratioIc, isDefault);
+        log.info("Configuración clínica a utilizar - ISF: {} | Ratio IC: {} | Peso: {} | Altura: {} | Tipo Insulina: {}", 
+                isf, ratioIc, peso, altura, tipoInsulina);
         log.info("Se encontraron {} lecturas recientes (últimas 5) para la línea de tiempo.", targetReadings.size());
 
         // Construir historial dinámico cronológico combinando resumen estadístico y lecturas individuales
@@ -143,15 +150,19 @@ public class IaService {
                     "cercana y profesional. Debes explicar qué está pasando metabólicamente, pero usando un lenguaje " +
                     "que cualquier persona pueda entender sin tecnicismos complejos.\n\n" +
                     "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
-                    "- Factor de Sensibilidad (ISF): %d mg/dL.\n" +
-                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n" +
+                    "- Factor de Sensibilidad (ISF): %.1f mg/dL.\n" +
+                    "- Ratio Insulina-Carbohidrato (IC): %.1f g.\n" +
+                    "- Peso Actual: %.1f kg.\n" +
+                    "- Altura: %.2f m.\n" +
+                    "- Tipo de Insulina Utilizada: %s.\n" +
                     "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### INSTRUCCIONES DE ACCIÓN\n" +
                     "1. Analiza si la glucosa está subiendo o bajando demasiado rápido.\n" +
                     "2. Explica brevemente la posible causa (ej. 'quizás la dosis de insulina anterior fue muy alta').\n" +
                     "3. Da una recomendación de acción inmediata (qué comer, qué observar o cuándo consultar a urgencias).\n" +
-                    "4. Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.\n\n" +
+                    "4. Considera obligatoriamente el tiempo de acción esperado para el tipo de insulina utilizado (%s), así como el peso (%.1f kg) y la altura (%.2f m) del paciente al formular cualquier análisis predictivo o alerta de tendencia.\n" +
+                    "5. Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.\n\n" +
                     "### FORMATO DE RESPUESTA (IMPORTANTE: MÁXIMO 4 ORACIONES)\n" +
                     "Responde ESTRICTAMENTE con un objeto JSON válido, sin markdown. " +
                     "{\n" +
@@ -164,7 +175,11 @@ public class IaService {
                     "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
                     "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
 
-            String prompt = String.format(basePrompt, isf, ratioIc, usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), history.toString());
+            String prompt = String.format(basePrompt, 
+                    isf, ratioIc, peso, altura, tipoInsulina,
+                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), 
+                    history.toString(),
+                    tipoInsulina, peso, altura);
             log.debug("Prompt final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(
@@ -191,11 +206,17 @@ public class IaService {
             }
 
             String rawResponse = response.candidates().get(0).content().parts().get(0).text();
-            
-            // Esta versión busca el primer '{' y el último '}' garantizando que el JSON completo sea extraído
+
+            // Intentar extraer el JSON que está entre llaves
+            String cleanJson;
             int firstCurly = rawResponse.indexOf('{');
             int lastCurly = rawResponse.lastIndexOf('}');
-            String cleanJson = rawResponse.substring(firstCurly, lastCurly + 1);
+            if (firstCurly != -1 && lastCurly != -1 && firstCurly < lastCurly) {
+                cleanJson = rawResponse.substring(firstCurly, lastCurly + 1);
+            } else {
+                log.warn("Gemini retornó una respuesta que no contiene JSON válido: {}", rawResponse);
+                throw new RuntimeException("IA_RESPONSE_NOT_JSON");
+            }
             return objectMapper.readValue(cleanJson, IaAnalysisResponse.class);
             
         } catch (Exception e) {
@@ -206,11 +227,21 @@ public class IaService {
 
     public ChatResponse chatear(Usuario usuario, String mensajeUsuario) {
         try {
-            ParametroClinico parametros = clinicalRepository.findByUsuario(usuario)
-                    .orElse(null);
-            
-            int isf = (parametros != null && parametros.getFactorSensibilidad() != null) ? parametros.getFactorSensibilidad().intValue() : 50;
-            int ratioIc = (parametros != null && parametros.getRatioCarbohidratos() != null) ? parametros.getRatioCarbohidratos().intValue() : 10;
+            double isf;
+            double ratioIc;
+            // Obtener parámetros clínicos sincronizados desde ParametroClinico
+            ParametroClinico pcChat = clinicalRepository.findByUsuario(usuario).orElse(null);
+            if (pcChat != null) {
+                isf = pcChat.getFactorSensibilidad() != null ? pcChat.getFactorSensibilidad() : 50.0;
+                ratioIc = pcChat.getRatioCarbohidratos() != null ? pcChat.getRatioCarbohidratos() : 10.0;
+            } else {
+                // Fallback a valores por defecto
+                isf = usuario.getFactorIs() != null ? usuario.getFactorIs() : 50.0;
+                ratioIc = usuario.getRatioIc() != null ? usuario.getRatioIc() : 10.0;
+            }
+            double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 74.0;
+            double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
+            String tipoInsulina = usuario.getTipoInsulina() != null && !usuario.getTipoInsulina().isBlank() ? usuario.getTipoInsulina() : "Rápida";
 
             List<GlucoseReading> ultimasLecturas = glucoseRepository.findTop5ByUsuarioOrderByFechaHoraDesc(usuario);
             StringBuilder history = new StringBuilder("### HISTORIAL RECIENTE\n");
@@ -228,8 +259,11 @@ public class IaService {
                     "Tu tarea es responder a la pregunta o solicitud del paciente de forma clara, " +
                     "cercana y profesional, teniendo en cuenta su contexto clínico actual.\n\n" +
                     "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
-                    "- Factor de Sensibilidad (ISF): %d mg/dL.\n" +
-                    "- Ratio Insulina-Carbohidrato (IC): %d g.\n" +
+                    "- Factor de Sensibilidad (ISF): %.1f mg/dL.\n" +
+                    "- Ratio Insulina-Carbohidrato (IC): %.1f g.\n" +
+                    "- Peso Actual: %.1f kg.\n" +
+                    "- Altura: %.2f m.\n" +
+                    "- Tipo de Insulina Utilizada: %s.\n" +
                     "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### PREGUNTA O MENSAJE DEL PACIENTE\n" +
@@ -243,9 +277,14 @@ public class IaService {
                     "1. PROHIBIDO usar párrafos normales. TODA tu respuesta debe estar estructurada obligatoriamente como una lista de viñetas (-).\n" +
                     "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
                     "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia. " +
+                    "Considera el tiempo de acción esperado para el tipo de insulina utilizado (%s), así como el peso (%.1f kg) y la altura (%.2f m) del paciente al formular tu análisis, recomendaciones o alertas.\n" +
                     "Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.";
 
-            String prompt = String.format(basePrompt, isf, ratioIc, usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), history.toString(), mensajeUsuario);
+            String prompt = String.format(basePrompt, 
+                    isf, ratioIc, peso, altura, tipoInsulina,
+                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), 
+                    history.toString(), mensajeUsuario,
+                    tipoInsulina, peso, altura);
             log.debug("Prompt de Chat final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(

@@ -3,6 +3,7 @@ package com.jonesys.vitalsy.controller;
 import com.jonesys.vitalsy.dto.response.UsuarioResponse;
 import com.jonesys.vitalsy.dto.request.ParametrosClinicosDTO;
 import com.jonesys.vitalsy.model.Usuario;
+
 import com.jonesys.vitalsy.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,8 @@ public class UsuarioController {
         usuario.setFactorIs(request.getFactorIs());
         usuario.setAlertasGlucosa(request.getAlertasGlucosa());
         usuario.setRecordatorioComidas(request.getRecordatorioComidas());
+
+        
 
         Usuario saved = usuarioRepository.save(usuario);
         System.out.println("DEBUG: Perfil actualizado con éxito para: " + saved.getEmail());

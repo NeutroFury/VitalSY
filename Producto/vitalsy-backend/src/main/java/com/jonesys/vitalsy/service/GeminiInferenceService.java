@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonesys.vitalsy.dto.gemini.*;
 import com.jonesys.vitalsy.dto.prediction.PredictiveAnalysisResult;
 import com.jonesys.vitalsy.model.GlucoseReading;
-import com.jonesys.vitalsy.model.ParametroClinico;
+import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.util.PromptBuilderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +41,11 @@ public class GeminiInferenceService {
                 .build();
     }
 
-    public PredictiveAnalysisResult analyzeCausality(List<GlucoseReading> readings, ParametroClinico params) {
+    public PredictiveAnalysisResult analyzeCausality(List<GlucoseReading> readings, Usuario usuario) {
         log.info("🤖 Iniciando inferencia con Gemini API (Privacy-safe)...");
         try {
             // 1. Construir prompt anónimo
-            String prompt = PromptBuilderUtil.buildPrompt(readings, params);
+            String prompt = PromptBuilderUtil.buildPrompt(readings, usuario);
             
             // 2. Preparar el DTO de Petición
             GeminiRequest request = new GeminiRequest(
