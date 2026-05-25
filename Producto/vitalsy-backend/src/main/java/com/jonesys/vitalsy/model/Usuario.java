@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -73,6 +74,17 @@ public class Usuario {
     
     @Column(nullable = false)
     private Boolean activo = true;
+
+    @Column(name = "zona_horaria", length = 50)
+    private String zonaHoraria = "America/Santiago";
+
+    public ZoneId getZoneId() {
+        try {
+            return ZoneId.of(zonaHoraria != null ? zonaHoraria : "America/Santiago");
+        } catch (Exception e) {
+            return ZoneId.of("UTC");
+        }
+    }
     
     @Column(name = "creado_en", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime creadoEn;

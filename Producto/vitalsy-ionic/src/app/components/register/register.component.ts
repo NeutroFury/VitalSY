@@ -32,7 +32,12 @@ export class RegisterComponent {
   }
 
   onRegister() {
-    this.authService.register(this.userData).subscribe({
+    const payload = {
+      ...this.userData,
+      zonaHoraria: Intl.DateTimeFormat().resolvedOptions().timeZone
+    };
+    
+    this.authService.register(payload).subscribe({
       next: (res) => {
         console.log('Registration successful', res);
         // Usually after register we go to login or auto-login

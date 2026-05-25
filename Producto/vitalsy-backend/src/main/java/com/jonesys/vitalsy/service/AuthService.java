@@ -47,6 +47,7 @@ public class AuthService implements UserDetailsService {
         u.setPesoActual(req.getPesoActual());
         u.setRol("PACIENTE"); // Rol por defecto
         u.setActivo(true);   // Usuario activo por defecto
+        u.setZonaHoraria(req.getZonaHoraria() != null ? req.getZonaHoraria() : "America/Santiago");
         u.setCreadoEn(ZonedDateTime.now());
 
         Usuario saved = usuarioRepository.save(u);

@@ -34,6 +34,7 @@ export class HistoryComponent implements OnInit {
   
   private glucoseService = inject(GlucoseService);
   groupedHistory: GroupedReadings[] = [];
+  expandedDays: string[] = [];
   isLoading = false;
 
   constructor() {
@@ -61,6 +62,9 @@ export class HistoryComponent implements OnInit {
     this.glucoseService.getAllReadings().subscribe({
       next: (readings) => {
         this.groupedHistory = this.groupReadingsByDate(readings);
+        this.expandedDays = this.groupedHistory.length > 0 
+          ? [this.groupedHistory[0].dateLabel] 
+          : [];
         this.isLoading = false;
       },
       error: (err) => {
@@ -142,6 +146,9 @@ export class HistoryComponent implements OnInit {
     this.glucoseService.getAllReadings().subscribe({
       next: (readings) => {
         this.groupedHistory = this.groupReadingsByDate(readings);
+        this.expandedDays = this.groupedHistory.length > 0 
+          ? [this.groupedHistory[0].dateLabel] 
+          : [];
         event.target.complete();
       },
       error: (err) => {

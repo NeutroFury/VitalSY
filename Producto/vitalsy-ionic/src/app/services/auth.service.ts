@@ -34,6 +34,14 @@ export class AuthService {
       tap(res => {
         const displayName = res.nombre || res.email || 'Usuario';
         this.saveAuthData(res.token, String(res.userId), displayName);
+        
+        // Update user's timezone on login
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        localStorage.setItem('zonaHoraria', zonaHoraria);
+        this.http.put(`${environment.apiUrl}/usuarios/perfil`, { zonaHoraria }).subscribe({
+          error: (err) => console.error('Error updating timezone on login', err)
+        });
+
         this.authState.next(true);
       })
     );
