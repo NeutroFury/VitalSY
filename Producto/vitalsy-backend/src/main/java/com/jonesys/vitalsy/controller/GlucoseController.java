@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/glucosa")
-@CrossOrigin(origins = "http://localhost:8100")
 public class GlucoseController {
 
     private final GlucoseReadingRepository repository;

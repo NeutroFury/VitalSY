@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/predict")
-@CrossOrigin(origins = "http://localhost:8100")
+@RequestMapping("/api/v1/ia")
 public class PredictiveAnalysisController {
 
     private static final Logger log = LoggerFactory.getLogger(PredictiveAnalysisController.class);

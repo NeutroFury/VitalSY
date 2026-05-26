@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/librelinkup")
-@CrossOrigin(origins = "http://localhost:8100")
 public class LibreLinkUpController {
 
     private static final Logger log = LoggerFactory.getLogger(LibreLinkUpController.class);

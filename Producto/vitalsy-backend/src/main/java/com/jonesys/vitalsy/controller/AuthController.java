@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:8100")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
