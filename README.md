@@ -45,14 +45,15 @@ El ecosistema está construido bajo un patrón desacoplado y orientado a servici
 ```mermaid
 graph TD
     subgraph Frontend [Capa de Cliente & Dispositivo Mobile]
-        A[App Híbrida Ionic 7 / Angular 17] -->|Manejo de Estado Reactivo RxJS| B[Dashboard Premium Dark / Tailwind CSS]
+        A[App Híbrida Ionic 8 / Angular 20] -->|Manejo de Estado Reactivo RxJS| B[Dashboard Premium Dark / Tailwind CSS]
         A -->|Seguridad: Guards de Ruta| C[Control de Sesión Activa]
         A -->|Intercepción Global HTTP| D[Inyección Automática JWT]
         A -->|Lógica Nativa/Local| E[Alertas y Notificaciones Críticas]
+        A -->|Voice UI| V[Capacitor STT/TTS Plugins]
     end
     
     subgraph Backend [Capa de Servicios & API RESTful]
-        F[API Gateway / Spring Security] -->|REST / JSON| G[Controladores de Glucosa, Nutrición y Perfil]
+        F[API Gateway / Spring Security] -->|REST / JSON| G[Controladores de Glucosa, IA y Perfil]
         G -->|Lógica de Negocio / Spring Boot 3.2.x & Java 21| H[Servicios Clínicos & Inferencia]
         H -->|Versionamiento de Esquema| I[Flyway Database Migrations]
         I -->|Persistencia y Transaccionalidad| J[(PostgreSQL 16 - Time Series)]
@@ -69,12 +70,14 @@ graph TD
 ## ✨ Casos de Uso Implementados
 
 * **C.U. 01 - Autenticación y Autorización de Grado Clínico:** Control de acceso seguro implementado en el backend con Spring Security, contraseñas encriptadas mediante BCrypt y generación de tokens de sesión JWT. En el frontend, la seguridad se gestiona a través de Angular `authGuard` y un interceptor de solicitudes HTTP que adjunta el token JWT de forma transparente.
-* **C.U. 02 - Gestión de Perfil Clínico y Parámetros Metabólicos:** Mantenimiento detallado de la altura, peso y coeficientes específicos de control glucémico (**Ratio IC** e **ISF**), permitiendo parametrizar las sugerencias de dosis de insulina rápida (Lispro) y basales (Lantus).
+* **C.U. 02 - Gestión de Perfil Clínico y Calculadora de Dosis:** Mantenimiento detallado de la altura, peso y coeficientes específicos de control glucémico (**Ratio IC** e **ISF**). Incorpora una calculadora interactiva para sugerencias de dosis de insulina (corrección y carbohidratos).
 * **C.U. 04 - Registro Glucémico Multi-Origen:** Soporte para ingresos manuales validados por interfaz e ingresos automatizados a través del módulo de sincronización con Abbott LibreLinkUp.
 * **C.U. 05 - Dashboard Reactivo de Control Metabólico:** Interfaz táctica optimizada para dispositivos móviles con estética Premium Dark. Muestra el estado del paciente, las lecturas recientes y los gráficos temporales de variabilidad de manera instantánea.
 * **C.U. 08 - Motor de Notificación y Alertas Críticas:** Detección en tiempo real de eventos glucémicos severos mediante lógica reactiva en el cliente, gatillando notificaciones visuales y acústicas inmediatas de seguridad.
-* **C.U. 09 - Historial Predictivo y Análisis de Causalidad IA:** Panel que renderiza las explicaciones generadas por el motor de IA sobre las oscilaciones glucémicas del paciente, analizando de manera contextual variables críticas como el **'Momento'** y las **'Notas'** cargadas. El sistema sanitiza la respuesta de Gemini y cuenta con un plan de resiliencia (fallback clínico temporal) si se corta la comunicación con la API.
-* **C.U. 10 - Exportación de Reportes Clínicos PDF (OpenPDF):** Módulo de generación de PDF profesionales en el backend mediante el motor **OpenPDF**. El documento generado de forma nativa incluye una sección de analítica avanzada que calcula el total de lecturas, el promedio (media) de glucemia y la variabilidad (desviación estándar) de los últimos 30 días, además de una bitácora detallada con coloración condicional para identificar desvíos clínicos de forma ágil por el endocrinólogo.
+* **C.U. 09 - Historial Predictivo y Análisis de Causalidad IA:** Panel que renderiza las explicaciones generadas por el motor de IA sobre las oscilaciones glucémicas del paciente, analizando de manera contextual variables críticas como el **'Momento'** y las **'Notas'** cargadas.
+* **C.U. 10 - Exportación de Reportes Clínicos PDF (OpenPDF):** Módulo de generación de PDF profesionales en el backend mediante el motor **OpenPDF**. Incluye analítica avanzada de los últimos 30 días con coloración condicional para identificar desvíos clínicos.
+* **C.U. 11 - Perfil Ambulatorio de Glucosa (AGP):** Análisis estadístico estandarizado sobre una ventana de 14 días. Cálculo de percentiles (10, 25, 50, 75, 90) agrupados por hora para evaluar la variabilidad glucémica y modelar curvas de tendencia mediante `Chart.js`.
+* **C.U. 12 - Asistente Virtual IA con Reconocimiento de Voz (STT):** Interfaz conversacional impulsada por Gemini para consultar tendencias, recibir consejos personalizados y analizar el estado actual. Cuenta con integración nativa de Speech-To-Text vía Capacitor.
 
 ---
 
@@ -88,14 +91,16 @@ graph TD
 * **OpenPDF:** Generación programática de reportes y exportación estructurada en formato PDF.
 
 ### Frontend (Mobile-First Web Client)
-* **Ionic 7 & Angular 17:** Plataforma híbrida y framework modular para lograr una experiencia nativa de alto rendimiento y código altamente mantenible.
-* **Tailwind CSS:** Diseño UI/UX moderno, fluido y responsivo con una estética Premium Dark unificada.
-* **RxJS:** Programación reactiva basada en observables para la transmisión de flujos de datos asíncronos en tiempo real.
+* **Ionic 8 & Angular 20:** Plataforma híbrida y framework en sus últimas versiones para una experiencia nativa, standalone de alto rendimiento.
+* **Tailwind CSS 4.x:** Diseño UI/UX moderno, fluido y responsivo con estética Premium Dark.
+* **RxJS:** Programación reactiva basada en observables para la transmisión de flujos de datos.
+* **Capacitor Plugins:** Integración de hardware nativo como reconocimiento de voz (`@capacitor-community/speech-recognition`) y notificaciones locales.
+* **Chart.js & ng2-charts:** Renderizado avanzado del Perfil Ambulatorio de Glucosa (AGP).
 
 ### Persistencia y Servicios Externos
-* **PostgreSQL 16:** Motor de base de datos relacional estructurado con índices específicos sobre columnas temporales para optimizar consultas de series de tiempo.
-* **Google Gemini API:** Modelo fundacional configurado en modo estricto de generación estructurada (JSON Schema) para auditoría clínica y de causalidad.
-* **Abbott LibreLinkUp Client:** Integración HTTP para la recuperación programada y sincronizada de lecturas glucémicas desde la nube del sensor CGM del paciente.
+* **PostgreSQL 16:** Motor de base de datos relacional estructurado con índices temporales para optimizar consultas de series de tiempo.
+* **Google Gemini API:** Modelo fundacional para análisis predictivo y asistente conversacional.
+* **Abbott LibreLinkUp Client:** Integración HTTP para sincronización de lecturas del sensor CGM del paciente.
 
 ---
 
