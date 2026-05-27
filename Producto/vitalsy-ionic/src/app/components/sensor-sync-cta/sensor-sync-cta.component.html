@@ -1,0 +1,33 @@
+<div class="cta-card">
+  <!-- Dismiss button -->
+  <button class="cta-dismiss" (click)="dismiss()" aria-label="Cerrar">
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+
+  <!-- Icon -->
+  <div class="cta-icon-wrap">
+    <span class="cta-ping"></span>
+    <ion-icon name="radio-outline" class="cta-icon"></ion-icon>
+  </div>
+
+  <!-- Text -->
+  <div class="cta-body">
+    <p class="cta-label">SENSOR CGM</p>
+    <h2 class="cta-title">Sincroniza tu Sensor FreeStyle</h2>
+    <p class="cta-desc">
+      Para que VitalSY analice tus niveles de glucosa automáticamente en
+      segundo plano, vincula tu sensor FreeStyle Libre.
+    </p>
+  </div>
+
+  <!-- Actions -->
+  <div class="cta-actions">
+    <button class="cta-btn-primary" (click)="goToProfile()">
+      <ion-icon name="link-outline"></ion-icon>
+      <span>Vincular Sensor</span>
+    </button>
+    <button class="cta-btn-ghost" (click)="dismiss()">
+      Hacerlo más tarde
+    </button>
+  </div>
+</div>

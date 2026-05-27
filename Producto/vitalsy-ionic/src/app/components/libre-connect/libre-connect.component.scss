@@ -1,0 +1,228 @@
+.libre-connect-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 20px;
+  background-color: #0b0b0f;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.neon-card {
+  background: rgba(20, 20, 28, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(0, 255, 204, 0.1),
+              0 0 20px rgba(0, 255, 204, 0.05);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(0, 255, 204, 0.2),
+                0 0 30px rgba(0, 255, 204, 0.15);
+  }
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 30px;
+
+  .neon-icon {
+    font-size: 48px;
+    color: #00ffcc;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 204, 0.5));
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    color: #8f95b2;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    color: #b0b5d1;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .input-wrapper {
+    position: relative;
+
+    input {
+      width: 100%;
+      background: rgba(30, 30, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #ffffff;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      outline: none;
+
+      &::placeholder {
+        color: #555b77;
+      }
+
+      &:focus {
+        border-color: #00ffcc;
+        background: rgba(30, 30, 42, 0.9);
+        box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.1),
+                    inset 0 0 10px rgba(0, 255, 204, 0.05);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.neon-button {
+  width: 100%;
+  background: linear-gradient(135deg, #00ffcc 0%, #00b3ff 100%);
+  color: #000000;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  ion-spinner {
+    color: #000000;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 204, 0.4),
+                0 0 15px rgba(0, 179, 255, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #2a2a36;
+    color: #555b77;
+    box-shadow: none;
+    cursor: not-allowed;
+    
+    ion-spinner {
+      color: #00ffcc;
+    }
+  }
+}
+
+/* ─── Step-by-step guide ─── */
+.steps-guide {
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(212, 255, 0, 0.04);
+  border: 1px solid rgba(212, 255, 0, 0.1);
+  border-radius: 14px;
+
+  .steps-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(212, 255, 0, 0.75);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 12px 0;
+
+    ion-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.steps-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  counter-reset: steps;
+
+  li {
+    counter-increment: steps;
+    position: relative;
+    padding-left: 28px;
+    color: #a1a1aa;
+    font-size: 12px;
+    line-height: 1.55;
+
+    &::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(212, 255, 0, 0.1);
+      border: 1px solid rgba(212, 255, 0, 0.2);
+      color: #d4ff00;
+      font-size: 9px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    strong {
+      color: #e4e4e7;
+      font-weight: 700;
+    }
+  }
+}
+
+.steps-link {
+  color: #d4ff00;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212, 255, 0, 0.3);
+
+  &:hover {
+    border-bottom-color: #d4ff00;
+  }
+}

@@ -140,83 +140,69 @@
       </div>
 
     </div>
+    <!-- INTEGRACIÓN DE DISPOSITIVOS (Acordeón) -->
+    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4 px-2">Integración de Dispositivos</h3>
+    <ion-accordion-group class="devices-accordion">
+      <ion-accordion value="libre" toggleIcon="chevron-forward-outline" toggleIconSlot="end">
 
-    <!-- LIBRELINKUP INTEGRATION -->
-    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4 px-2">Integración de Sensor (LibreLinkUp)</h3>
-    <div class="bg-[#0c0c0c] rounded-[32px] p-6 flex flex-col gap-6 border border-zinc-900 shadow-xl">
-      
-      @if (libreConfigured) {
-        <!-- Estado Conectado -->
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-neon-green/10 flex items-center justify-center border border-neon-green/20">
-                <ion-icon name="link-outline" class="text-base text-neon-green"></ion-icon>
+        <!-- Header del acordeón -->
+        <ion-item slot="header" class="accordion-header">
+          <div class="flex items-center gap-3 py-1">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center border"
+                 [class]="libreConfigured ? 'bg-neon-green/10 border-neon-green/20' : 'bg-zinc-900 border-zinc-800'">
+              <ion-icon name="radio-outline"
+                        [class]="libreConfigured ? 'text-base text-neon-green' : 'text-base text-zinc-500'">
+              </ion-icon>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[11px] font-black text-white uppercase tracking-widest italic">FreeStyle Libre</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest"
+                    [class]="libreConfigured ? 'text-neon-green' : 'text-zinc-600'">
+                {{ libreConfigured ? 'Conectado · ' + libreEmail : 'Sin vincular' }}
+              </span>
+            </div>
+          </div>
+          @if (libreConfigured) {
+            <div class="w-2.5 h-2.5 rounded-full bg-neon-green shadow-[0_0_8px_#d4ff00] animate-pulse ml-auto mr-3" slot="end"></div>
+          }
+        </ion-item>
+
+        <!-- Contenido del acordeón -->
+        <div slot="content" class="accordion-content">
+
+          @if (libreConfigured) {
+            <!-- Estado: Conectado -->
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1 px-1">
+                <span class="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Cuenta Vinculada</span>
+                <span class="text-xs font-semibold text-zinc-400">{{ libreEmail }}</span>
               </div>
-              <div class="flex flex-col">
-                <span class="text-[10px] font-black text-neon-green uppercase tracking-widest">ESTADO</span>
-                <span class="text-sm font-black text-white italic uppercase">Conectado con Abbott</span>
+              <div class="flex flex-col gap-1 px-1">
+                <span class="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Última Sincronización</span>
+                <span class="text-xs font-semibold text-zinc-400">{{ libreLastSync }}</span>
+              </div>
+              <div class="w-full h-[1px] bg-zinc-900/50"></div>
+              <div class="grid grid-cols-2 gap-4">
+                <button (click)="syncLibreLinkUp()" [disabled]="isSyncing || isLibreLoading"
+                        class="h-12 bg-neon-green/10 border border-neon-green/20 text-neon-green rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest active:scale-95 transition-all">
+                  <ion-icon name="refresh-outline" class="text-base" [class.animate-spin]="isSyncing"></ion-icon>
+                  <span>{{ isSyncing ? 'Sincronizando...' : 'Sincronizar' }}</span>
+                </button>
+                <button (click)="disconnectLibreLinkUp()" [disabled]="isLibreLoading"
+                        class="h-12 bg-transparent border border-red-500/20 text-red-500/70 rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest active:scale-95 transition-all">
+                  <ion-icon name="log-out-outline" class="text-base"></ion-icon>
+                  <span>Desconectar</span>
+                </button>
               </div>
             </div>
-            <div class="w-3 h-3 rounded-full bg-neon-green shadow-[0_0_10px_#d4ff00] animate-pulse"></div>
-          </div>
+          } @else {
+            <!-- Estado: Desconectado → formulario via LibreConnectComponent -->
+            <app-libre-connect (connected)="loadLibreStatus()"></app-libre-connect>
+          }
 
-          <div class="w-full h-[1px] bg-zinc-900/50"></div>
-
-          <div class="flex flex-col gap-1 px-1">
-            <span class="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Cuenta Vinculada</span>
-            <span class="text-xs font-semibold text-zinc-400">{{ libreEmail }}</span>
-          </div>
-
-          <div class="flex flex-col gap-1 px-1">
-            <span class="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Última Sincronización</span>
-            <span class="text-xs font-semibold text-zinc-400">{{ libreLastSync }}</span>
-          </div>
-
-          <div class="w-full h-[1px] bg-zinc-900/50"></div>
-
-          <div class="grid grid-cols-2 gap-4 mt-2">
-            <button (click)="syncLibreLinkUp()" [disabled]="isSyncing || isLibreLoading"
-                    class="h-12 bg-neon-green/10 border border-neon-green/20 text-neon-green rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest active:scale-95 transition-all">
-              <ion-icon name="refresh-outline" class="text-base" [class.animate-spin]="isSyncing"></ion-icon>
-              <span>{{ isSyncing ? 'Sincronizando...' : 'Sincronizar' }}</span>
-            </button>
-            <button (click)="disconnectLibreLinkUp()" [disabled]="isLibreLoading"
-                    class="h-12 bg-transparent border border-red-500/20 text-red-500/70 rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest active:scale-95 transition-all">
-              <ion-icon name="log-out-outline" class="text-base"></ion-icon>
-              <span>Desconectar</span>
-            </button>
-          </div>
         </div>
-      } @else {
-        <!-- Estado Desconectado - Formulario de Login -->
-        <div class="flex flex-col gap-4">
-          <p class="text-[11px] text-zinc-500 leading-relaxed">
-            Conecta tu cuenta de <strong>LibreLinkUp (cuidador)</strong> para importar automáticamente las mediciones del sensor FreeStyle Libre cada 5 minutos.
-          </p>
-
-          <div class="flex flex-col gap-2">
-            <label class="text-[9px] font-black uppercase tracking-widest text-zinc-500 px-1">Correo Electrónico</label>
-            <input type="email" [(ngModel)]="libreEmail" [ngModelOptions]="{standalone: true}" [disabled]="isLibreLoading"
-                   class="w-full bg-black/40 border border-zinc-900 rounded-2xl p-4 text-sm text-white placeholder-zinc-700 outline-none focus:border-neon-green/30 transition-all" 
-                   placeholder="ejemplo@correo.com" />
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <label class="text-[9px] font-black uppercase tracking-widest text-zinc-500 px-1">Contraseña</label>
-            <input type="password" [(ngModel)]="librePassword" [ngModelOptions]="{standalone: true}" [disabled]="isLibreLoading"
-                   class="w-full bg-black/40 border border-zinc-900 rounded-2xl p-4 text-sm text-white placeholder-zinc-700 outline-none focus:border-neon-green/30 transition-all" 
-                   placeholder="••••••••" />
-          </div>
-
-          <button (click)="connectLibreLinkUp()" [disabled]="isLibreLoading || !libreEmail || !librePassword"
-                  class="w-full h-14 bg-neon-green text-black rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-neon disabled:opacity-50 mt-2">
-            <ion-icon name="link-outline" class="text-xl"></ion-icon>
-            <span>{{ isLibreLoading ? 'Estableciendo Conexión...' : 'Vincular Sensor' }}</span>
-          </button>
-        </div>
-      }
-    </div>
+      </ion-accordion>
+    </ion-accordion-group>
 
     <!-- ACTION BUTTONS -->
     <div class="flex flex-col gap-4 mt-4">

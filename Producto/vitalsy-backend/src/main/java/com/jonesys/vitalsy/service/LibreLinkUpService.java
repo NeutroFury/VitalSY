@@ -79,6 +79,9 @@ public class LibreLinkUpService {
         // 1. Login y obtención del JWT y BaseURL adecuada (con redirección regional)
         AbbottSession session = login(config.getLibreEmail(), password);
         
+        // Auto-Aceptar invitaciones
+        checkAndAcceptInvitations(session.token());
+        
         // 2. Obtención de conexiones (pacientes seguidos)
         String patientId = config.getLibrePatientId();
         if (patientId == null || patientId.isEmpty()) {
@@ -107,6 +110,11 @@ public class LibreLinkUpService {
     }
 
     // --- MÉTODOS DE COMUNICACIÓN CON LA API DE ABBOTT ---
+
+    public void verifyCredentials(String email, String password) {
+        // Intenta hacer login, si falla lanzará una RuntimeException
+        login(email, password);
+    }
 
     private AbbottSession login(String email, String password) {
         String url = DEFAULT_LOGIN_URL + "/llu/auth/login";
@@ -298,6 +306,42 @@ public class LibreLinkUpService {
     }
 
     // --- UTILITARIOS CRIPTOGRÁFICOS Y MODELOS ---
+
+    private void checkAndAcceptInvitations(String jwtToken) {
+        try {
+            log.info("🔍 Verificando invitaciones pendientes en LibreView...");
+            String url = "https://api.libreview.io/llu/connections";
+
+            Map<String, Object> response = baseRestClient.get()
+                    .uri(url)
+                    .header("Authorization", "Bearer " + jwtToken)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response != null && response.containsKey("data")) {
+                List<Map<String, Object>> data = (List<Map<String, Object>>) response.get("data");
+
+                for (Map<String, Object> connection : data) {
+                    Integer status = (Integer) connection.get("status");
+                    if (status != null && status == 1) { // 1 = Invitación pendiente
+                        String connectionId = (String) connection.get("id");
+                        log.info("📬 Invitación pendiente encontrada. ID: {}. Aceptando...", connectionId);
+
+                        String acceptUrl = "https://api.libreview.io/llu/connections/" + connectionId + "/accept";
+                        baseRestClient.post()
+                                .uri(acceptUrl)
+                                .header("Authorization", "Bearer " + jwtToken)
+                                .retrieve()
+                                .toBodilessEntity();
+
+                        log.info("✅ Invitación aceptada exitosamente.");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("⚠️ Error al verificar/aceptar invitaciones de LibreView: {}", e.getMessage());
+        }
+    }
 
     private String sha256(String input) {
         try {

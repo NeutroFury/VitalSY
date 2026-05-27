@@ -22,10 +22,12 @@ import {
   flashOutline,
   timeOutline,
   chevronForwardOutline,
-  refreshOutline
+  refreshOutline,
+  radioOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
+import { LibreConnectComponent } from '../libre-connect/libre-connect.component';
 import { UserService, UserProfile } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
@@ -35,7 +37,7 @@ import { LibreLinkUpService } from '../../services/librelinkup.service';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent, LibreConnectComponent]
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
@@ -77,7 +79,8 @@ export class ProfileComponent implements OnInit {
       flashOutline,
       timeOutline,
       chevronForwardOutline,
-      refreshOutline
+      refreshOutline,
+      radioOutline
     });
     
     this.username = this.authService.getUsername();

@@ -1,0 +1,78 @@
+<div class="libre-connect-container">
+  <div class="neon-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <ion-icon name="radio-outline" class="neon-icon"></ion-icon>
+      <h2>Conexión LibreView</h2>
+      <p>Sincroniza tus datos de glucosa automáticamente</p>
+    </div>
+
+    <!-- Step-by-step guide -->
+    <div class="steps-guide">
+      <p class="steps-title">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Configuración de única vez:
+      </p>
+      <ol class="steps-list">
+        <li>
+          Ve a
+          <a href="https://www.libreview.com" target="_blank" rel="noopener" class="steps-link">
+            www.libreview.com
+          </a>
+          y regístrate gratis eligiendo
+          <strong>Cuenta de LibreView</strong> (usa un correo electrónico diferente al de tu app principal).
+        </li>
+        <li>
+          Abre tu app <strong>FreeStyle LibreLink</strong> y envía una invitación a ese correo secundario.
+        </li>
+        <li>
+          Ingresa ese correo y contraseña aquí para enlazar el motor.
+        </li>
+      </ol>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="connect()" #connectForm="ngForm">
+      <div class="input-group">
+        <label>Correo LibreView</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            placeholder="tu@correo.com"
+            [disabled]="isLoading"
+          />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            placeholder="••••••••"
+            [disabled]="isLoading"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="neon-button"
+        [disabled]="connectForm.invalid || isLoading">
+        <ng-container *ngIf="!isLoading">
+          <ion-icon name="link-outline"></ion-icon>
+          Vincular Sensor
+        </ng-container>
+        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+      </button>
+    </form>
+
+  </div>
+</div>

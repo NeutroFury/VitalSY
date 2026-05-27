@@ -61,6 +61,18 @@ public class LibreLinkUpController {
             return ResponseEntity.badRequest().body("El email y la contraseña son requeridos.");
         }
 
+        // Verificar credenciales directamente con Abbott ANTES de guardar
+        try {
+            log.info("🔐 Verificando credenciales de LibreLinkUp para: {}", email);
+            service.verifyCredentials(email, password);
+            log.info("✅ Credenciales válidas para: {}", email);
+        } catch (Exception e) {
+            log.warn("❌ Credenciales de LibreLinkUp inválidas para: {}. Error: {}", email, e.getMessage());
+            return ResponseEntity.status(400).body(
+                    Map.of("mensaje", "Credenciales incorrectas. Verifica tu correo y contraseña de LibreLinkUp.")
+            );
+        }
+
         LibreLinkUpConfig config = configRepository.findByUsuario(usuario)
                 .orElse(new LibreLinkUpConfig());
 
@@ -72,7 +84,7 @@ public class LibreLinkUpController {
 
         configRepository.save(config);
 
-        return ResponseEntity.ok(Map.of("mensaje", "Configuración de LibreLinkUp guardada con éxito."));
+        return ResponseEntity.ok(Map.of("mensaje", "Sensor FreeStyle Libre vinculado con éxito."));
     }
 
     @PostMapping("/sync")

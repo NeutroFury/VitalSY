@@ -19,9 +19,12 @@ import {
   arrowForwardOutline,
   trendingUpOutline,
   trendingDownOutline,
-  linkOutline
+  linkOutline,
+  radioOutline,
+  closeOutline
 } from 'ionicons/icons';
 import { HeaderComponent } from '../header/header.component';
+import { SensorSyncCtaComponent } from '../sensor-sync-cta/sensor-sync-cta.component';
 import { IaService, IaAnalysis } from '../../services/ia.service';
 import { GlucoseService } from '../../services/glucose.service';
 import { NotificationService } from '../../services/notification.service';
@@ -32,8 +35,9 @@ import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, HeaderComponent, BaseChartDirective, SafeHtmlPipe]
+  imports: [CommonModule, IonicModule, HeaderComponent, BaseChartDirective, SafeHtmlPipe, SensorSyncCtaComponent]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   
@@ -43,6 +47,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentReading: number = 0;
   recentHistory: any[] = [];
   
+  // CTA de vinculación
+  showSensorCta = false;
+
   // Integración LibreLinkUp
   libreConfigured = false;
   libreLastSync = '';
@@ -148,7 +155,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       arrowForwardOutline,
       trendingUpOutline,
       trendingDownOutline,
-      linkOutline
+      linkOutline,
+      radioOutline,
+      closeOutline
     });
   }
 
@@ -322,12 +331,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (status) => {
         this.libreConfigured = status.configurado;
         this.libreLastSync = status.ultimoSync || 'Nunca';
+        // Mostrar el CTA solo si el sensor no está vinculado
+        const dismissed = sessionStorage.getItem('sensorCtaDismissed');
+        this.showSensorCta = !status.configurado && !dismissed;
       },
       error: () => {
         this.libreConfigured = false;
         this.libreLastSync = '';
+        this.showSensorCta = false;
       }
     });
+  }
+
+  dismissSensorCta() {
+    this.showSensorCta = false;
+    sessionStorage.setItem('sensorCtaDismissed', '1');
   }
 
   loadUserRanges() {

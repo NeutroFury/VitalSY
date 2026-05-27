@@ -74,3 +74,58 @@ ion-list-header {
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
+/* ────────────────────────────────────────────
+   INTEGRACIÓN DE DISPOSITIVOS — Acordeón
+──────────────────────────────────────────── */
+.devices-accordion {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid #1a1a1a;
+  background: #0c0c0c;
+
+  ion-accordion {
+    background: transparent;
+
+    &.accordion-expanded > [slot='header'] ion-item {
+      --background: rgba(212, 255, 0, 0.04);
+    }
+  }
+
+  .accordion-header {
+    --background: transparent;
+    --border-color: transparent;
+    --inner-border-width: 0;
+    --padding-start: 20px;
+    --padding-end: 12px;
+    --min-height: 68px;
+    --color: white;
+
+    ion-icon[slot='end'] {
+      color: #52525b;
+      font-size: 14px;
+      transition: transform 0.25s ease;
+    }
+  }
+
+  .accordion-content {
+    padding: 0 20px 20px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    // Strip styles from nested LibreConnectComponent card to avoid double-card look
+    app-libre-connect {
+      .libre-connect-container {
+        padding: 0;
+      }
+      .neon-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  }
+}
