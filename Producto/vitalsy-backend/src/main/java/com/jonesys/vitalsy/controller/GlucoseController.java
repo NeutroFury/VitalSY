@@ -1,10 +1,10 @@
 package com.jonesys.vitalsy.controller;
 
+import com.jonesys.vitalsy.dto.response.AgpDataResponse;
+import com.jonesys.vitalsy.dto.response.GlucoseReadingDto;
 import com.jonesys.vitalsy.model.GlucoseReading;
-import com.jonesys.vitalsy.model.Usuario;
-import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
-import com.jonesys.vitalsy.repository.UsuarioRepository;
-import com.jonesys.vitalsy.service.PdfExportService;
+import com.jonesys.vitalsy.service.GlucoseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,163 +13,78 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/glucosa")
+@Slf4j
 public class GlucoseController {
 
-    private final GlucoseReadingRepository repository;
-    private final UsuarioRepository usuarioRepository;
-    private final PdfExportService pdfExportService;
-    private final com.jonesys.vitalsy.service.AgpStatisticsService agpStatisticsService;
+    private final GlucoseService glucoseService;
 
-    public GlucoseController(GlucoseReadingRepository repository, UsuarioRepository usuarioRepository, PdfExportService pdfExportService, com.jonesys.vitalsy.service.AgpStatisticsService agpStatisticsService) {
-        this.repository = repository;
-        this.usuarioRepository = usuarioRepository;
-        this.pdfExportService = pdfExportService;
-        this.agpStatisticsService = agpStatisticsService;
+    public GlucoseController(GlucoseService glucoseService) {
+        this.glucoseService = glucoseService;
     }
 
     @PostMapping
     public ResponseEntity<GlucoseReadingDto> registrar(@RequestBody GlucoseReading reading, Authentication authentication) {
-        System.out.println("DEBUG: Recibida petición para registrar glucosa: " + reading.getValorMgdl());
+        log.info("Petición POST para registrar glucosa iniciada por el usuario: {}", authentication.getName());
         try {
-            Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            
-            reading.setUsuario(usuario);
-            reading.setFechaHora(ZonedDateTime.now());
-            reading.setTipoRegistro("MANUAL");
-            
-            GlucoseReading saved = repository.save(reading);
-            System.out.println("DEBUG: Lectura guardada con éxito. ID: " + saved.getId());
-            
-            GlucoseReadingDto response = new GlucoseReadingDto(
-                saved.getId(),
-                saved.getValorMgdl(),
-                saved.getTendencia(),
-                saved.getTipoRegistro(),
-                saved.getFechaHora().toString(),
-                saved.getAnalisisIa(),
-                saved.getCarbohidratos(),
-                saved.getComentarios()
-            );
-            
+            GlucoseReadingDto response = glucoseService.registrar(reading, authentication.getName());
             return ResponseEntity.status(201).body(response);
         } catch (Exception e) {
-            System.err.println("DEBUG ERROR: Fallo al registrar lectura");
-            e.printStackTrace();
+            log.error("Fallo al registrar lectura", e);
             throw e;
         }
     }
 
-        @GetMapping("/ultimas")
-        public ResponseEntity<List<GlucoseReadingDto>> ultimasLecturas(Authentication authentication) {
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        List<GlucoseReading> ultimas = repository.findTop20ByUsuarioOrderByFechaHoraDesc(usuario);
-        List<GlucoseReading> cronologicas = new ArrayList<>(ultimas);
-        Collections.reverse(cronologicas);
-
-        List<GlucoseReadingDto> response = cronologicas.stream()
-            .map(reading -> new GlucoseReadingDto(
-                reading.getId(),
-                reading.getValorMgdl(),
-                reading.getTendencia(),
-                reading.getTipoRegistro(),
-                reading.getFechaHora().toString(),
-                reading.getAnalisisIa(),
-                reading.getCarbohidratos(),
-                reading.getComentarios()
-            ))
-            .toList();
-
+    @GetMapping("/ultimas")
+    public ResponseEntity<List<GlucoseReadingDto>> ultimasLecturas(Authentication authentication) {
+        log.info("Petición GET para ultimas lecturas iniciada por el usuario: {}", authentication.getName());
+        List<GlucoseReadingDto> response = glucoseService.getUltimasLecturas(authentication.getName());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/historial")
+    public ResponseEntity<?> historial(Authentication authentication) {
+        log.info("Petición GET para historial iniciada por el usuario: {}", authentication.getName());
+        try {
+            List<GlucoseReadingDto> response = glucoseService.getHistorial(authentication.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Fallo al recuperar historial", e);
+            return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
         }
+    }
 
-        @GetMapping("/historial")
-        public ResponseEntity<?> historial(Authentication authentication) {
-            System.out.println("DEBUG: Recuperando historial para: " + authentication.getName());
-            try {
-                Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    @GetMapping("/exportar-pdf")
+    public ResponseEntity<InputStreamResource> exportarPdf(Authentication authentication) {
+        log.info("Petición GET para exportar PDF iniciada por el usuario: {}", authentication.getName());
+        try {
+            ByteArrayInputStream bis = glucoseService.exportarPdf(authentication.getName());
 
-                List<GlucoseReading> historial = repository.findByUsuarioOrderByFechaHoraDesc(usuario);
-                
-                List<GlucoseReadingDto> response = historial.stream()
-                    .map(reading -> new GlucoseReadingDto(
-                        reading.getId(),
-                        reading.getValorMgdl(),
-                        reading.getTendencia(),
-                        reading.getTipoRegistro(),
-                        reading.getFechaHora().toString(),
-                        reading.getAnalisisIa(),
-                        reading.getCarbohidratos(),
-                        reading.getComentarios()
-                    ))
-                    .toList();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
 
-                System.out.println("DEBUG: Historial recuperado. Total registros: " + response.size());
-                return ResponseEntity.ok(response);
-            } catch (Exception e) {
-                System.err.println("DEBUG ERROR: Fallo al recuperar historial");
-                e.printStackTrace();
-                return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
-            }
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(new InputStreamResource(bis));
+        } catch (Exception e) {
+            log.error("Fallo al exportar PDF", e);
+            throw e;
         }
+    }
 
-        @GetMapping("/exportar-pdf")
-        public ResponseEntity<InputStreamResource> exportarPdf(Authentication authentication) {
-            System.out.println("DEBUG: Exportando PDF para: " + authentication.getName());
-            try {
-                Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-                List<GlucoseReading> readings = repository.findByUsuarioOrderByFechaHoraDesc(usuario);
-                ByteArrayInputStream bis = pdfExportService.generateGlucosePdf(usuario, readings, usuario.getZoneId());
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
-
-                return ResponseEntity.ok()
-                        .headers(headers)
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .body(new InputStreamResource(bis));
-            } catch (Exception e) {
-                System.err.println("DEBUG ERROR: Fallo al exportar PDF");
-                e.printStackTrace();
-                throw e;
-            }
+    @GetMapping("/agp")
+    public ResponseEntity<AgpDataResponse> obtenerAgp(Authentication authentication) {
+        log.info("Petición GET para obtener AGP iniciada por el usuario: {}", authentication.getName());
+        try {
+            AgpDataResponse response = glucoseService.obtenerAgp(authentication.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Fallo al calcular AGP", e);
+            return ResponseEntity.status(500).build();
         }
-
-        public record GlucoseReadingDto(
-            Integer id,
-            Integer valorMgdl,
-            String tendencia,
-            String tipoRegistro,
-            String fechaHora,
-            String analisisIa,
-            Integer carbohidratos,
-            String comentarios
-        ) {}
-
-        @GetMapping("/agp")
-        public ResponseEntity<com.jonesys.vitalsy.dto.response.AgpDataResponse> obtenerAgp(Authentication authentication) {
-            try {
-                Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-                
-                com.jonesys.vitalsy.dto.response.AgpDataResponse response = agpStatisticsService.getAgpData(usuario);
-                return ResponseEntity.ok(response);
-            } catch (Exception e) {
-                System.err.println("DEBUG ERROR: Fallo al calcular AGP");
-                e.printStackTrace();
-                return ResponseEntity.status(500).build();
-            }
-        }
+    }
 }
