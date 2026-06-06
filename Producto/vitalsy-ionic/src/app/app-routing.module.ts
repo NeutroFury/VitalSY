@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -40,6 +41,11 @@ const routes: Routes = [
     path: 'chat',
     canActivate: [authGuard],
     loadComponent: () => import('./components/chat/chat.component').then(m => m.ChatComponent)
+  },
+  {
+    path: 'admin-panel',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./components/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
   },
   {
     path: '',

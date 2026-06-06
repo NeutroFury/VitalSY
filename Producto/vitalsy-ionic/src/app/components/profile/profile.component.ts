@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { take } from 'rxjs/operators';
 import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
@@ -23,7 +24,8 @@ import {
   timeOutline,
   chevronForwardOutline,
   refreshOutline,
-  closeOutline
+  closeOutline,
+  checkmarkOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
@@ -44,6 +46,7 @@ export class ProfileComponent implements OnInit {
   username: string = 'Usuario';
   isInsulinModalOpen = false;
   currentInsulinTarget: 'lenta' | 'rapida' = 'lenta';
+  customInsulinName: string = '';
 
   libreConfigured = false;
   libreEmail = '';
@@ -80,7 +83,8 @@ export class ProfileComponent implements OnInit {
       timeOutline,
       chevronForwardOutline,
       refreshOutline,
-      closeOutline
+      closeOutline,
+      checkmarkOutline
     });
     
     this.username = this.authService.getUsername();
@@ -105,9 +109,21 @@ export class ProfileComponent implements OnInit {
 
   loadProfile() {
     this.isLoading = true;
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (profile) => {
-        this.profileForm.patchValue(profile);
+        this.profileForm.patchValue({
+          ...profile,
+          pesoActual: profile.pesoActual || this.profileForm.get('pesoActual')?.value,
+          altura: profile.altura || this.profileForm.get('altura')?.value,
+          ratioIc: profile.ratioIc || this.profileForm.get('ratioIc')?.value || 10,
+          factorIs: profile.factorIs || this.profileForm.get('factorIs')?.value || 40,
+          alertasGlucosa: profile.alertasGlucosa !== null && profile.alertasGlucosa !== undefined ? profile.alertasGlucosa : true,
+          recordatorioComidas: profile.recordatorioComidas !== null && profile.recordatorioComidas !== undefined ? profile.recordatorioComidas : false,
+          // Evitar que null sobreescriba los valores con vacíos si el usuario ya tenía uno seleccionado
+          insulinaLenta: profile.insulinaLenta || this.profileForm.get('insulinaLenta')?.value || 'Tresiba (Degludec)',
+          insulinaRapida: profile.insulinaRapida || this.profileForm.get('insulinaRapida')?.value || 'Humalog (Lispro)'
+        });
+        
         if (profile.nombre) {
           localStorage.setItem('username', profile.nombre);
           this.username = profile.nombre;
@@ -129,6 +145,7 @@ export class ProfileComponent implements OnInit {
 
   openInsulinModal(target: 'lenta' | 'rapida') {
     this.currentInsulinTarget = target;
+    this.customInsulinName = '';
     this.isInsulinModalOpen = true;
   }
 
@@ -136,19 +153,28 @@ export class ProfileComponent implements OnInit {
     const control = this.currentInsulinTarget === 'lenta' ? 'insulinaLenta' : 'insulinaRapida';
     this.profileForm.get(control)?.setValue(value);
     this.isInsulinModalOpen = false;
-    this.saveProfile();
+    this.customInsulinName = '';
+  }
+
+  selectCustomInsulin() {
+    if (this.customInsulinName.trim()) {
+      this.selectInsulin(this.customInsulinName.trim());
+    }
   }
 
   recordatorioComidasToggle() {
     const currentValue = this.profileForm.get('recordatorioComidas')?.value;
     this.profileForm.get('recordatorioComidas')?.setValue(!currentValue);
-    this.saveProfile();
   }
 
   saveProfile() {
     if (this.profileForm.valid) {
       this.isLoading = true;
-      this.userService.updateUserProfile(this.profileForm.getRawValue()).subscribe({
+      const data = this.profileForm.getRawValue();
+      console.log('DATOS A GUARDAR:', JSON.stringify(data));
+      
+      // Enviamos el objeto de manera one-shot y sin llamar de vuelta a loadProfile()
+      this.userService.updateUserProfile(data).pipe(take(1)).subscribe({
         next: (updatedProfile) => {
           this.showToast('Configuración Clínica Actualizada', 'success');
           if (updatedProfile.nombre) {

@@ -1,0 +1,245 @@
+<ion-content [fullscreen]="true" class="admin-bg">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar">
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <div class="logo-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div>
+          <p class="logo-title">VitalSY</p>
+          <p class="logo-sub">Panel Administrador</p>
+        </div>
+      </div>
+
+      <!-- Admin info -->
+      <div class="admin-info-card">
+        <div class="admin-avatar">{{ getInitials(adminNombre) }}</div>
+        <div>
+          <p class="admin-name">{{ adminNombre }}</p>
+          <span class="admin-badge">ADMIN</span>
+        </div>
+      </div>
+
+      <!-- Nav -->
+      <nav class="sidebar-nav">
+        <button class="nav-item" [class.active]="activeTab === 'pacientes'"
+                (click)="activeTab = 'pacientes'">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Pacientes</span>
+        </button>
+        <button class="nav-item" [class.active]="activeTab === 'stats'"
+                (click)="activeTab = 'stats'">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Estadísticas</span>
+        </button>
+      </nav>
+
+      <!-- Logout -->
+      <button class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </aside>
+
+    <!-- ══════════════════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════════════════ -->
+    <main class="admin-main">
+
+      <!-- ── HEADER ── -->
+      <header class="admin-header">
+        <div>
+          <h1 class="header-title">
+            {{ activeTab === 'pacientes' ? 'Pacientes Registrados' : 'Estadísticas del Sistema' }}
+          </h1>
+          <p class="header-sub">
+            {{ activeTab === 'pacientes'
+              ? filteredPacientes.length + ' paciente(s) encontrados'
+              : 'Métricas globales de la plataforma' }}
+          </p>
+        </div>
+        <button class="refresh-btn" (click)="loadData()" title="Recargar datos">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </header>
+
+      <!-- ══ TAB: PACIENTES ══ -->
+      @if (activeTab === 'pacientes') {
+
+        <!-- Search bar -->
+        <div class="search-bar-wrap">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar por nombre o correo..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearch($event)"
+          />
+          @if (searchQuery) {
+            <button class="clear-search" (click)="clearSearch()">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Loading -->
+        @if (isLoading) {
+          <div class="loading-wrap">
+            <ion-spinner name="crescent" class="neon-spinner"></ion-spinner>
+            <p class="loading-text">Cargando pacientes...</p>
+          </div>
+        }
+
+        <!-- Table -->
+        @if (!isLoading) {
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Correo</th>
+                  <th>
+                    <div class="th-icon-wrap">
+                      <ion-icon name="time-outline" class="text-sky-400"></ion-icon>
+                      Insulina Lenta (Basal)
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-icon-wrap">
+                      <ion-icon name="flash-outline" class="text-amber-400"></ion-icon>
+                      Insulina Rápida (Bolus)
+                    </div>
+                  </th>
+                  <th>Rango Glucosa</th>
+                  <th>Ratio IC</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of filteredPacientes; track p.id) {
+                  <tr class="table-row">
+                    <td>
+                      <div class="patient-cell">
+                        <div class="patient-avatar">{{ getInitials(p.nombre) }}</div>
+                        <span class="patient-name">{{ p.nombre }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="email-cell">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <span>{{ p.email }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="insulin-badge basal">
+                        {{ formatInsulin(p.insulinaLenta) }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="insulin-badge bolus">
+                        {{ formatInsulin(p.insulinaRapida) }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="range-badge">
+                        {{ p.rangoGlucosaMin }}–{{ p.rangoGlucosaMax }} mg/dL
+                      </span>
+                    </td>
+                    <td>
+                      <span class="ratio-badge">1:{{ p.ratioIc }}</span>
+                    </td>
+                  </tr>
+                }
+                @if (filteredPacientes.length === 0 && !isLoading) {
+                  <tr>
+                    <td colspan="6" class="empty-row">
+                      <ion-icon name="people-outline"></ion-icon>
+                      <span>No se encontraron pacientes.</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ══ TAB: STATS ══ -->
+      @if (activeTab === 'stats') {
+        @if (stats) {
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <div class="stat-icon icon-green">
+                <ion-icon name="people-outline"></ion-icon>
+              </div>
+              <div>
+                <p class="stat-value">{{ stats.totalUsuarios }}</p>
+                <p class="stat-label">Total Usuarios</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon icon-blue">
+                <ion-icon name="person-outline"></ion-icon>
+              </div>
+              <div>
+                <p class="stat-value">{{ stats.totalPacientes }}</p>
+                <p class="stat-label">Pacientes</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon icon-amber">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <div>
+                <p class="stat-value">{{ stats.totalAdmins }}</p>
+                <p class="stat-label">Administradores</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon icon-emerald">
+                <ion-icon name="stats-chart-outline"></ion-icon>
+              </div>
+              <div>
+                <p class="stat-value">{{ stats.totalActivos }}</p>
+                <p class="stat-label">Usuarios Activos</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Porcentaje activos -->
+          <div class="progress-card">
+            <div class="progress-header">
+              <span class="progress-label">Tasa de actividad</span>
+              <span class="progress-value">
+                {{ stats.totalUsuarios > 0 ? ((stats.totalActivos / stats.totalUsuarios) * 100 | number:'1.0-0') : 0 }}%
+              </span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill"
+                   [style.width.%]="stats.totalUsuarios > 0 ? (stats.totalActivos / stats.totalUsuarios) * 100 : 0">
+              </div>
+            </div>
+          </div>
+
+        } @else {
+          <div class="loading-wrap">
+            <ion-spinner name="crescent" class="neon-spinner"></ion-spinner>
+          </div>
+        }
+      }
+
+    </main>
+  </div>
+
+</ion-content>

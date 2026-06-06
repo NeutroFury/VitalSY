@@ -32,20 +32,37 @@ public class UsuarioController {
     @PutMapping("/perfil")
     public ResponseEntity<UsuarioResponse> updatePerfil(@RequestBody UsuarioResponse request, Authentication authentication) {
         System.out.println("DEBUG: Petición PUT perfil para: " + authentication.getName());
+        System.out.println("DATOS RECIBIDOS: " + request);
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
 
         if (request.getNombre() != null && !request.getNombre().isBlank()) {
             usuario.setNombre(request.getNombre());
         }
-        usuario.setPesoActual(request.getPesoActual());
-        usuario.setAltura(request.getAltura());
-        usuario.setInsulinaLenta(request.getInsulinaLenta());
-        usuario.setInsulinaRapida(request.getInsulinaRapida());
-        usuario.setRatioIc(request.getRatioIc());
-        usuario.setFactorIs(request.getFactorIs());
-        usuario.setAlertasGlucosa(request.getAlertasGlucosa());
-        usuario.setRecordatorioComidas(request.getRecordatorioComidas());
+        if (request.getPesoActual() != null) {
+            usuario.setPesoActual(request.getPesoActual());
+        }
+        if (request.getAltura() != null) {
+            usuario.setAltura(request.getAltura());
+        }
+        if (request.getInsulinaLenta() != null) {
+            usuario.setInsulinaLenta(request.getInsulinaLenta());
+        }
+        if (request.getInsulinaRapida() != null) {
+            usuario.setInsulinaRapida(request.getInsulinaRapida());
+        }
+        if (request.getRatioIc() != null) {
+            usuario.setRatioIc(request.getRatioIc());
+        }
+        if (request.getFactorIs() != null) {
+            usuario.setFactorIs(request.getFactorIs());
+        }
+        if (request.getAlertasGlucosa() != null) {
+            usuario.setAlertasGlucosa(request.getAlertasGlucosa());
+        }
+        if (request.getRecordatorioComidas() != null) {
+            usuario.setRecordatorioComidas(request.getRecordatorioComidas());
+        }
         if (request.getZonaHoraria() != null && !request.getZonaHoraria().isBlank()) {
             usuario.setZonaHoraria(request.getZonaHoraria());
         }
@@ -91,6 +108,7 @@ public class UsuarioController {
                 .rangoGlucosaMin(u.getRangoGlucosaMin())
                 .rangoGlucosaMax(u.getRangoGlucosaMax())
                 .zonaHoraria(u.getZonaHoraria())
+                .rol(u.getRol())
                 .build();
     }
 }

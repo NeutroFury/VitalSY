@@ -340,8 +340,22 @@
 
         </ion-list>
 
+        <!-- Ingreso Manual de Insulina Personalizada -->
+        <div class="mt-2 mb-4 px-1">
+          <label class="text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-2 block">¿Usas otra insulina? Escríbela aquí:</label>
+          <div class="flex gap-2">
+            <input type="text" [(ngModel)]="customInsulinName" [ngModelOptions]="{standalone: true}"
+                   class="flex-1 bg-black/40 border border-zinc-900 rounded-xl p-3 text-sm text-white placeholder-zinc-700 outline-none focus:border-neon-green/30 transition-all" 
+                   placeholder="Ej. Mi Insulina Especial" />
+            <button (click)="selectCustomInsulin()" [disabled]="!customInsulinName.trim()"
+                    class="h-[46px] px-4 bg-neon-green text-black rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-30">
+              <ion-icon name="checkmark-outline" class="text-xl"></ion-icon>
+            </button>
+          </div>
+        </div>
+
         <button (click)="isInsulinModalOpen = false"
-                class="w-full py-5 mt-4 text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em] border border-zinc-900 rounded-2xl active:bg-zinc-900 active:text-white transition-all">
+                class="w-full py-5 text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em] border border-zinc-900 rounded-2xl active:bg-zinc-900 active:text-white transition-all">
           CANCELAR
         </button>
       </div>

@@ -24,4 +24,5 @@ public class UsuarioResponse {
     private Integer rangoGlucosaMin;
     private Integer rangoGlucosaMax;
     private String zonaHoraria;
+    private String rol;
 }

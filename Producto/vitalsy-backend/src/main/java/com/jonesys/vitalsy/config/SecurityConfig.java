@@ -65,9 +65,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/v1/ia/**").hasAnyRole("PACIENTE", "MEDICO")
-                        .requestMatchers("/api/v1/glucosa/**").hasAnyRole("PACIENTE", "MEDICO")
-                        .requestMatchers("/api/v1/usuarios/**").hasAnyRole("PACIENTE", "MEDICO")
+                        .requestMatchers("/api/v1/ia/**").hasAnyRole("PACIENTE", "MEDICO", "ADMIN")
+                        .requestMatchers("/api/v1/glucosa/**").hasAnyRole("PACIENTE", "MEDICO", "ADMIN")
+                        .requestMatchers("/api/v1/usuarios/**").hasAnyRole("PACIENTE", "MEDICO", "ADMIN")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

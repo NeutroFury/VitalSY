@@ -1,0 +1,548 @@
+// ══════════════════════════════════════════════════════════
+// VitalSY Admin Panel — Dark Premium Styles
+// ══════════════════════════════════════════════════════════
+
+$neon: #d4ff00;
+$neon-dim: rgba(212, 255, 0, 0.15);
+$bg: #050505;
+$surface: #0e0e0e;
+$surface-2: #161616;
+$border: rgba(255, 255, 255, 0.06);
+$text: #ffffff;
+$text-muted: #52525b;
+$sky: #38bdf8;
+$amber: #fbbf24;
+$emerald: #34d399;
+
+ion-content.admin-bg {
+  --background: #{$bg};
+}
+
+// ── Layout ──────────────────────────────────────────────
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ── Sidebar ─────────────────────────────────────────────
+.admin-sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: $surface;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  gap: 24px;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $border;
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $neon 0%, rgba(212, 255, 0, 0.4) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ion-icon {
+      color: #000;
+      font-size: 20px;
+    }
+  }
+
+  .logo-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: $text;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+
+  .logo-sub {
+    font-size: 9px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 2px 0 0;
+  }
+}
+
+.admin-info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: $surface-2;
+  border: 1px solid $border;
+  border-radius: 14px;
+
+  .admin-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $neon-dim;
+    border: 1.5px solid rgba(212, 255, 0, 0.4);
+    color: $neon;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .admin-badge {
+    font-size: 8px;
+    font-weight: 900;
+    color: $neon;
+    background: $neon-dim;
+    border: 1px solid rgba(212, 255, 0, 0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    letter-spacing: 0.15em;
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: $text-muted;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: $surface-2;
+    color: $text;
+    border-color: $border;
+  }
+
+  &.active {
+    background: $neon-dim;
+    color: $neon;
+    border-color: rgba(212, 255, 0, 0.25);
+    font-weight: 800;
+  }
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid $border;
+  background: transparent;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+
+  ion-icon { font-size: 16px; }
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+}
+
+// ── Main ─────────────────────────────────────────────────
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: $bg;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid $border;
+  flex-shrink: 0;
+
+  .header-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: $text;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: $text-muted;
+    margin: 4px 0 0;
+    font-weight: 500;
+  }
+}
+
+.refresh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid $border;
+  background: $surface-2;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  ion-icon { font-size: 18px; }
+
+  &:hover {
+    border-color: rgba(212, 255, 0, 0.3);
+    color: $neon;
+    background: $neon-dim;
+  }
+}
+
+// ── Search ───────────────────────────────────────────────
+.search-bar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 20px 32px 0;
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    color: $text-muted;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 11px 40px 11px 42px;
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: 12px;
+    color: $text;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus { border-color: rgba(212, 255, 0, 0.4); }
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.2s;
+
+    ion-icon { font-size: 16px; }
+    &:hover { color: $text; }
+  }
+}
+
+// ── Table ────────────────────────────────────────────────
+.table-wrap {
+  flex: 1;
+  overflow: auto;
+  margin: 20px 32px 32px;
+  border: 1px solid $border;
+  border-radius: 16px;
+  background: $surface;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    border-bottom: 1px solid $border;
+  }
+
+  th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 800;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    background: $surface;
+  }
+
+  .th-icon-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    ion-icon { font-size: 13px; }
+  }
+
+  .table-row {
+    border-bottom: 1px solid $border;
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: $surface-2; }
+  }
+
+  td {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: $text;
+    vertical-align: middle;
+  }
+}
+
+.patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.patient-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: $neon-dim;
+  border: 1px solid rgba(212, 255, 0, 0.25);
+  color: $neon;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.patient-name {
+  font-weight: 700;
+  color: $text;
+}
+
+.email-cell {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: $text-muted;
+  font-size: 12px;
+  ion-icon { font-size: 14px; flex-shrink: 0; }
+}
+
+.insulin-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+
+  &.basal {
+    background: rgba(56, 189, 248, 0.1);
+    color: $sky;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+  }
+
+  &.bolus {
+    background: rgba(251, 191, 36, 0.1);
+    color: $amber;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+}
+
+.range-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: $emerald;
+}
+
+.ratio-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: $neon;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 48px !important;
+  color: $text-muted;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  ion-icon { font-size: 32px; }
+}
+
+// ── Loading ──────────────────────────────────────────────
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
+  padding: 60px;
+
+  .neon-spinner {
+    --color: #{$neon};
+    width: 36px;
+    height: 36px;
+  }
+
+  .loading-text {
+    color: $text-muted;
+    font-size: 13px;
+  }
+}
+
+// ── Stats Grid ───────────────────────────────────────────
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 24px 32px 0;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 16px;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba(212, 255, 0, 0.2); }
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  ion-icon { font-size: 22px; }
+
+  &.icon-green  { background: $neon-dim; color: $neon; }
+  &.icon-blue   { background: rgba(56,189,248,0.1); color: $sky; }
+  &.icon-amber  { background: rgba(251,191,36,0.1); color: $amber; }
+  &.icon-emerald { background: rgba(52,211,153,0.1); color: $emerald; }
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: $text;
+  margin: 0;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 5px 0 0;
+}
+
+// ── Progress bar ─────────────────────────────────────────
+.progress-card {
+  margin: 20px 32px;
+  padding: 20px 24px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 16px;
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .progress-value {
+    font-size: 14px;
+    font-weight: 900;
+    color: $neon;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $neon 0%, rgba(212, 255, 0, 0.4) 100%);
+    border-radius: 99px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(212, 255, 0, 0.4);
+  }
+}

@@ -22,16 +22,17 @@ public class JwtProvider {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(String email, Integer userId) {
+    public String generateToken(String email, Integer userId, String rol) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
                 .subject(email)
                 .claim("userId", userId)
+                .claim("rol", rol != null ? rol : "PACIENTE")
                 .issuedAt(now)
                 .expiration(exp)
-                .signWith(signingKey) // Firma automática con el algoritmo correcto
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -58,6 +59,15 @@ public class JwtProvider {
         try {
             Claims claims = getClaims(token);
             return claims.get("userId", Integer.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getRolFromToken(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return claims.get("rol", String.class);
         } catch (Exception e) {
             return null;
         }
