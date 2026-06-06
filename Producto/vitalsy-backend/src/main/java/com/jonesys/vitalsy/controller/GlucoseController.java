@@ -29,13 +29,8 @@ public class GlucoseController {
     @PostMapping
     public ResponseEntity<GlucoseReadingDto> registrar(@RequestBody GlucoseReading reading, Authentication authentication) {
         log.info("Petición POST para registrar glucosa iniciada por el usuario: {}", authentication.getName());
-        try {
-            GlucoseReadingDto response = glucoseService.registrar(reading, authentication.getName());
-            return ResponseEntity.status(201).body(response);
-        } catch (Exception e) {
-            log.error("Fallo al registrar lectura", e);
-            throw e;
-        }
+        GlucoseReadingDto response = glucoseService.registrar(reading, authentication.getName());
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/ultimas")
@@ -46,45 +41,30 @@ public class GlucoseController {
     }
 
     @GetMapping("/historial")
-    public ResponseEntity<?> historial(Authentication authentication) {
+    public ResponseEntity<List<GlucoseReadingDto>> historial(Authentication authentication) {
         log.info("Petición GET para historial iniciada por el usuario: {}", authentication.getName());
-        try {
-            List<GlucoseReadingDto> response = glucoseService.getHistorial(authentication.getName());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Fallo al recuperar historial", e);
-            return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
-        }
+        List<GlucoseReadingDto> response = glucoseService.getHistorial(authentication.getName());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/exportar-pdf")
     public ResponseEntity<InputStreamResource> exportarPdf(Authentication authentication) {
         log.info("Petición GET para exportar PDF iniciada por el usuario: {}", authentication.getName());
-        try {
-            ByteArrayInputStream bis = glucoseService.exportarPdf(authentication.getName());
+        ByteArrayInputStream bis = glucoseService.exportarPdf(authentication.getName());
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=historial_glucemia.pdf");
 
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(new InputStreamResource(bis));
-        } catch (Exception e) {
-            log.error("Fallo al exportar PDF", e);
-            throw e;
-        }
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
     }
 
     @GetMapping("/agp")
     public ResponseEntity<AgpDataResponse> obtenerAgp(Authentication authentication) {
         log.info("Petición GET para obtener AGP iniciada por el usuario: {}", authentication.getName());
-        try {
-            AgpDataResponse response = glucoseService.obtenerAgp(authentication.getName());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Fallo al calcular AGP", e);
-            return ResponseEntity.status(500).build();
-        }
+        AgpDataResponse response = glucoseService.obtenerAgp(authentication.getName());
+        return ResponseEntity.ok(response);
     }
 }
