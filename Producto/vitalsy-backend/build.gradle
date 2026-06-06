@@ -62,6 +62,9 @@ dependencies {
 	
 	// JFreeChart (For PDF AGP Generation)
 	implementation 'org.jfree:jfreechart:1.5.3'
+
+	// Rate Limiting
+	implementation 'com.bucket4j:bucket4j-core:8.10.1'
 	testImplementation 'org.testcontainers:testcontainers:1.19.3'
 	testImplementation 'com.h2database:h2'
 	testCompileOnly 'org.projectlombok:lombok'
