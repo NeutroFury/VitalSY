@@ -9,7 +9,8 @@ export interface UserProfile {
   email: string;
   pesoActual: number;
   altura: number;
-  tipoInsulina: string;
+  insulinaLenta: string;
+  insulinaRapida: string;
   ratioIc: number;
   factorIs: number;
   alertasGlucosa: boolean;

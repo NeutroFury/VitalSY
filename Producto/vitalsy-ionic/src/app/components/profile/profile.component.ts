@@ -22,7 +22,8 @@ import {
   flashOutline,
   timeOutline,
   chevronForwardOutline,
-  refreshOutline
+  refreshOutline,
+  closeOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
@@ -42,6 +43,7 @@ export class ProfileComponent implements OnInit {
   isLoading = false;
   username: string = 'Usuario';
   isInsulinModalOpen = false;
+  currentInsulinTarget: 'lenta' | 'rapida' = 'lenta';
 
   libreConfigured = false;
   libreEmail = '';
@@ -77,7 +79,8 @@ export class ProfileComponent implements OnInit {
       flashOutline,
       timeOutline,
       chevronForwardOutline,
-      refreshOutline
+      refreshOutline,
+      closeOutline
     });
     
     this.username = this.authService.getUsername();
@@ -86,7 +89,8 @@ export class ProfileComponent implements OnInit {
       nombre: ['', [Validators.required]],
       pesoActual: [null, [Validators.required, Validators.min(1)]],
       altura: [null, [Validators.required, Validators.min(1)]],
-      tipoInsulina: ['Humalog', [Validators.required]],
+      insulinaLenta: ['Tresiba (Degludec)', [Validators.required]],
+      insulinaRapida: ['Humalog (Lispro)', [Validators.required]],
       ratioIc: [10, [Validators.required, Validators.min(0.1)]],
       factorIs: [40, [Validators.required, Validators.min(1)]],
       alertasGlucosa: [true],
@@ -123,8 +127,14 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  openInsulinModal(target: 'lenta' | 'rapida') {
+    this.currentInsulinTarget = target;
+    this.isInsulinModalOpen = true;
+  }
+
   selectInsulin(value: string) {
-    this.profileForm.get('tipoInsulina')?.setValue(value);
+    const control = this.currentInsulinTarget === 'lenta' ? 'insulinaLenta' : 'insulinaRapida';
+    this.profileForm.get(control)?.setValue(value);
     this.isInsulinModalOpen = false;
     this.saveProfile();
   }

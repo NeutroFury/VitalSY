@@ -40,7 +40,8 @@ public class UsuarioController {
         }
         usuario.setPesoActual(request.getPesoActual());
         usuario.setAltura(request.getAltura());
-        usuario.setTipoInsulina(request.getTipoInsulina());
+        usuario.setInsulinaLenta(request.getInsulinaLenta());
+        usuario.setInsulinaRapida(request.getInsulinaRapida());
         usuario.setRatioIc(request.getRatioIc());
         usuario.setFactorIs(request.getFactorIs());
         usuario.setAlertasGlucosa(request.getAlertasGlucosa());
@@ -81,7 +82,8 @@ public class UsuarioController {
                 .email(u.getEmail())
                 .pesoActual(u.getPesoActual())
                 .altura(u.getAltura())
-                .tipoInsulina(u.getTipoInsulina())
+                .insulinaLenta(u.getInsulinaLenta())
+                .insulinaRapida(u.getInsulinaRapida())
                 .ratioIc(u.getRatioIc())
                 .factorIs(u.getFactorIs())
                 .alertasGlucosa(u.getAlertasGlucosa())

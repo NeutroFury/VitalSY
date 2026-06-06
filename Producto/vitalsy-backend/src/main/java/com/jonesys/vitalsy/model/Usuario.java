@@ -40,8 +40,11 @@ public class Usuario {
     @Column(name = "altura")
     private Double altura;
     
-    @Column(name = "tipo_insulina", length = 50)
-    private String tipoInsulina;
+    @Column(name = "insulina_lenta", length = 50)
+    private String insulinaLenta;
+
+    @Column(name = "insulina_rapida", length = 50)
+    private String insulinaRapida;
     
     @Column(name = "ratio_ic")
     private Double ratioIc; // Insulin-to-Carb

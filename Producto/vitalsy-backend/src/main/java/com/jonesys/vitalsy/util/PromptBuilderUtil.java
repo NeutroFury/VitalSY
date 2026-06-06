@@ -20,19 +20,22 @@ public class PromptBuilderUtil {
             double factorIs = usuario.getFactorIs() != null ? usuario.getFactorIs() : 50.0;
             double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 70.0;
             double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
-            String tipoInsulina = usuario.getTipoInsulina() != null ? usuario.getTipoInsulina() : "Rápida";
+            String insulinaLenta = usuario.getInsulinaLenta() != null ? usuario.getInsulinaLenta() : "Lantus (Predeterminada)";
+            String insulinaRapida = usuario.getInsulinaRapida() != null ? usuario.getInsulinaRapida() : "Humalog (Predeterminada)";
             
             sb.append("  * Ratio IC (Relación Insulina-Carbohidratos): ").append(ratioIc).append(" g\n");
             sb.append("  * Factor IS (Factor de Sensibilidad a la Insulina): ").append(factorIs).append(" mg/dL por unidad\n");
             sb.append("  * Peso Actual: ").append(peso).append(" kg\n");
             sb.append("  * Altura: ").append(altura).append(" m\n");
-            sb.append("  * Tipo de Insulina Utilizada: ").append(tipoInsulina).append("\n");
+            sb.append("  * Insulina Lenta (Basal): ").append(insulinaLenta).append("\n");
+            sb.append("  * Insulina Rápida (Bolus): ").append(insulinaRapida).append("\n");
         } else {
             sb.append("  * Ratio IC: No configurado (usar estándar estimado)\n");
             sb.append("  * Factor IS: No configurado (usar estándar estimado)\n");
             sb.append("  * Peso Actual: No configurado (usar estándar estimado)\n");
             sb.append("  * Altura: No configurado (usar estándar estimado)\n");
-            sb.append("  * Tipo de Insulina: No configurado (usar estándar estimado)\n");
+            sb.append("  * Insulina Lenta: No configurada (usar estándar estimado)\n");
+            sb.append("  * Insulina Rápida: No configurada (usar estándar estimado)\n");
         }
         
         sb.append("- Historial de las Últimas 3 Lecturas (de la más reciente a la más antigua):\n");
@@ -50,9 +53,10 @@ public class PromptBuilderUtil {
         if (usuario != null) {
             double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 70.0;
             double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
-            String tipoInsulina = usuario.getTipoInsulina() != null ? usuario.getTipoInsulina() : "Rápida";
+            String insulinaLenta = usuario.getInsulinaLenta() != null ? usuario.getInsulinaLenta() : "Basal genérica";
+            String insulinaRapida = usuario.getInsulinaRapida() != null ? usuario.getInsulinaRapida() : "Bolus genérica";
             sb.append("2. Utiliza los coeficientes Ratio IC y Factor IS para argumentar médicamente si el paciente podría corregir la tendencia de manera segura basándose en su sensibilidad. ");
-            sb.append("Debes considerar obligatoriamente el tiempo de acción esperado para el tipo de insulina utilizado (").append(tipoInsulina).append("), ");
+            sb.append("Debes considerar obligatoriamente los tiempos de acción de su esquema Basal-Bolus (Lenta: ").append(insulinaLenta).append(", Rápida: ").append(insulinaRapida).append("), ");
             sb.append("así como el peso (").append(peso).append(" kg) y altura (").append(altura).append(" m) al formular tu análisis predictivo o alerta de tendencia.\n");
         } else {
             sb.append("2. Utiliza los coeficientes Ratio IC y Factor IS para argumentar médicamente si el paciente podría corregir la tendencia de manera segura basándose en su sensibilidad.\n");
@@ -63,7 +67,7 @@ public class PromptBuilderUtil {
         sb.append("Debes responder EXCLUSIVAMENTE en un formato JSON estructurado con las siguientes llaves exactas. No incluyas texto fuera del JSON:\n");
         sb.append("{\n");
         sb.append("  \"riesgo\": \"ALTO\" | \"MEDIO\" | \"BAJO\",\n");
-        sb.append("  \"analisis_causal\": \"[Explicación concisa basada en la tendencia, coeficientes clínicos, tipo de insulina, peso y altura del paciente]\"\n");
+        sb.append("  \"analisis_causal\": \"[Explicación concisa basada en la tendencia, coeficientes clínicos, esquema de insulina Basal-Bolus, peso y altura del paciente]\"\n");
         sb.append("}\n");
 
         return sb.toString();

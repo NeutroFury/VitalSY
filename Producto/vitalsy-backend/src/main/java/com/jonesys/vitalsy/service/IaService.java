@@ -107,10 +107,12 @@ public class IaService {
         }
         double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 74.0;
         double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
-        String tipoInsulina = usuario.getTipoInsulina() != null && !usuario.getTipoInsulina().isBlank() ? usuario.getTipoInsulina() : "Rápida";
+        String insulinaLenta = usuario.getInsulinaLenta() != null && !usuario.getInsulinaLenta().isBlank() ? usuario.getInsulinaLenta() : "Lantus (Predeterminada)";
+        String insulinaRapida = usuario.getInsulinaRapida() != null && !usuario.getInsulinaRapida().isBlank() ? usuario.getInsulinaRapida() : "Humalog (Predeterminada)";
+        String tipoInsulinaPrompt = "Lenta/Basal: " + insulinaLenta + ", Rápida/Bolus: " + insulinaRapida;
 
-        log.info("Configuración clínica a utilizar - ISF: {} | Ratio IC: {} | Peso: {} | Altura: {} | Tipo Insulina: {}", 
-                isf, ratioIc, peso, altura, tipoInsulina);
+        log.info("Configuración clínica - ISF: {} | Ratio IC: {} | Peso: {} | Altura: {} | Insulina Lenta: {} | Insulina Rápida: {}",
+                isf, ratioIc, peso, altura, insulinaLenta, insulinaRapida);
         log.info("Se encontraron {} lecturas recientes (últimas 5) para la línea de tiempo.", targetReadings.size());
 
         // Construir historial dinámico cronológico combinando resumen estadístico y lecturas individuales
@@ -154,14 +156,14 @@ public class IaService {
                     "- Ratio Insulina-Carbohidrato (IC): %.1f g.\n" +
                     "- Peso Actual: %.1f kg.\n" +
                     "- Altura: %.2f m.\n" +
-                    "- Tipo de Insulina Utilizada: %s.\n" +
+                    "- Esquema Basal-Bolus (Insulina Lenta/Rápida): %s.\n" +
                     "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### INSTRUCCIONES DE ACCIÓN\n" +
                     "1. Analiza si la glucosa está subiendo o bajando demasiado rápido.\n" +
                     "2. Explica brevemente la posible causa (ej. 'quizás la dosis de insulina anterior fue muy alta').\n" +
                     "3. Da una recomendación de acción inmediata (qué comer, qué observar o cuándo consultar a urgencias).\n" +
-                    "4. Considera obligatoriamente el tiempo de acción esperado para el tipo de insulina utilizado (%s), así como el peso (%.1f kg) y la altura (%.2f m) del paciente al formular cualquier análisis predictivo o alerta de tendencia.\n" +
+                    "4. Considera obligatoriamente los tiempos de acción del esquema Basal-Bolus del paciente (%s), así como el peso (%.1f kg) y la altura (%.2f m) al formular cualquier análisis predictivo o alerta de tendencia.\n" +
                     "5. Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.\n\n" +
                     "### FORMATO DE RESPUESTA (IMPORTANTE: MÁXIMO 4 ORACIONES)\n" +
                     "Responde ESTRICTAMENTE con un objeto JSON válido, sin markdown. " +
@@ -175,11 +177,11 @@ public class IaService {
                     "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
                     "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia.";
 
-            String prompt = String.format(basePrompt, 
-                    isf, ratioIc, peso, altura, tipoInsulina,
-                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), 
+            String prompt = String.format(basePrompt,
+                    isf, ratioIc, peso, altura, tipoInsulinaPrompt,
+                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(),
                     history.toString(),
-                    tipoInsulina, peso, altura);
+                    tipoInsulinaPrompt, peso, altura);
             log.debug("Prompt final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(
@@ -241,7 +243,9 @@ public class IaService {
             }
             double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 74.0;
             double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
-            String tipoInsulina = usuario.getTipoInsulina() != null && !usuario.getTipoInsulina().isBlank() ? usuario.getTipoInsulina() : "Rápida";
+            String insulinaLentaChat = usuario.getInsulinaLenta() != null && !usuario.getInsulinaLenta().isBlank() ? usuario.getInsulinaLenta() : "Lantus (Predeterminada)";
+            String insulinaRapidaChat = usuario.getInsulinaRapida() != null && !usuario.getInsulinaRapida().isBlank() ? usuario.getInsulinaRapida() : "Humalog (Predeterminada)";
+            String tipoInsulinaChat = "Lenta/Basal: " + insulinaLentaChat + ", Rápida/Bolus: " + insulinaRapidaChat;
 
             List<GlucoseReading> ultimasLecturas = glucoseRepository.findTop5ByUsuarioOrderByFechaHoraDesc(usuario);
             StringBuilder history = new StringBuilder("### HISTORIAL RECIENTE\n");
@@ -263,7 +267,7 @@ public class IaService {
                     "- Ratio Insulina-Carbohidrato (IC): %.1f g.\n" +
                     "- Peso Actual: %.1f kg.\n" +
                     "- Altura: %.2f m.\n" +
-                    "- Tipo de Insulina Utilizada: %s.\n" +
+                    "- Esquema Basal-Bolus (Insulina Lenta/Rápida): %s.\n" +
                     "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
                     "%s\n" +
                     "### PREGUNTA O MENSAJE DEL PACIENTE\n" +
@@ -280,11 +284,11 @@ public class IaService {
                     "Considera el tiempo de acción esperado para el tipo de insulina utilizado (%s), así como el peso (%.1f kg) y la altura (%.2f m) del paciente al formular tu análisis, recomendaciones o alertas.\n" +
                     "Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.";
 
-            String prompt = String.format(basePrompt, 
-                    isf, ratioIc, peso, altura, tipoInsulina,
-                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(), 
+            String prompt = String.format(basePrompt,
+                    isf, ratioIc, peso, altura, tipoInsulinaChat,
+                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(),
                     history.toString(), mensajeUsuario,
-                    tipoInsulina, peso, altura);
+                    tipoInsulinaChat, peso, altura);
             log.debug("Prompt de Chat final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(

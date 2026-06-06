@@ -15,7 +15,8 @@ public class UsuarioResponse {
     private String email;
     private Double pesoActual;
     private Double altura;
-    private String tipoInsulina;
+    private String insulinaLenta;
+    private String insulinaRapida;
     private Double ratioIc;
     private Double factorIs;
     private Boolean alertasGlucosa;
