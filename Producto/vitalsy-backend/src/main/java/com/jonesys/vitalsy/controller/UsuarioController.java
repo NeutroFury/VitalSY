@@ -2,113 +2,43 @@ package com.jonesys.vitalsy.controller;
 
 import com.jonesys.vitalsy.dto.response.UsuarioResponse;
 import com.jonesys.vitalsy.dto.request.ParametrosClinicosDTO;
-import com.jonesys.vitalsy.model.Usuario;
-
-import com.jonesys.vitalsy.repository.UsuarioRepository;
+import com.jonesys.vitalsy.service.UsuarioService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
+@Slf4j
 public class UsuarioController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping("/perfil")
     public ResponseEntity<UsuarioResponse> getPerfil(Authentication authentication) {
-        System.out.println("DEBUG: Petición GET perfil para: " + authentication.getName());
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
-
-        return ResponseEntity.ok(mapToResponse(usuario));
+        log.info("Petición GET perfil para: {}", authentication.getName());
+        UsuarioResponse response = usuarioService.getPerfil(authentication.getName());
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/perfil")
     public ResponseEntity<UsuarioResponse> updatePerfil(@RequestBody UsuarioResponse request, Authentication authentication) {
-        System.out.println("DEBUG: Petición PUT perfil para: " + authentication.getName());
-        System.out.println("DATOS RECIBIDOS: " + request);
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
-
-        if (request.getNombre() != null && !request.getNombre().isBlank()) {
-            usuario.setNombre(request.getNombre());
-        }
-        if (request.getPesoActual() != null) {
-            usuario.setPesoActual(request.getPesoActual());
-        }
-        if (request.getAltura() != null) {
-            usuario.setAltura(request.getAltura());
-        }
-        if (request.getInsulinaLenta() != null) {
-            usuario.setInsulinaLenta(request.getInsulinaLenta());
-        }
-        if (request.getInsulinaRapida() != null) {
-            usuario.setInsulinaRapida(request.getInsulinaRapida());
-        }
-        if (request.getRatioIc() != null) {
-            usuario.setRatioIc(request.getRatioIc());
-        }
-        if (request.getFactorIs() != null) {
-            usuario.setFactorIs(request.getFactorIs());
-        }
-        if (request.getAlertasGlucosa() != null) {
-            usuario.setAlertasGlucosa(request.getAlertasGlucosa());
-        }
-        if (request.getRecordatorioComidas() != null) {
-            usuario.setRecordatorioComidas(request.getRecordatorioComidas());
-        }
-        if (request.getZonaHoraria() != null && !request.getZonaHoraria().isBlank()) {
-            usuario.setZonaHoraria(request.getZonaHoraria());
-        }
-
-        Usuario saved = usuarioRepository.save(usuario);
-        System.out.println("DEBUG: Perfil actualizado con éxito para: " + saved.getEmail());
-        return ResponseEntity.ok(mapToResponse(saved));
+        log.info("Petición PUT perfil para: {}", authentication.getName());
+        log.debug("DATOS RECIBIDOS: {}", request);
+        UsuarioResponse response = usuarioService.updatePerfil(authentication.getName(), request);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/parametros-clinicos")
-    public ResponseEntity<?> updateParametrosClinicos(@Valid @RequestBody ParametrosClinicosDTO request, Authentication authentication) {
-        System.out.println("DEBUG: Petición PUT parametros-clinicos para: " + authentication.getName());
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
-
-        if (request.getRangoGlucosaMin() > request.getRangoGlucosaMax()) {
-            return ResponseEntity.badRequest().body(java.util.Map.of(
-                "mensaje", "El rango mínimo no puede ser mayor que el rango máximo."
-            ));
-        }
-
-        usuario.setRangoGlucosaMin(request.getRangoGlucosaMin());
-        usuario.setRangoGlucosaMax(request.getRangoGlucosaMax());
-
-        Usuario saved = usuarioRepository.save(usuario);
-        System.out.println("DEBUG: Parámetros clínicos actualizados con éxito para: " + saved.getEmail());
-        return ResponseEntity.ok(mapToResponse(saved));
-    }
-
-    private UsuarioResponse mapToResponse(Usuario u) {
-        return UsuarioResponse.builder()
-                .id(u.getId())
-                .nombre(u.getNombre())
-                .email(u.getEmail())
-                .pesoActual(u.getPesoActual())
-                .altura(u.getAltura())
-                .insulinaLenta(u.getInsulinaLenta())
-                .insulinaRapida(u.getInsulinaRapida())
-                .ratioIc(u.getRatioIc())
-                .factorIs(u.getFactorIs())
-                .alertasGlucosa(u.getAlertasGlucosa())
-                .recordatorioComidas(u.getRecordatorioComidas())
-                .rangoGlucosaMin(u.getRangoGlucosaMin())
-                .rangoGlucosaMax(u.getRangoGlucosaMax())
-                .zonaHoraria(u.getZonaHoraria())
-                .rol(u.getRol())
-                .build();
+    public ResponseEntity<UsuarioResponse> updateParametrosClinicos(@Valid @RequestBody ParametrosClinicosDTO request, Authentication authentication) {
+        log.info("Petición PUT parametros-clinicos para: {}", authentication.getName());
+        UsuarioResponse response = usuarioService.updateParametrosClinicos(authentication.getName(), request);
+        return ResponseEntity.ok(response);
     }
 }
