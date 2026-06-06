@@ -1,5 +1,5 @@
 # VS Code Java extension output (prevents ghost bin/ folders)
-/vitalsy-backend/
+**/vitalsy-backend/bin/
 
 # ==========================================
 # Credenciales y Variables de Entorno (.env)
