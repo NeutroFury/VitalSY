@@ -2,10 +2,8 @@ package com.jonesys.vitalsy.controller;
 
 import com.jonesys.vitalsy.dto.prediction.PredictiveAnalysisResult;
 import com.jonesys.vitalsy.model.GlucoseReading;
-import com.jonesys.vitalsy.model.ParametroClinico;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
-import com.jonesys.vitalsy.repository.ParametroClinicoRepository;
 import com.jonesys.vitalsy.repository.UsuarioRepository;
 import com.jonesys.vitalsy.service.GeminiInferenceService;
 import org.slf4j.Logger;
@@ -23,16 +21,13 @@ public class PredictiveAnalysisController {
 
     private final UsuarioRepository usuarioRepository;
     private final GlucoseReadingRepository glucoseRepository;
-    private final ParametroClinicoRepository clinicalRepository;
     private final GeminiInferenceService geminiService;
 
     public PredictiveAnalysisController(UsuarioRepository usuarioRepository,
                                         GlucoseReadingRepository glucoseRepository,
-                                        ParametroClinicoRepository clinicalRepository,
                                         GeminiInferenceService geminiService) {
         this.usuarioRepository = usuarioRepository;
         this.glucoseRepository = glucoseRepository;
-        this.clinicalRepository = clinicalRepository;
         this.geminiService = geminiService;
     }
 
@@ -68,11 +63,8 @@ public class PredictiveAnalysisController {
         // Tomar exactamente las primeras 3 (las más recientes)
         List<GlucoseReading> lastThree = readings.subList(0, 3);
 
-        // 3. OBTENER PARÁMETROS CLÍNICOS
-        ParametroClinico params = clinicalRepository.findByUsuario(usuarioAAnalizar).orElse(null);
-
-        // 4. EJECUTAR INFERENCIA
-        PredictiveAnalysisResult result = geminiService.analyzeCausality(lastThree, params);
+        // 3. EJECUTAR INFERENCIA CON EL USUARIO DIRECTAMENTE
+        PredictiveAnalysisResult result = geminiService.analyzeCausality(lastThree, usuarioAAnalizar);
 
         return ResponseEntity.ok(result);
     }

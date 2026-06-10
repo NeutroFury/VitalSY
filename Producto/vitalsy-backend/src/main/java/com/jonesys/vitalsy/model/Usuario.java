@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -39,8 +40,11 @@ public class Usuario {
     @Column(name = "altura")
     private Double altura;
     
-    @Column(name = "tipo_insulina", length = 50)
-    private String tipoInsulina;
+    @Column(name = "insulina_lenta", length = 50)
+    private String insulinaLenta;
+
+    @Column(name = "insulina_rapida", length = 50)
+    private String insulinaRapida;
     
     @Column(name = "ratio_ic")
     private Double ratioIc; // Insulin-to-Carb
@@ -53,12 +57,37 @@ public class Usuario {
     
     @Column(name = "recordatorio_comidas")
     private Boolean recordatorioComidas = false;
+
+    @Column(name = "rango_glucosa_min")
+    private Integer rangoGlucosaMin = 70;
+    
+    @Column(name = "rango_glucosa_max")
+    private Integer rangoGlucosaMax = 180;
+
+    public Integer getRangoGlucosaMin() {
+        return rangoGlucosaMin != null ? rangoGlucosaMin : 70;
+    }
+
+    public Integer getRangoGlucosaMax() {
+        return rangoGlucosaMax != null ? rangoGlucosaMax : 180;
+    }
     
     @Column(length = 20)
     private String rol = "PACIENTE";
     
     @Column(nullable = false)
     private Boolean activo = true;
+
+    @Column(name = "zona_horaria", length = 50)
+    private String zonaHoraria = "America/Santiago";
+
+    public ZoneId getZoneId() {
+        try {
+            return ZoneId.of(zonaHoraria != null ? zonaHoraria : "America/Santiago");
+        } catch (Exception e) {
+            return ZoneId.of("UTC");
+        }
+    }
     
     @Column(name = "creado_en", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime creadoEn;

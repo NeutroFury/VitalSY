@@ -64,4 +64,25 @@ export class GlucoseService {
   exportarPdf(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/exportar-pdf`, { responseType: 'blob' });
   }
+
+  getAgpStatistics(): Observable<AgpDataResponse> {
+    return this.http.get<AgpDataResponse>(`${this.apiUrl}/agp`);
+  }
+}
+
+export interface AgpDataResponse {
+  diasAnalizados: number;
+  mediana: AgpPoint[];
+  rango50: AgpRangePoint[];
+  rango90: AgpRangePoint[];
+}
+
+export interface AgpPoint {
+  x: string;
+  y: number;
+}
+
+export interface AgpRangePoint {
+  x: string;
+  y: [number, number];
 }

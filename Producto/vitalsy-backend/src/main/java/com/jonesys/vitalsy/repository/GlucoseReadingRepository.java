@@ -18,6 +18,8 @@ public interface GlucoseReadingRepository extends JpaRepository<GlucoseReading, 
 
     List<GlucoseReading> findTop20ByUsuarioOrderByFechaHoraDesc(Usuario usuario);
     
+    List<GlucoseReading> findTop5ByUsuarioOrderByFechaHoraDesc(Usuario usuario);
+    
     List<GlucoseReading> findByUsuarioAndFechaHoraBetween(Usuario usuario, 
                                                           ZonedDateTime startDate, 
                                                           ZonedDateTime endDate);

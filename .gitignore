@@ -1,5 +1,5 @@
 # VS Code Java extension output (prevents ghost bin/ folders)
-/vitalsy-backend/
+**/vitalsy-backend/bin/
 
 # ==========================================
 # Credenciales y Variables de Entorno (.env)
@@ -29,3 +29,13 @@
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# ==========================================
+# Supabase Local Data
+# ==========================================
+supabase/.temp/
+supabase/.branch/
+supabase/db/data/
+**/supabase/.temp/
+**/supabase/.branch/
+**/supabase/db/data/

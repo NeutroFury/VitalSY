@@ -25,7 +25,7 @@ public class LibreLinkUpService {
 
     private static final Logger log = LoggerFactory.getLogger(LibreLinkUpService.class);
     private static final String DEFAULT_LOGIN_URL = "https://api-us.libreview.io";
-    private static final String VERSION_HEADER = "4.12.0";
+    private static final String VERSION_HEADER = "4.16.0";
     private static final String PRODUCT_HEADER = "llu.android";
 
     private final LibreLinkUpConfigRepository configRepository;

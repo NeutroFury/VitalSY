@@ -10,6 +10,10 @@ export interface IaAnalysis {
   consejo_breve: string;
 }
 
+export interface ChatResponse {
+  respuesta: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +43,16 @@ export class IaService {
             consejo_breve: 'No hay suficientes datos históricos para un análisis clínico'
           });
         }
+        return throwError(() => new Error('IA_SERVER_UNAVAILABLE'));
+      })
+    );
+  }
+
+  enviarMensajeChat(mensaje: string): Observable<ChatResponse> {
+    console.log('IA_SERVICE: Enviando mensaje de chat...');
+    return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, { mensaje }).pipe(
+      catchError(err => {
+        console.error('IA_SERVICE: Error en el chat:', err);
         return throwError(() => new Error('IA_SERVER_UNAVAILABLE'));
       })
     );

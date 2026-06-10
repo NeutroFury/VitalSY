@@ -1,62 +1,44 @@
 package com.jonesys.vitalsy.controller;
 
 import com.jonesys.vitalsy.dto.response.UsuarioResponse;
-import com.jonesys.vitalsy.model.Usuario;
-import com.jonesys.vitalsy.repository.UsuarioRepository;
+import com.jonesys.vitalsy.dto.request.ParametrosClinicosDTO;
+import com.jonesys.vitalsy.service.UsuarioService;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
+@Slf4j
 public class UsuarioController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping("/perfil")
     public ResponseEntity<UsuarioResponse> getPerfil(Authentication authentication) {
-        System.out.println("DEBUG: Petición GET perfil para: " + authentication.getName());
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
-
-        return ResponseEntity.ok(mapToResponse(usuario));
+        log.info("Petición GET perfil para: {}", authentication.getName());
+        UsuarioResponse response = usuarioService.getPerfil(authentication.getName());
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/perfil")
     public ResponseEntity<UsuarioResponse> updatePerfil(@RequestBody UsuarioResponse request, Authentication authentication) {
-        System.out.println("DEBUG: Petición PUT perfil para: " + authentication.getName());
-        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + authentication.getName()));
-
-        usuario.setPesoActual(request.getPesoActual());
-        usuario.setAltura(request.getAltura());
-        usuario.setTipoInsulina(request.getTipoInsulina());
-        usuario.setRatioIc(request.getRatioIc());
-        usuario.setFactorIs(request.getFactorIs());
-        usuario.setAlertasGlucosa(request.getAlertasGlucosa());
-        usuario.setRecordatorioComidas(request.getRecordatorioComidas());
-
-        Usuario saved = usuarioRepository.save(usuario);
-        System.out.println("DEBUG: Perfil actualizado con éxito para: " + saved.getEmail());
-        return ResponseEntity.ok(mapToResponse(saved));
+        log.info("Petición PUT perfil para: {}", authentication.getName());
+        log.debug("DATOS RECIBIDOS: {}", request);
+        UsuarioResponse response = usuarioService.updatePerfil(authentication.getName(), request);
+        return ResponseEntity.ok(response);
     }
 
-    private UsuarioResponse mapToResponse(Usuario u) {
-        return UsuarioResponse.builder()
-                .id(u.getId())
-                .nombre(u.getNombre())
-                .email(u.getEmail())
-                .pesoActual(u.getPesoActual())
-                .altura(u.getAltura())
-                .tipoInsulina(u.getTipoInsulina())
-                .ratioIc(u.getRatioIc())
-                .factorIs(u.getFactorIs())
-                .alertasGlucosa(u.getAlertasGlucosa())
-                .recordatorioComidas(u.getRecordatorioComidas())
-                .build();
+    @PutMapping("/parametros-clinicos")
+    public ResponseEntity<UsuarioResponse> updateParametrosClinicos(@Valid @RequestBody ParametrosClinicosDTO request, Authentication authentication) {
+        log.info("Petición PUT parametros-clinicos para: {}", authentication.getName());
+        UsuarioResponse response = usuarioService.updateParametrosClinicos(authentication.getName(), request);
+        return ResponseEntity.ok(response);
     }
 }

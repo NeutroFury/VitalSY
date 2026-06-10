@@ -9,11 +9,15 @@ export interface UserProfile {
   email: string;
   pesoActual: number;
   altura: number;
-  tipoInsulina: string;
+  insulinaLenta: string;
+  insulinaRapida: string;
   ratioIc: number;
   factorIs: number;
   alertasGlucosa: boolean;
   recordatorioComidas: boolean;
+  rangoGlucosaMin?: number;
+  rangoGlucosaMax?: number;
+  zonaHoraria?: string;
 }
 
 @Injectable({

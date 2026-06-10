@@ -1,163 +1,211 @@
-# 🚀 VitalSY: Ecosistema Inteligente para Diabetes Tipo 1 📱💉
+# 🚀 VitalSY 📱⚕️
 
-VitalSY es una plataforma de grado profesional y arquitectura distribuida diseñada específicamente para el control y la gestión metabólica proactiva de pacientes con Diabetes Mellitus Tipo 1 (DM1). Más allá de actuar como una bitácora tradicional, el sistema funciona como un asistente clínico inteligente que integra sensores continuos de glucosa (CGM), análisis causales mediante modelos de lenguaje de gran tamaño (LLM) y un motor predictivo para la prevención de eventos agudos en tiempo real.
+![Java 21](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT_Auth-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![AI Integration](https://img.shields.io/badge/AI_Cognitive-FF6F00?style=for-the-badge&logo=google-gemini&logoColor=white)
+
+**VitalSY** es una plataforma de monitoreo biométrico y de salud de grado empresarial orientada a revolucionar el manejo metabólico. Este repositorio aloja el **Backend Core** del sistema, construido sobre una arquitectura distribuida que expone una API RESTful de alto rendimiento para integrarse de forma fluida con un frontend desarrollado en React e Ionic.
+
+Más que un simple gestor de registros médicos, VitalSY actúa como un **motor cognitivo** que aprovecha la Inteligencia Artificial y una infraestructura Cloud moderna para proporcionar análisis predictivos, mantener un blindaje de seguridad robusto y garantizar alta disponibilidad. Todo el ecosistema está orquestado ágilmente mediante contenedores Docker.
 
 ---
 
 ## 📌 Tabla de Contenidos
-- [📖 Descripción del Proyecto](#-descripción-del-proyecto)
-- [🧠 Innovación: IA Causal y Predictiva](#-innovación-ia-causal-y-predictiva)
-- [🏗️ Arquitectura del Sistema](#-arquitectura-del-sistema)
-- [✨ Casos de Uso Implementados](#-casos-de-uso-implementados)
+
+- [📖 Sobre el Proyecto](#-sobre-el-proyecto)
 - [🛠️ Stack Tecnológico](#%EF%B8%8F-stack-tecnológico)
-- [🚀 Despliegue Local / Instalación](#-despliegue-local--instalación)
-- [👨‍💻 Autores](#-autores)
+- [☁️ Infraestructura Cloud y Contenedores](#%E2%98%81%EF%B8%8F-infraestructura-cloud-y-contenedores)
+- [🤖 Inteligencia Artificial y Cognición](#-inteligencia-artificial-y-cognición)
+- [🏗️ Arquitectura Limpia y DevSecOps](#%EF%B8%8F-arquitectura-limpia-y-devsecops)
+- [⚙️ Instalación y Despliegue (Docker Compose)](#%E2%9A%99%EF%B8%8F-instalación-y-despliegue-docker-compose)
+- [📂 Estructura de Directorios](#-estructura-de-directorios)
+- [👨‍💻 Equipo de Desarrollo](#-equipo-de-desarrollo)
 
 ---
 
-## 📖 Descripción del Proyecto
+## 📖 Sobre el Proyecto
 
-VitalSY centraliza la gestión metabólica a través de un enfoque clínico, funcional y de alta fidelidad tecnológica. La plataforma ha sido diseñada para optimizar la toma de decisiones terapéuticas diarias mediante:
+El objetivo principal de VitalSY es proporcionar a los pacientes y profesionales de la salud una herramienta integral y predictiva. La plataforma centraliza las mediciones de glucosa y ofrece un flujo de trabajo continuo que incluye la generación de reportes en formato PDF y el registro detallado del perfil clínico del usuario.
 
-- **Monitoreo Glucémico en Tiempo Real:** Integración directa con datos de sensores continuos a través de la API de Abbott LibreLinkUp y visualización de tendencias dinámicas.
-- **Gestión Clínica y Antropométrica:** Registro y evolución de parámetros corporales vinculados a la modulación de la sensibilidad insulínica.
-- **Análisis Predictivo Local y Remoto:** Evaluación constante del comportamiento metabólico mediante algoritmos locales e inferencia cognitiva externa.
-- **Seguridad y Resiliencia Estrictas:** Mecanismos de comunicación cifrada y fallbacks automáticos ante fallas de red para asegurar la continuidad del servicio médico-asistencial.
+### ✨ Características Principales
 
----
-
-## 🧠 Innovación: IA Causal y Predictiva
-
-El núcleo diferenciador de VitalSY radica en su **Capa Cognitiva de Análisis Causal**, la cual supera el simple registro de datos históricos mediante el uso de **Google Gemini API** (con configuración de salida estructurada JSON nativa):
-
-1. **Contextualización Clínica Completa:** El sistema recopila de forma anónima y segura los coeficientes metabólicos del paciente: el **Ratio IC** (Relación Insulina-Carbohidratos) y el **ISF** (Factor de Sensibilidad a la Insulina, expresado en mg/dL por unidad), complementados con las notas clínicas de las últimas comidas, ejercicio físico y estados de ánimo.
-2. **Gestión Contextual Avanzada:** El motor de IA analiza las lecturas asociándolas al **'Momento'** específico (antes o después de comidas) y a las **'Notas'** o comentarios clínicos provistos por el usuario, proporcionando una evaluación personalizada de las fluctuaciones de glucosa.
-3. **Análisis Temporal y Causalidad:** Se procesa el diferencial de tiempo y tendencia de las últimas tres lecturas de glucemia consecutivas para inferir la velocidad de cambio glucémico.
-4. **Resiliencia y Sanitización de Respuestas JSON:** Implementa un pipeline robusto de procesamiento de IA que realiza un filtrado y sanitización de las respuestas textuales de la API de Gemini (removiendo metadatos Markdown no deseados o bloques de código adicionales de forma segura) antes de su deserialización en el modelo del dominio. Ante degradación de red o fallos de API externa, se activa un fallback local resiliente que asegura la continuidad del servicio médico.
-5. **Intervención Preventiva Temprana (C.U. 08):** Evaluación de riesgos de variabilidad metabólica en una ventana predictiva de 60 a 120 minutos, alertando preventivamente al usuario antes de cruzar los umbrales de seguridad críticos de **Hipoglucemia (< 60 mg/dL)** o **Hiperglucemia (> 250 mg/dL)**.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-El ecosistema está construido bajo un patrón desacoplado y orientado a servicios que garantiza alta disponibilidad, modularidad y seguridad en la transferencia de datos clínicos sensibles:
-
-```mermaid
-graph TD
-    subgraph Frontend [Capa de Cliente & Dispositivo Mobile]
-        A[App Híbrida Ionic 7 / Angular 17] -->|Manejo de Estado Reactivo RxJS| B[Dashboard Premium Dark / Tailwind CSS]
-        A -->|Seguridad: Guards de Ruta| C[Control de Sesión Activa]
-        A -->|Intercepción Global HTTP| D[Inyección Automática JWT]
-        A -->|Lógica Nativa/Local| E[Alertas y Notificaciones Críticas]
-    end
-    
-    subgraph Backend [Capa de Servicios & API RESTful]
-        F[API Gateway / Spring Security] -->|REST / JSON| G[Controladores de Glucosa, Nutrición y Perfil]
-        G -->|Lógica de Negocio / Spring Boot 3.2.x & Java 21| H[Servicios Clínicos & Inferencia]
-        H -->|Versionamiento de Esquema| I[Flyway Database Migrations]
-        I -->|Persistencia y Transaccionalidad| J[(PostgreSQL 16 - Time Series)]
-        H -->|OpenPDF Engine| K[Exportador de Reportes Clínicos PDF]
-        H -->|RestClient con Timeouts Estrictos| L[Google Gemini API]
-        H -->|Cliente HTTP Sincronizado| M[Abbott LibreLinkUp API]
-    end
-
-    A ==>|Canal Cifrado HTTPS / JWT| F
-```
-
----
-
-## ✨ Casos de Uso Implementados
-
-* **C.U. 01 - Autenticación y Autorización de Grado Clínico:** Control de acceso seguro implementado en el backend con Spring Security, contraseñas encriptadas mediante BCrypt y generación de tokens de sesión JWT. En el frontend, la seguridad se gestiona a través de Angular `authGuard` y un interceptor de solicitudes HTTP que adjunta el token JWT de forma transparente.
-* **C.U. 02 - Gestión de Perfil Clínico y Parámetros Metabólicos:** Mantenimiento detallado de la altura, peso y coeficientes específicos de control glucémico (**Ratio IC** e **ISF**), permitiendo parametrizar las sugerencias de dosis de insulina rápida (Lispro) y basales (Lantus).
-* **C.U. 04 - Registro Glucémico Multi-Origen:** Soporte para ingresos manuales validados por interfaz e ingresos automatizados a través del módulo de sincronización con Abbott LibreLinkUp.
-* **C.U. 05 - Dashboard Reactivo de Control Metabólico:** Interfaz táctica optimizada para dispositivos móviles con estética Premium Dark. Muestra el estado del paciente, las lecturas recientes y los gráficos temporales de variabilidad de manera instantánea.
-* **C.U. 08 - Motor de Notificación y Alertas Críticas:** Detección en tiempo real de eventos glucémicos severos mediante lógica reactiva en el cliente, gatillando notificaciones visuales y acústicas inmediatas de seguridad.
-* **C.U. 09 - Historial Predictivo y Análisis de Causalidad IA:** Panel que renderiza las explicaciones generadas por el motor de IA sobre las oscilaciones glucémicas del paciente, analizando de manera contextual variables críticas como el **'Momento'** y las **'Notas'** cargadas. El sistema sanitiza la respuesta de Gemini y cuenta con un plan de resiliencia (fallback clínico temporal) si se corta la comunicación con la API.
-* **C.U. 10 - Exportación de Reportes Clínicos PDF (OpenPDF):** Módulo de generación de PDF profesionales en el backend mediante el motor **OpenPDF**. El documento generado de forma nativa incluye una sección de analítica avanzada que calcula el total de lecturas, el promedio (media) de glucemia y la variabilidad (desviación estándar) de los últimos 30 días, además de una bitácora detallada con coloración condicional para identificar desvíos clínicos de forma ágil por el endocrinólogo.
+- **Gestión Biométrica:** Almacenamiento y procesamiento de lecturas glucémicas y datos antropométricos.
+- **Predicción Inteligente:** Alertas preventivas calculadas por modelos de lenguaje (LLMs) sobre tendencias metabólicas.
+- **Exportación de Reportes:** Generación nativa de PDFs clínicos detallados listos para presentar a especialistas.
+- **Administración Centralizada:** Panel de control para gestionar permisos y accesos de los usuarios.
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
-### Backend (Cloud Service & Core Clínico)
-* **Java 21 (LTS):** Uso de características avanzadas de lenguaje como *Records*, *Pattern Matching* y concurrencia optimizada.
-* **Spring Boot 3.2.x:** Framework principal para la inyección de dependencias, configuración automática y creación de la API RESTful.
-* **Spring Security & JWT:** Implementación de seguridad y validación de tokens sin estado.
-* **Flyway Migrations:** Gestión y versionamiento controlado de la estructura de base de datos relacional.
-* **OpenPDF:** Generación programática de reportes y exportación estructurada en formato PDF.
+La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a largo plazo y gran escalabilidad.
 
-### Frontend (Mobile-First Web Client)
-* **Ionic 7 & Angular 17:** Plataforma híbrida y framework modular para lograr una experiencia nativa de alto rendimiento y código altamente mantenible.
-* **Tailwind CSS:** Diseño UI/UX moderno, fluido y responsivo con una estética Premium Dark unificada.
-* **RxJS:** Programación reactiva basada en observables para la transmisión de flujos de datos asíncronos en tiempo real.
+**Core y Lógica de Negocio:**
 
-### Persistencia y Servicios Externos
-* **PostgreSQL 16:** Motor de base de datos relacional estructurado con índices específicos sobre columnas temporales para optimizar consultas de series de tiempo.
-* **Google Gemini API:** Modelo fundacional configurado en modo estricto de generación estructurada (JSON Schema) para auditoría clínica y de causalidad.
-* **Abbott LibreLinkUp Client:** Integración HTTP para la recuperación programada y sincronizada de lecturas glucémicas desde la nube del sensor CGM del paciente.
+- Java 21 LTS (Records, Pattern Matching)
+- Spring Boot 3.2.x
+- Spring Security (Seguridad de Endpoints)
+- Spring Data JPA (Capa de persistencia)
+- Spring Web (Controladores REST)
+
+**Base de Datos y Migraciones:**
+
+- PostgreSQL 16 (Serie de tiempo y alta concurrencia)
+- Supabase (Plataforma Cloud para hosting de Base de Datos)
+- Flyway (Versionado de esquemas relacionales)
+
+**DevSecOps y Seguridad:**
+
+- JSON Web Tokens (JWT) para autenticación sin estado
+- Bucket4j (Defensa perimetral y Rate Limiting)
+
+**Inteligencia Artificial:**
+
+- Google Gemini API (Análisis y generación de recomendaciones)
+- Spring AI (Integración abstracta de modelos locales y remotos)
+
+**Utilidades y Reportes:**
+
+- OpenPDF (Generación de documentos clínicos)
+- Lombok (Reducción de código repetitivo)
+- Jakarta Validation (Desinfección de entrada de datos)
+
+**Infraestructura y Orquestación:**
+
+- Docker (Aislamiento de procesos)
+- Docker Compose (Orquestación del stack completo)
+- Nginx (Servidor web para el cliente)
 
 ---
 
-## 🚀 Despliegue Local / Instalación
+## ☁️ Infraestructura Cloud y Contenedores
 
-Sigue estos pasos para configurar y ejecutar localmente tanto el backend como el frontend del ecosistema VitalSY.
+VitalSY está diseñado para ser agnóstico del proveedor gracias a **Docker Compose**. Sin embargo, la plataforma está optimizada para operar sobre **Supabase** como proveedor de base de datos en la nube.
+
+- **Motor Relacional:** Utilizamos PostgreSQL 16 alojado de forma remota en Supabase (o de forma local para entornos de prueba)
+- **Rendimiento:** La conexión se establece a través de un pooler nativo optimizado para transacciones rápidas
+- **Orquestación Total:** El frontend (Ionic web), el backend (Spring Boot) y la base de datos se despliegan simultáneamente con un único archivo de configuración
+
+---
+
+## 🤖 Inteligencia Artificial y Cognición
+
+El sistema proporciona inteligencia clínica activa interactuando con modelos de lenguaje como Google Gemini o instancias locales corriendo en Ollama.
+
+- **Análisis de Contexto:** Al guardar una lectura de glucosa, el sistema evalúa el momento del día y las notas agregadas por el paciente para generar recomendaciones y escribirlas en la propiedad `analisisIa`
+- **Predictibilidad:** El motor cruza datos históricos buscando advertir preventivamente al usuario frente a riesgos metabólicos
+- **Transparencia:** Todo este proceso se maneja asíncronamente y se refleja en los DTOs de respuesta hacia la interfaz del usuario
+
+---
+
+## 🏗️ Arquitectura Limpia y DevSecOps
+
+El código fuente obedece a las prácticas más altas de desarrollo empresarial.
+
+### Clean Architecture
+
+La base de código está dividida estrictamente:
+
+- **Controllers:** Capa exclusiva para enrutamiento HTTP y respuestas estandarizadas
+- **Services:** Centralizan validaciones clínicas y la inteligencia del dominio
+- **Repositories:** Manejan las transacciones hacia PostgreSQL
+- **Mappers y DTOs:** Total aislamiento de las entidades de dominio para no exponer el modelo de datos
+
+### Seguridad Avanzada
+
+- **Autenticación:** Flujos seguros apoyados cien por ciento en JWT
+- **Filtro de Rate Limiting:** Usando Bucket4j protegemos los servidores de ataques de fuerza bruta. Limitamos rigurosamente el inicio de sesión a 5 intentos por minuto por cada IP y dejamos una cuota holgada de 100 peticiones para el resto de recursos
+
+### Tolerancia a Fallos y Manejo de Errores
+
+- Hemos consolidado un `GlobalExceptionHandler` (`@RestControllerAdvice`) que atrapa cualquier evento inesperado
+- Esta capa de protección asegura que el cliente móvil siempre reciba una respuesta JSON estructurada con un formato predecible llamado `ErrorResponse` garantizando la estabilidad de la aplicación y la ausencia de trazas de pila (stack traces) filtradas a la web
+- Registramos todo evento anómalo con anotaciones `@Slf4j`
+
+---
+
+## ⚙️ Instalación y Despliegue (Docker Compose)
+
+El proyecto completo se puede levantar con unos pocos comandos.
 
 ### Prerrequisitos
-Asegúrate de tener instalados los siguientes componentes antes de iniciar:
-- **Java Development Kit (JDK) 21**
-- **Node.js** (versión 18 o superior) junto con **npm**
-- **PostgreSQL 16** (corriendo de forma local o en la nube)
-- **Ionic CLI** (opcional, instalable mediante `npm install -g @ionic/cli`)
+
+- Docker instalado y ejecutándose en el equipo
+- Docker Compose configurado
+- Java 21 (solo necesario si deseas compilar manualmente fuera de los contenedores)
+
+### 1. Variables de Entorno
+
+El sistema lee la configuración desde un archivo de entorno protegido. Crea un archivo `.env` en la raíz (junto al archivo Compose) y pega los siguientes valores de ejemplo.
+
+```properties
+# PostgreSQL Local Fallback
+POSTGRES_DB=vitalsy_db
+POSTGRES_USER=<tu_usuario_local>
+POSTGRES_PASSWORD=<tu_password_local>
+DB_PORT=5432
+
+# Supabase Override Opcional (Descomentar para usar Cloud)
+# SPRING_DATASOURCE_URL=jdbc:postgresql://<tu_host_supabase>:5432/postgres
+# SPRING_DATASOURCE_USERNAME=postgres.<tu_id_supabase>
+# SPRING_DATASOURCE_PASSWORD=<tu_password_supabase>
+
+# Seguridad JWT
+JWT_SECRET=<tu_llave_jwt_secreta>
+JWT_EXPIRATION=3600000
+
+# Integracion de Inteligencia Artificial
+GEMINI_API_KEY=<tu_api_key_gemini>
+SPRING_AI_OPENAI_BASE_URL=http://host.docker.internal:1234
+```
+
+### 2. Levantar el Proyecto
+
+Abre tu terminal en la carpeta raíz y ejecuta el siguiente comando para construir y desplegar todas las capas.
+
+```bash
+docker-compose up -d --build
+```
+
+Esto procesará tres servicios principales:
+
+- `vitalsy-db`: Tu base de datos relacional
+- `vitalsy-backend`: Tu API Spring Boot en el puerto 8080
+- `vitalsy-frontend`: Tu interfaz de usuario web en el puerto 80
+
+Si deseas detener la ejecución de forma ordenada ejecuta:
+
+```bash
+docker-compose down
+```
 
 ---
 
-### Paso 1: Configurar y Levantar el Backend (Spring Boot)
+## 📂 Estructura de Directorios
 
-1. **Configurar las Variables de Entorno y Base de Datos:**
-   Asegúrate de crear una base de datos en PostgreSQL llamada `vitalsy_db` (o el nombre definido en tu archivo `application.properties`).
-   Configura las siguientes variables de entorno o edita el archivo `application.properties` con tus credenciales:
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/vitalsy_db
-   spring.datasource.username=tu_usuario
-   spring.datasource.password=tu_contraseña
-   gemini.api.key=tu_api_key_de_google_gemini
-   gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
-   ```
+Una vista general simplificada del módulo de código fuente.
 
-2. **Compilar y Ejecutar el Servidor:**
-   Navega al directorio del backend (`Producto/vitalsy-backend`) y ejecuta el comando de Gradle:
-   - **En Windows:**
-     ```bash
-     gradlew.bat bootRun
-     ```
-   - **En macOS / Linux:**
-     ```bash
-     ./gradlew bootRun
-     ```
-   El backend se compilará y las migraciones de Flyway se aplicarán automáticamente. La API estará disponible en `http://localhost:8080`.
+```text
+vitalsy-backend/src/main/java/com/jonesys/vitalsy/
+├── config/         # Configuraciones de seguridad CORS y Swagger
+├── controller/     # Enrutamiento de la API (Glucosa Usuarios Admin)
+├── dto/            # Objetos de transferencia de datos y Mappers
+├── exception/      # Manejador global de excepciones
+├── model/          # Entidades persistentes de la base de datos
+├── repository/     # Interfaces de Spring Data
+├── security/       # Filtros JWT y Rate Limiting (Bucket4j)
+└── service/        # Lógica clínica e inteligencia artificial
+```
 
 ---
 
-### Paso 2: Configurar y Levantar el Frontend (Ionic / Angular)
+## 👨‍💻 Equipo de Desarrollo
 
-1. **Instalar Dependencias:**
-   Navega al directorio del frontend (`Producto/vitalsy-ionic`) y ejecuta:
-   ```bash
-   npm install
-   ```
+El ecosistema **VitalSY** fue ideado, desarrollado y es mantenido de forma profesional por:
 
-2. **Levantar el Servidor de Desarrollo Híbrido:**
-   Una vez completada la instalación de los paquetes de node, inicia la aplicación mediante el comando:
-   ```bash
-   npx ionic serve
-   ```
-   La aplicación móvil se abrirá automáticamente en tu navegador predeterminado en la dirección `http://localhost:8100`.
-
----
-
-## 👨‍💻 Autores
-
-* **Joaquín Santana**
-* **Gabriel Hernández**
-* **Gabriel Nercelles**
+- 💻 **Joaquín Santana**
+- 💻 **Gabriel Hernández**
+- 💻 **Gabriel Nercelles**

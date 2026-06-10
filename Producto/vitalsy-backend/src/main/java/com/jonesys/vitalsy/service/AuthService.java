@@ -47,6 +47,7 @@ public class AuthService implements UserDetailsService {
         u.setPesoActual(req.getPesoActual());
         u.setRol("PACIENTE"); // Rol por defecto
         u.setActivo(true);   // Usuario activo por defecto
+        u.setZonaHoraria(req.getZonaHoraria() != null ? req.getZonaHoraria() : "America/Santiago");
         u.setCreadoEn(ZonedDateTime.now());
 
         Usuario saved = usuarioRepository.save(u);
@@ -62,7 +63,7 @@ public class AuthService implements UserDetailsService {
             throw new org.springframework.security.authentication.BadCredentialsException("Credenciales inválidas");
         }
 
-        String token = jwtProvider.generateToken(usuario.getEmail(), usuario.getId());
+        String token = jwtProvider.generateToken(usuario.getEmail(), usuario.getId(), usuario.getRol());
 
         int expiresInSeconds = (int) (jwtProvider.getExpirationMs() / 1000);
 

@@ -1,0 +1,138 @@
+<ion-content [fullscreen]="true" class="bg-black">
+  <div class="flex flex-col h-full bg-black">
+
+    <!-- ── Header ── -->
+    <div class="px-6 pt-6 pb-4">
+      <app-header [showBack]="true" [showGreeting]="false" title="Asistente IA"></app-header>
+    </div>
+
+    <!-- ── Messages Area ── -->
+    <div #scrollContainer class="flex-1 overflow-y-auto px-6 pb-4 space-y-4">
+
+      <!-- Prompt Starters (solo cuando no hay mensajes) -->
+      @if (messages.length === 0) {
+        <div class="flex flex-col items-center justify-center h-full space-y-6 animate-fade-in">
+          
+          <!-- AI Avatar -->
+          <div class="w-16 h-16 rounded-3xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center shadow-[0_0_30px_rgba(212,255,0,0.1)]">
+            <ion-icon name="hardware-chip-outline" class="text-3xl text-neon-green"></ion-icon>
+          </div>
+
+          <div class="text-center space-y-1">
+            <h3 class="text-sm font-black text-white uppercase tracking-widest italic">VitalSY AI</h3>
+            <p class="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">Asistente de Salud Inteligente</p>
+          </div>
+
+          <!-- Prompt Starter Cards -->
+          <div class="w-full space-y-3 mt-4">
+            @for (suggestion of suggestions; track suggestion.id) {
+              <button
+                (click)="sendSuggestion(suggestion.prompt)"
+                class="w-full p-4 bg-[#0c0c0c] border border-zinc-900 rounded-2xl text-left active:scale-[0.98] transition-all group hover:border-neon-green/20"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-neon-green/10 flex items-center justify-center shrink-0 group-hover:bg-neon-green/20 transition-colors">
+                    <ion-icon [name]="suggestion.icon" class="text-lg text-neon-green"></ion-icon>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-neon-green">{{ suggestion.label }}</span>
+                    <span class="text-xs text-zinc-400 font-medium truncate">{{ suggestion.prompt }}</span>
+                  </div>
+                </div>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Chat Messages -->
+      @for (msg of messages; track msg.id) {
+        <div class="flex animate-fade-in" [class]="msg.role === 'user' ? 'justify-end' : 'justify-start'">
+          
+          <!-- AI Message -->
+          @if (msg.role === 'assistant') {
+            <div class="flex gap-2 max-w-[85%]">
+              <div class="w-7 h-7 rounded-lg bg-neon-green/10 flex items-center justify-center shrink-0 mt-1">
+                <ion-icon name="hardware-chip-outline" class="text-sm text-neon-green"></ion-icon>
+              </div>
+              <div class="bg-[#0c0c0c] border border-zinc-900 rounded-2xl rounded-tl-md px-4 py-3">
+                <p class="text-[13px] text-zinc-300 leading-relaxed" [innerHTML]="formatMarkdown(msg.content) | safeHtml"></p>
+                <span class="text-[8px] text-zinc-700 font-bold uppercase tracking-widest mt-2 block">{{ formatTime(msg.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- User Message -->
+          @if (msg.role === 'user') {
+            <div class="max-w-[80%]">
+              <div class="bg-neon-green rounded-2xl rounded-tr-md px-4 py-3 shadow-[0_4px_15px_-5px_rgba(212,255,0,0.3)]">
+                <p class="text-[13px] text-black font-semibold leading-relaxed" [innerHTML]="formatMarkdown(msg.content) | safeHtml"></p>
+                <span class="text-[8px] text-black/40 font-bold uppercase tracking-widest mt-2 block text-right">{{ formatTime(msg.timestamp) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Typing Indicator -->
+      @if (isLoading) {
+        <div class="flex gap-2 animate-fade-in">
+          <div class="w-7 h-7 rounded-lg bg-neon-green/10 flex items-center justify-center shrink-0 mt-1">
+            <ion-icon name="hardware-chip-outline" class="text-sm text-neon-green animate-pulse"></ion-icon>
+          </div>
+          <div class="bg-[#0c0c0c] border border-zinc-900 rounded-2xl rounded-tl-md px-5 py-4">
+            <div class="flex items-center gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-neon-green/60 animate-bounce" style="animation-delay: 0ms"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60 animate-bounce" style="animation-delay: 150ms"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60 animate-bounce" style="animation-delay: 300ms"></div>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- ── Input Area ── -->
+    <div class="px-4 pb-6 pt-3 border-t border-zinc-900/50 bg-black/80 backdrop-blur-sm">
+      <div class="flex items-end gap-2">
+        <div class="flex-1 bg-[#0c0c0c] border border-zinc-800 rounded-2xl px-4 py-3 focus-within:border-neon-green/30 transition-colors">
+          <textarea
+            #messageInput
+            [(ngModel)]="userMessage"
+            (keydown.enter)="onEnterPress($event)"
+            placeholder="Escribe tu consulta..."
+            rows="1"
+            class="w-full bg-transparent text-sm text-white placeholder-zinc-600 resize-none outline-none max-h-24 font-medium"
+          ></textarea>
+        </div>
+        <button
+          (click)="startListening()"
+          [disabled]="isLoading"
+          class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 active:scale-90 transition-all bg-[#0c0c0c] border border-zinc-800"
+          [class.shadow-[0_0_15px_rgba(212,255,0,0.3)]]="isListening"
+        >
+          <ion-icon 
+            name="mic" 
+            class="text-lg" 
+            [class]="isListening ? 'text-neon-green animate-pulse' : 'text-zinc-500'"
+          ></ion-icon>
+        </button>
+        <button
+          (click)="sendMessage()"
+          [disabled]="!userMessage.trim() || isLoading"
+          class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 active:scale-90 transition-all"
+          [class]="userMessage.trim() && !isLoading 
+            ? 'bg-neon-green shadow-[0_4px_15px_-5px_rgba(212,255,0,0.4)]' 
+            : 'bg-zinc-900 opacity-40'"
+        >
+          <ion-icon 
+            name="send" 
+            class="text-lg" 
+            [class]="userMessage.trim() && !isLoading ? 'text-black' : 'text-zinc-600'"
+          ></ion-icon>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

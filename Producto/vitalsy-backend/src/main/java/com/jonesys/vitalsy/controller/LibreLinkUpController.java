@@ -9,11 +9,15 @@ import com.jonesys.vitalsy.util.EncryptionUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/librelinkup")
 public class LibreLinkUpController {
+
+    private static final Logger log = LoggerFactory.getLogger(LibreLinkUpController.class);
 
     private final LibreLinkUpConfigRepository configRepository;
     private final UsuarioRepository usuarioRepository;
@@ -76,6 +80,8 @@ public class LibreLinkUpController {
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        log.info("DEBUG: Iniciando forzar sincronización para el usuario: {}", usuario.getEmail());
+
         LibreLinkUpConfig config = configRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("LibreLinkUp no configurado para este usuario."));
 
@@ -86,6 +92,7 @@ public class LibreLinkUpController {
                     "nuevosRegistros", guardados
             ));
         } catch (Exception e) {
+            log.error("ERROR: Fallo al forzar sincronización para el usuario {}", usuario.getEmail(), e);
             return ResponseEntity.status(500).body("Error sincronizando: " + e.getMessage());
         }
     }

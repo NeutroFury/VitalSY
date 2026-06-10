@@ -38,10 +38,11 @@ export class LoginComponent {
 
       this.authService.login(credentials).subscribe({
         next: (res) => {
-          console.log('Login successful', res);
-          this.navCtrl.navigateRoot('/dashboard', { 
-            animated: true, 
-            animationDirection: 'forward' 
+          const rol = this.authService.getRol();
+          const destino = rol === 'ADMIN' ? '/admin-panel' : '/dashboard';
+          this.navCtrl.navigateRoot(destino, {
+            animated: true,
+            animationDirection: 'forward'
           });
         },
         error: (err) => {

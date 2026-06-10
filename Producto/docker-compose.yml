@@ -29,10 +29,10 @@ services:
     container_name: vitalsy-backend
     restart: unless-stopped
     environment:
-      # Override datasource to point to Docker service name
-      SPRING_DATASOURCE_URL: jdbc:postgresql://vitalsy-db:5432/${POSTGRES_DB:-vitalsy_db}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # Override datasource — defaults to local container, overridable via .env
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://vitalsy-db:5432/${POSTGRES_DB:-vitalsy_db}}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-${POSTGRES_USER:-postgres}}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-${POSTGRES_PASSWORD:-postgres}}
       # JWT (Spring relaxed binding: jwt.secret → JWT_SECRET)
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production-vitalsy-2024}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}

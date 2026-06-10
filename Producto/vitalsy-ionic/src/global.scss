@@ -96,3 +96,76 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
 }
+
+/* =========================================
+   History - Accordion & FAB Styles
+   ========================================= */
+
+/* Accordion Group: remove default backgrounds */
+.history-accordion {
+  background: transparent;
+}
+
+.history-accordion ion-accordion {
+  background: transparent;
+  margin-bottom: 8px;
+}
+
+/* Accordion header item: dark theme */
+.history-accordion ion-accordion .history-day-header {
+  --background: rgba(24, 24, 27, 0.4);
+  --border-color: rgba(39, 39, 42, 0.6);
+  --padding-start: 16px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  --min-height: 56px;
+  border: 1px solid rgba(39, 39, 42, 0.6);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Accordion toggle icon color */
+.history-accordion ion-accordion::part(icon) {
+  color: #ccff00;
+  opacity: 0.6;
+  font-size: 16px;
+}
+
+/* When expanded, brighten the toggle */
+.history-accordion ion-accordion.accordion-expanded::part(icon) {
+  opacity: 1;
+}
+
+/* Expanded header gets a subtle neon border */
+.history-accordion ion-accordion.accordion-expanded .history-day-header {
+  --border-color: rgba(204, 255, 0, 0.15);
+  border-color: rgba(204, 255, 0, 0.15);
+}
+
+/* Content panel */
+.history-accordion ion-accordion .ion-padding,
+.history-accordion ion-accordion [slot="content"] {
+  background: transparent;
+  padding: 0;
+}
+
+/* FAB Export Button */
+.history-fab ion-fab-button {
+  --background: #ccff00;
+  --color: #000;
+  --box-shadow: 
+    0 0 20px rgba(204, 255, 0, 0.3),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+  --border-radius: 18px;
+  width: 56px;
+  height: 56px;
+  transition: transform 0.2s ease;
+}
+
+.history-fab ion-fab-button:active {
+  transform: scale(0.92);
+}
+
+.history-fab ion-fab-button ion-icon {
+  font-size: 22px;
+}
