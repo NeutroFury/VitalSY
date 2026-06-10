@@ -21,6 +21,7 @@ Más que un simple gestor de registros médicos, VitalSY actúa como un **motor 
 - [🤖 Inteligencia Artificial y Cognición](#-inteligencia-artificial-y-cognición)
 - [🏗️ Arquitectura Limpia y DevSecOps](#%EF%B8%8F-arquitectura-limpia-y-devsecops)
 - [⚙️ Instalación y Despliegue (Docker Compose)](#%E2%9A%99%EF%B8%8F-instalación-y-despliegue-docker-compose)
+  - [🔑 Variables de Entorno](#1-variables-de-entorno)
 - [📂 Estructura de Directorios](#-estructura-de-directorios)
 - [👨‍💻 Equipo de Desarrollo](#-equipo-de-desarrollo)
 
@@ -139,28 +140,70 @@ El proyecto completo se puede levantar con unos pocos comandos.
 
 ### 1. Variables de Entorno
 
-El sistema lee la configuración desde un archivo de entorno protegido. Crea un archivo `.env` en la raíz (junto al archivo Compose) y pega los siguientes valores de ejemplo.
+El sistema lee su configuración desde un archivo `.env` ubicado en la raíz del proyecto (junto al `docker-compose.yml`). Se provee el archivo [`.env.example`](./Producto/.env.example) como plantilla de referencia.
 
-```properties
-# PostgreSQL Local Fallback
-POSTGRES_DB=vitalsy_db
-POSTGRES_USER=<tu_usuario_local>
-POSTGRES_PASSWORD=<tu_password_local>
-DB_PORT=5432
+```bash
+# En Windows (PowerShell)
+copy Producto\.env.example Producto\.env
 
-# Supabase Override Opcional (Descomentar para usar Cloud)
-# SPRING_DATASOURCE_URL=jdbc:postgresql://<tu_host_supabase>:5432/postgres
-# SPRING_DATASOURCE_USERNAME=postgres.<tu_id_supabase>
-# SPRING_DATASOURCE_PASSWORD=<tu_password_supabase>
-
-# Seguridad JWT
-JWT_SECRET=<tu_llave_jwt_secreta>
-JWT_EXPIRATION=3600000
-
-# Integracion de Inteligencia Artificial
-GEMINI_API_KEY=<tu_api_key_gemini>
-SPRING_AI_OPENAI_BASE_URL=http://host.docker.internal:1234
+# En macOS / Linux
+cp Producto/.env.example Producto/.env
 ```
+
+> ⚠️ **Nunca subas el archivo `.env` al repositorio.** Ya está protegido en el `.gitignore`.
+
+A continuación se describen todas las variables disponibles, agrupadas por función. Las marcadas como **Sí** en la columna *Requerido* deben definirse obligatoriamente antes de iniciar los contenedores.
+
+---
+
+#### 🗄️ Base de Datos (PostgreSQL local)
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `POSTGRES_DB` | `vitalsy_db` | No | Nombre de la base de datos creada en el contenedor |
+| `POSTGRES_USER` | `postgres` | No | Usuario del motor PostgreSQL local |
+| `POSTGRES_PASSWORD` | — | **Sí** | Contraseña del usuario de la base de datos |
+| `DB_PORT` | `5432` | No | Puerto del host mapeado al contenedor de PostgreSQL |
+
+---
+
+#### ☁️ Supabase / DataSource Cloud (override opcional)
+
+Estas variables **reemplazan** la conexión al contenedor local. Úsalas si deseas apuntar a **Supabase** u otro proveedor PostgreSQL remoto. Si no se definen, el backend se conecta automáticamente al contenedor `vitalsy-db`.
+
+| Variable | Requerido | Descripción |
+|---|:---:|---|
+| `SPRING_DATASOURCE_URL` | No | URL JDBC completa del servidor remoto (ej. `jdbc:postgresql://<host>:5432/postgres`) |
+| `SPRING_DATASOURCE_USERNAME` | No | Usuario del servidor remoto |
+| `SPRING_DATASOURCE_PASSWORD` | No | Contraseña del servidor remoto |
+
+---
+
+#### 🔐 Seguridad JWT
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `JWT_SECRET` | — | **Sí** | Clave secreta para firmar tokens JWT. Debe ser una cadena aleatoria larga (mín. 32 caracteres) |
+| `JWT_EXPIRATION` | `3600000` | No | Tiempo de vida del token en milisegundos (por defecto: 1 hora) |
+
+---
+
+#### 🤖 Inteligencia Artificial
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `GEMINI_API_KEY` | — | **Sí** | API Key obtenida desde [Google AI Studio](https://aistudio.google.com) para acceder al modelo Gemini |
+| `SPRING_AI_OPENAI_BASE_URL` | `http://127.0.0.1:1234` | No | URL de una instancia de IA local compatible con OpenAI (LM Studio / Ollama) |
+| `SPRING_AI_OPENAI_API_KEY` | `vitalsy-local` | No | Clave ficticia requerida por el cliente HTTP para la IA local |
+
+---
+
+#### 🌐 Puertos de los Servicios
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `BACKEND_PORT` | `8080` | No | Puerto del host mapeado al backend Spring Boot |
+| `FRONTEND_PORT` | `80` | No | Puerto del host mapeado al frontend Ionic/Nginx |
 
 ### 2. Levantar el Proyecto
 
