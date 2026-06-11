@@ -59,6 +59,18 @@ public class GlucoseService {
         return cronologicas.stream().map(this::mapToDto).toList();
     }
 
+    public List<GlucoseReadingDto> getUltimosRegistrosAdmin(Integer usuarioId) {
+        log.debug("Administrador solicitando últimos 10 registros para el usuario ID: {}", usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<GlucoseReading> ultimas = repository.findTop10ByUsuarioOrderByFechaHoraDesc(usuario);
+        List<GlucoseReading> cronologicas = new ArrayList<>(ultimas);
+        Collections.reverse(cronologicas);
+
+        return cronologicas.stream().map(this::mapToDto).toList();
+    }
+
     public List<GlucoseReadingDto> getHistorial(String email) {
         log.debug("Recuperando historial para el usuario: {}", email);
         Usuario usuario = getUsuarioOrThrow(email);

@@ -1,0 +1,120 @@
+<ion-header class="admin-header">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin-panel" text="Volver" icon="arrow-back-outline" class="neon-back-btn"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="header-title">Expediente del Paciente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="admin-bg">
+  <div class="content-container">
+
+    @if (isLoading) {
+      <div class="loading-wrap">
+        <ion-spinner name="crescent" class="neon-spinner"></ion-spinner>
+        <p class="loading-text">Cargando expediente...</p>
+      </div>
+    }
+
+    @if (!isLoading && paciente) {
+      <!-- ── Cabecera del Paciente ── -->
+      <div class="patient-header-card">
+        <div class="avatar-section">
+          <div class="large-avatar">{{ getInitials(paciente.nombre) }}</div>
+          <div class="info-group">
+            <h1 class="patient-name">{{ paciente.nombre }}</h1>
+            <p class="patient-email">{{ paciente.email }}</p>
+            <span class="status-badge" [class.active]="paciente.activo" [class.suspended]="!paciente.activo">
+              {{ paciente.activo ? 'Activo' : 'Suspendido' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="metrics-section">
+          <div class="metric-item">
+            <span class="metric-label">Peso / Altura</span>
+            <span class="metric-value">{{ paciente.pesoActual || '—' }} kg / {{ paciente.altura || '—' }} m</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Rango Glucosa</span>
+            <span class="metric-value range-value">{{ paciente.rangoGlucosaMin }} – {{ paciente.rangoGlucosaMax }} mg/dL</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Insulina Basal</span>
+            <span class="metric-value badge basal">{{ formatInsulin(paciente.insulinaLenta) }}</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Insulina Bolus</span>
+            <span class="metric-value badge bolus">{{ formatInsulin(paciente.insulinaRapida) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Tarjetas de Funcionalidades (Esqueletos) ── -->
+      <div class="features-grid">
+        
+        <!-- Tarjeta 1: Historial -->
+        <ion-card class="feature-card neon-purple-glow">
+          <ion-card-header>
+            <div class="icon-wrap purple">
+              <ion-icon name="pulse-outline"></ion-icon>
+            </div>
+            <ion-card-title>Historial de Glucosa</ion-card-title>
+            <ion-card-subtitle>Métricas y registros</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            @if (hasRegistros) {
+              <div class="chart-container">
+                <canvas baseChart 
+                  [data]="lineChartData" 
+                  [options]="lineChartOptions" 
+                  type="line">
+                </canvas>
+              </div>
+            } @else {
+              <div class="no-data-placeholder">
+                <p class="placeholder-text">El paciente aún no ha registrado niveles de glucosa.</p>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Tarjeta 2: Ajuste de Dosis -->
+        <ion-card class="feature-card neon-green-glow">
+          <ion-card-header>
+            <div class="icon-wrap green">
+              <ion-icon name="medical-outline"></ion-icon>
+            </div>
+            <ion-card-title>Ajuste de Dosis</ion-card-title>
+            <ion-card-subtitle>Ratios y sensibilidad</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="mock-stats">
+              <div class="mock-stat"><span>Ratio IC:</span> <strong>1:{{ paciente.ratioIc }}</strong></div>
+              <div class="mock-stat"><span>Factor IS:</span> <strong>1:{{ paciente.factorIs }}</strong></div>
+            </div>
+            <p class="placeholder-text">Herramienta para sugerir ajustes médicos próximamente.</p>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Tarjeta 3: Notas Médicas -->
+        <ion-card class="feature-card neon-blue-glow">
+          <ion-card-header>
+            <div class="icon-wrap blue">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+            <ion-card-title>Notas Médicas</ion-card-title>
+            <ion-card-subtitle>Observaciones</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="mock-textarea">Sin notas registradas...</div>
+            <button class="mock-btn outline">Agregar Nota</button>
+          </ion-card-content>
+        </ion-card>
+
+      </div>
+    }
+
+  </div>
+</ion-content>

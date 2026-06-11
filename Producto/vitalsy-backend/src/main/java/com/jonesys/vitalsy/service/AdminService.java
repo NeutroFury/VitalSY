@@ -41,6 +41,13 @@ public class AdminService {
                 .toList();
     }
 
+    public UsuarioResponse getUsuarioById(Integer id, String adminEmail) {
+        log.info("🔐 Admin '{}' consultó el detalle del usuario con ID: {}", adminEmail, id);
+        return usuarioRepository.findById(id)
+                .map(usuarioMapper::toResponse)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+    }
+
     public Map<String, String> cambiarRol(Integer id, String nuevoRol, String adminEmail) {
         if (nuevoRol == null || !List.of("PACIENTE", "MEDICO", "ADMIN").contains(nuevoRol.toUpperCase())) {
             throw new RuntimeException("Rol inválido. Los valores permitidos son: PACIENTE, MEDICO, ADMIN.");

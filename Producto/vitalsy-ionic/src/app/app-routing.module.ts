@@ -52,6 +52,11 @@ const routes: Routes = [
     loadComponent: () => import('./components/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
   {
+    path: 'admin/paciente/:id',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./components/paciente-detalle/paciente-detalle.component').then(m => m.PacienteDetalleComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

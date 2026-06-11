@@ -44,6 +44,17 @@ public class AdminController {
     }
 
     /**
+     * GET /api/v1/admin/usuarios/{id}
+     * Devuelve el detalle de un usuario específico.
+     * Requiere rol ADMIN.
+     */
+    @GetMapping("/usuarios/{id}")
+    public ResponseEntity<UsuarioResponse> getUsuarioById(@PathVariable Integer id, Authentication authentication) {
+        UsuarioResponse usuario = adminService.getUsuarioById(id, authentication.getName());
+        return ResponseEntity.ok(usuario);
+    }
+
+    /**
      * PUT /api/v1/admin/usuarios/{id}/rol
      * Cambia el rol de un usuario. Body: { "rol": "ADMIN" | "PACIENTE" | "MEDICO" }
      * Requiere rol ADMIN.

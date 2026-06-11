@@ -39,8 +39,16 @@ export class AdminService {
     return this.http.get<PacienteAdmin[]>(`${this.apiUrl}/usuarios`);
   }
 
+  getPacienteById(id: number): Observable<PacienteAdmin> {
+    return this.http.get<PacienteAdmin>(`${this.apiUrl}/usuarios/${id}`);
+  }
+
   getTodos(): Observable<PacienteAdmin[]> {
     return this.http.get<PacienteAdmin[]>(`${this.apiUrl}/usuarios/todos`);
+  }
+
+  getUltimosRegistrosGlucosa(usuarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8080/api/v1/registros/usuario/${usuarioId}/ultimos`);
   }
 
   getStats(): Observable<AdminStats> {

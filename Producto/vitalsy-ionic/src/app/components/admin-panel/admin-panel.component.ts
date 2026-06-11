@@ -17,7 +17,8 @@ import {
   searchOutline,
   closeOutline,
   banOutline,
-  checkmarkCircleOutline
+  checkmarkCircleOutline,
+  eyeOutline
 } from 'ionicons/icons';
 import { AdminService, PacienteAdmin, AdminStats } from '../../services/admin.service';
 import { AuthService } from '../../services/auth.service';
@@ -51,7 +52,7 @@ export class AdminPanelComponent implements OnInit {
       peopleOutline, statsChartOutline, logOutOutline, refreshOutline,
       shieldCheckmarkOutline, waterOutline, flashOutline, timeOutline,
       personOutline, mailOutline, searchOutline, closeOutline,
-      banOutline, checkmarkCircleOutline
+      banOutline, checkmarkCircleOutline, eyeOutline
     });
   }
 
@@ -107,6 +108,10 @@ export class AdminPanelComponent implements OnInit {
       .slice(0, 2)
       .map(n => n[0]?.toUpperCase() ?? '')
       .join('');
+  }
+
+  goToDetalle(id: number) {
+    this.router.navigate(['/admin/paciente', id]);
   }
 
   async onToggleStatus(paciente: PacienteAdmin) {

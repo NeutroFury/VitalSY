@@ -1,0 +1,348 @@
+// ══════════════════════════════════════════════════════════
+// VitalSY Admin Panel — Paciente Detalle (Premium Dark)
+// ══════════════════════════════════════════════════════════
+
+$neon: #d4ff00;
+$purple: #9d4edd;
+$blue: #38bdf8;
+$bg: #050505;
+$surface: #0e0e0e;
+$surface-2: #161616;
+$border: rgba(255, 255, 255, 0.06);
+$text: #ffffff;
+$text-muted: #8b8b93;
+
+ion-content.admin-bg {
+  --background: #{$bg};
+}
+
+// ── Header Override ──
+.admin-header {
+  ion-toolbar {
+    --background: #{$bg};
+    --border-color: #{$border};
+  }
+
+  .header-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: $text;
+    letter-spacing: 0.5px;
+  }
+
+  .neon-back-btn {
+    --color: #{$text-muted};
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s;
+
+    &::part(native):hover {
+      color: $neon;
+    }
+  }
+}
+
+.content-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+// ── Loading ──
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  gap: 16px;
+
+  .neon-spinner {
+    --color: #{$neon};
+    width: 36px;
+    height: 36px;
+  }
+  .loading-text {
+    color: $text-muted;
+    font-size: 14px;
+  }
+}
+
+// ── Cabecera del Paciente ──
+.patient-header-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+
+  .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .large-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(212, 255, 0, 0.1);
+      border: 2px solid rgba(212, 255, 0, 0.5);
+      color: $neon;
+      font-size: 28px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(212, 255, 0, 0.15);
+    }
+
+    .info-group {
+      .patient-name {
+        font-size: 26px;
+        font-weight: 900;
+        margin: 0 0 6px;
+        color: $text;
+        letter-spacing: -0.5px;
+      }
+      .patient-email {
+        font-size: 14px;
+        color: $text-muted;
+        margin: 0 0 12px;
+      }
+    }
+  }
+
+  .metrics-section {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .metric-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: $text-muted;
+      }
+      
+      .metric-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: $text;
+
+        &.range-value {
+          color: #34d399;
+        }
+
+        &.badge {
+          display: inline-block;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 13px;
+          
+          &.basal {
+            background: rgba(56, 189, 248, 0.1);
+            color: $blue;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+          }
+          &.bolus {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+          }
+        }
+      }
+    }
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.active {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+  }
+  &.suspended {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+}
+
+// ── Tarjetas de Funcionalidades (Grid) ──
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  margin: 0;
+  background: $surface;
+  border-radius: 16px;
+  border: 1px solid $border;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  // Brillos sutiles
+  &.neon-purple-glow:hover {
+    border-color: rgba($purple, 0.5);
+    box-shadow: 0 0 20px rgba($purple, 0.15);
+    transform: translateY(-4px);
+  }
+  &.neon-green-glow:hover {
+    border-color: rgba($neon, 0.5);
+    box-shadow: 0 0 20px rgba($neon, 0.15);
+    transform: translateY(-4px);
+  }
+  &.neon-blue-glow:hover {
+    border-color: rgba($blue, 0.5);
+    box-shadow: 0 0 20px rgba($blue, 0.15);
+    transform: translateY(-4px);
+  }
+
+  ion-card-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+
+    &.purple { background: rgba($purple, 0.15); color: lighten($purple, 20%); }
+    &.green { background: rgba($neon, 0.1); color: $neon; }
+    &.blue { background: rgba($blue, 0.15); color: $blue; }
+  }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: $text;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  ion-card-subtitle {
+    font-size: 12px;
+    color: $text-muted;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  ion-card-content {
+    padding: 0 24px 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .no-data-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    
+    p {
+      margin: 0;
+      color: $text-muted;
+      font-size: 13px;
+      text-align: center;
+      padding: 0 20px;
+    }
+  }
+
+  .placeholder-text {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0 0 20px;
+  }
+
+  .mock-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    .mock-stat {
+      background: $surface-2;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid $border;
+      font-size: 12px;
+      color: $text-muted;
+      strong { color: $text; font-size: 14px; margin-left: 6px; }
+    }
+  }
+
+  .mock-textarea {
+    background: $surface-2;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 13px;
+    color: #52525b;
+    font-style: italic;
+    margin-bottom: 20px;
+    min-height: 80px;
+  }
+
+  .mock-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+
+    &.purple {
+      background: rgba($purple, 0.15);
+      color: lighten($purple, 15%);
+      &:hover { background: rgba($purple, 0.25); }
+    }
+    &.outline {
+      background: transparent;
+      border: 1px dashed $border;
+      color: $text-muted;
+      &:hover { border-color: rgba(255,255,255,0.2); color: $text; }
+    }
+  }
+}
