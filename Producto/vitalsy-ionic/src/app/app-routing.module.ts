@@ -48,6 +48,10 @@ const routes: Routes = [
     loadComponent: () => import('./components/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent)
   },
   {
+    path: 'reset-password',
+    loadComponent: () => import('./components/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

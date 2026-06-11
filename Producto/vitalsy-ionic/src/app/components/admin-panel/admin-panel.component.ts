@@ -15,11 +15,14 @@ import {
   personOutline,
   mailOutline,
   searchOutline,
-  closeOutline
+  closeOutline,
+  banOutline,
+  checkmarkCircleOutline
 } from 'ionicons/icons';
 import { AdminService, PacienteAdmin, AdminStats } from '../../services/admin.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { ToastController, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-admin-panel',
@@ -32,6 +35,8 @@ export class AdminPanelComponent implements OnInit {
   private adminService = inject(AdminService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private toastCtrl = inject(ToastController);
+  private alertCtrl = inject(AlertController);
 
   pacientes: PacienteAdmin[] = [];
   filteredPacientes: PacienteAdmin[] = [];
@@ -45,7 +50,8 @@ export class AdminPanelComponent implements OnInit {
     addIcons({
       peopleOutline, statsChartOutline, logOutOutline, refreshOutline,
       shieldCheckmarkOutline, waterOutline, flashOutline, timeOutline,
-      personOutline, mailOutline, searchOutline, closeOutline
+      personOutline, mailOutline, searchOutline, closeOutline,
+      banOutline, checkmarkCircleOutline
     });
   }
 
@@ -101,5 +107,70 @@ export class AdminPanelComponent implements OnInit {
       .slice(0, 2)
       .map(n => n[0]?.toUpperCase() ?? '')
       .join('');
+  }
+
+  async onToggleStatus(paciente: PacienteAdmin) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar',
+      message: `¿Estás seguro que deseas ${paciente.activo ? 'suspender' : 'activar'} a ${paciente.nombre}?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel', cssClass: 'text-zinc-400' },
+        { 
+          text: 'Sí, continuar', 
+          handler: () => {
+            this.adminService.toggleStatus(paciente.id).subscribe({
+              next: async (res) => {
+                paciente.activo = !paciente.activo;
+                const toast = await this.toastCtrl.create({
+                  message: res.mensaje || 'Estado actualizado.',
+                  duration: 3000, color: 'success', position: 'top'
+                });
+                toast.present();
+              },
+              error: async (err) => {
+                const toast = await this.toastCtrl.create({
+                  message: err.error?.message || 'Error al actualizar el estado.',
+                  duration: 3000, color: 'danger', position: 'top'
+                });
+                toast.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async onTriggerPasswordReset(paciente: PacienteAdmin) {
+    const alert = await this.alertCtrl.create({
+      header: 'Recuperación de Contraseña',
+      message: `¿Deseas enviar un enlace de recuperación al correo ${paciente.email}?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel', cssClass: 'text-zinc-400' },
+        { 
+          text: 'Enviar Correo', 
+          handler: () => {
+            this.adminService.triggerPasswordReset(paciente.id).subscribe({
+              next: async (res) => {
+                const toast = await this.toastCtrl.create({
+                  message: res.mensaje || 'Correo enviado al paciente.',
+                  duration: 4000, color: 'success', position: 'top'
+                });
+                toast.present();
+              },
+              error: async (err) => {
+                const toast = await this.toastCtrl.create({
+                  message: err.error?.message || 'Error al enviar el correo.',
+                  duration: 3000, color: 'danger', position: 'top'
+                });
+                toast.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }

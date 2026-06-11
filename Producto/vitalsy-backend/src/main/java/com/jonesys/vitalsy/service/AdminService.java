@@ -16,10 +16,12 @@ public class AdminService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordResetService passwordResetService;
 
-    public AdminService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public AdminService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PasswordResetService passwordResetService) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
+        this.passwordResetService = passwordResetService;
     }
 
     public List<UsuarioResponse> getAllPacientes(String adminEmail) {
@@ -77,6 +79,42 @@ public class AdminService {
                 "totalMedicos", totalMedicos,
                 "totalAdmins", totalAdmins,
                 "totalActivos", totalActivos
+        );
+    }
+
+    public Map<String, String> toggleUserStatus(Integer id, String adminEmail) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+        
+        // No permitir que el admin se suspenda a sí mismo para evitar bloqueos
+        if (usuario.getEmail().equals(adminEmail)) {
+            throw new RuntimeException("No puedes suspender tu propia cuenta.");
+        }
+
+        usuario.setActivo(!usuario.getActivo());
+        usuarioRepository.save(usuario);
+
+        String estado = usuario.getActivo() ? "activado" : "suspendido";
+        log.info("🔐 Admin '{}' ha {} la cuenta del usuario {}.", adminEmail, estado, usuario.getEmail());
+
+        return Map.of(
+                "mensaje", "Usuario " + estado + " correctamente.",
+                "usuario", usuario.getEmail(),
+                "activo", usuario.getActivo().toString()
+        );
+    }
+
+    public Map<String, String> triggerPasswordReset(Integer id, String adminEmail) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+
+        passwordResetService.iniciarRecuperacion(usuario.getEmail());
+        
+        log.info("🔐 Admin '{}' forzó envío de enlace de recuperación al usuario {}.", adminEmail, usuario.getEmail());
+
+        return Map.of(
+                "mensaje", "Correo de recuperación enviado al usuario.",
+                "usuario", usuario.getEmail()
         );
     }
 }

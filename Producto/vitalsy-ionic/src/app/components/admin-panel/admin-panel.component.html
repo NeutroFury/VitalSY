@@ -117,8 +117,8 @@
                       Insulina Rápida (Bolus)
                     </div>
                   </th>
-                  <th>Rango Glucosa</th>
-                  <th>Ratio IC</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,12 +147,19 @@
                       </span>
                     </td>
                     <td>
-                      <span class="range-badge">
-                        {{ p.rangoGlucosaMin }}–{{ p.rangoGlucosaMax }} mg/dL
+                      <span class="status-badge" [class.active]="p.activo" [class.suspended]="!p.activo">
+                        {{ p.activo ? 'Activo' : 'Suspendido' }}
                       </span>
                     </td>
                     <td>
-                      <span class="ratio-badge">1:{{ p.ratioIc }}</span>
+                      <div class="actions-cell">
+                        <button class="action-btn toggle-btn" [title]="p.activo ? 'Suspender' : 'Activar'" (click)="onToggleStatus(p)">
+                          <ion-icon [name]="p.activo ? 'ban-outline' : 'checkmark-circle-outline'"></ion-icon>
+                        </button>
+                        <button class="action-btn reset-btn" title="Enviar Enlace de Recuperación" (click)="onTriggerPasswordReset(p)">
+                          <ion-icon name="mail-outline"></ion-icon>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 }

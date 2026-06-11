@@ -71,15 +71,19 @@
             Crear cuenta
           </button>
           
-          <button type="button" class="text-[10px] text-zinc-600 hover:text-neon-green transition-colors font-black uppercase tracking-widest underline underline-offset-4 bg-transparent border-none">
+          <span 
+            role="button"
+            tabindex="0"
+            (click)="promptForgotPassword()"
+            class="cursor-pointer text-[10px] text-zinc-400 hover:text-neon-green transition-colors font-black uppercase tracking-widest underline underline-offset-4 decoration-zinc-700 hover:decoration-neon-green">
             ¿Olvidaste tu contraseña?
-          </button>
+          </span>
         </div>
         
-        <div class="flex items-center gap-4 text-[10px] text-zinc-800 font-black uppercase tracking-widest w-full">
-          <div class="h-px flex-1 bg-zinc-900"></div>
+        <div class="flex items-center gap-4 text-[10px] text-zinc-500 font-black uppercase tracking-widest w-full">
+          <div class="h-px flex-1 bg-zinc-800"></div>
           <span>O continúa con</span>
-          <div class="h-px flex-1 bg-zinc-900"></div>
+          <div class="h-px flex-1 bg-zinc-800"></div>
         </div>
         
         <div class="w-full">

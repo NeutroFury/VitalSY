@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -89,6 +90,14 @@ public class Usuario {
         }
     }
     
+    // ── Recuperación de contraseña ──────────────────────────────────────
+    @Column(name = "reset_password_token", length = 255)
+    private String resetPasswordToken;
+
+    @Column(name = "reset_password_expires_at")
+    private LocalDateTime resetPasswordExpiresAt;
+    // ────────────────────────────────────────────────────────────────────
+
     @Column(name = "creado_en", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime creadoEn;
     

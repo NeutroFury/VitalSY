@@ -546,3 +546,69 @@ ion-content.admin-bg {
     box-shadow: 0 0 10px rgba(212, 255, 0, 0.4);
   }
 }
+
+// ── Badges & Actions ─────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.active {
+    background: rgba(52, 211, 153, 0.1);
+    color: $emerald;
+    border: 1px solid rgba(52, 211, 153, 0.25);
+  }
+
+  &.suspended {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444; // Tailwind red-500
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: $surface-2;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  ion-icon {
+    font-size: 16px;
+  }
+
+  &.toggle-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  // Si el usuario está suspendido, el hover debe ser verde para activarlo
+  // Usamos una pequeña trampa: pasaremos [class.suspended]="!p.activo" al botón en HTML o simplemente:
+  &.toggle-btn:not(:hover) {
+    color: $text-muted;
+  }
+
+  &.reset-btn:hover {
+    background: rgba(56, 189, 248, 0.1);
+    color: $sky;
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+}

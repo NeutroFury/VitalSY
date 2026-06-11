@@ -55,6 +55,14 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
+  resetPassword(data: { token: string, newPassword: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, data);
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
+
   /**
    * Decodifica el payload del JWT (sin verificar firma) para extraer el claim 'rol'.
    * El JWT tiene el formato: header.payload.signature (Base64URL)

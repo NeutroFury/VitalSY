@@ -66,4 +66,24 @@ public class AdminController {
         Map<String, Object> stats = adminService.getStats(authentication.getName());
         return ResponseEntity.ok(stats);
     }
+
+    /**
+     * PATCH /api/v1/admin/usuarios/{id}/toggle-status
+     * Invierte el estado activo/inactivo del usuario.
+     */
+    @PatchMapping("/usuarios/{id}/toggle-status")
+    public ResponseEntity<Map<String, String>> toggleStatus(@PathVariable Integer id, Authentication authentication) {
+        Map<String, String> response = adminService.toggleUserStatus(id, authentication.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/v1/admin/usuarios/{id}/trigger-password-reset
+     * Envía un enlace de recuperación de contraseña al usuario.
+     */
+    @PostMapping("/usuarios/{id}/trigger-password-reset")
+    public ResponseEntity<Map<String, String>> triggerPasswordReset(@PathVariable Integer id, Authentication authentication) {
+        Map<String, String> response = adminService.triggerPasswordReset(id, authentication.getName());
+        return ResponseEntity.ok(response);
+    }
 }

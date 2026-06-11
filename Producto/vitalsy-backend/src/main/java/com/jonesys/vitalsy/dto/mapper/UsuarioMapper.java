@@ -27,6 +27,7 @@ public class UsuarioMapper {
                 .rangoGlucosaMax(u.getRangoGlucosaMax())
                 .zonaHoraria(u.getZonaHoraria())
                 .rol(u.getRol())
+                .activo(u.getActivo())
                 .build();
     }
 }

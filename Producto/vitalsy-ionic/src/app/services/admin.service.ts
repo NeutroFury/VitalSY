@@ -17,6 +17,7 @@ export interface PacienteAdmin {
   rangoGlucosaMax: number;
   zonaHoraria: string;
   rol: string;
+  activo: boolean;
 }
 
 export interface AdminStats {
@@ -48,5 +49,13 @@ export class AdminService {
 
   cambiarRol(id: number, rol: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/usuarios/${id}/rol`, { rol });
+  }
+
+  toggleStatus(id: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/usuarios/${id}/toggle-status`, {});
+  }
+
+  triggerPasswordReset(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/${id}/trigger-password-reset`, {});
   }
 }
