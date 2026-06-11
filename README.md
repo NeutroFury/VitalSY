@@ -21,7 +21,7 @@ Más que un simple gestor de registros médicos, VitalSY actúa como un **motor 
 - [🤖 Inteligencia Artificial y Cognición](#-inteligencia-artificial-y-cognición)
 - [🏗️ Arquitectura Limpia y DevSecOps](#%EF%B8%8F-arquitectura-limpia-y-devsecops)
 - [⚙️ Instalación y Despliegue (Docker Compose)](#%E2%9A%99%EF%B8%8F-instalación-y-despliegue-docker-compose)
-  - [🔑 Variables de Entorno](#1-variables-de-entorno)
+- [🔑 Variables de Entorno](#1-variables-de-entorno)
 - [📂 Estructura de Directorios](#-estructura-de-directorios)
 - [👨‍💻 Equipo de Desarrollo](#-equipo-de-desarrollo)
 
