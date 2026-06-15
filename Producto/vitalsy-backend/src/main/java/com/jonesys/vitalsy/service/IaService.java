@@ -244,66 +244,36 @@ public class IaService {
             double ratioIc;
             // Obtener parámetros clínicos sincronizados desde ParametroClinico
             ParametroClinico pcChat = clinicalRepository.findByUsuario(usuario).orElse(null);
-            if (pcChat != null) {
-                isf = pcChat.getFactorSensibilidad() != null ? pcChat.getFactorSensibilidad() : 50.0;
-                ratioIc = pcChat.getRatioCarbohidratos() != null ? pcChat.getRatioCarbohidratos() : 10.0;
-            } else {
-                // Fallback a valores por defecto
-                isf = usuario.getFactorIs() != null ? usuario.getFactorIs() : 50.0;
-                ratioIc = usuario.getRatioIc() != null ? usuario.getRatioIc() : 10.0;
-            }
-            double peso = usuario.getPesoActual() != null ? usuario.getPesoActual() : 74.0;
-            double altura = usuario.getAltura() != null ? usuario.getAltura() : 1.70;
-            String insulinaLentaChat = usuario.getInsulinaLenta() != null && !usuario.getInsulinaLenta().isBlank() ? usuario.getInsulinaLenta() : "Lantus (Predeterminada)";
-            String insulinaRapidaChat = usuario.getInsulinaRapida() != null && !usuario.getInsulinaRapida().isBlank() ? usuario.getInsulinaRapida() : "Humalog (Predeterminada)";
-            String tipoInsulinaChat = "Lenta/Basal: " + insulinaLentaChat + ", Rápida/Bolus: " + insulinaRapidaChat;
 
-            List<GlucoseReading> ultimasLecturas = glucoseRepository.findTop5ByUsuarioOrderByFechaHoraDesc(usuario);
-            StringBuilder history = new StringBuilder("### HISTORIAL RECIENTE\n");
-            
-            if (ultimasLecturas.isEmpty()) {
-                history.append("No hay lecturas registradas.\n");
-            } else {
-                for (GlucoseReading r : ultimasLecturas) {
-                    history.append(String.format("- %s: %d mg/dL (Tipo: %s)\n", 
-                            r.getFechaHora().toString(), r.getValorMgdl(), r.getTipoRegistro()));
-                }
-            }
+            // Obtener el timeline completo de los últimos 7 días
+            List<TimelineEventDto> timeline = timelineAssemblerService.buildTimeline(usuario, 7);
 
-            String basePrompt = "Actúa como un médico endocrinólogo experto en Diabetes Tipo 1. " +
-                    "Tu tarea es responder a la pregunta o solicitud del paciente de forma clara, " +
-                    "cercana y profesional, teniendo en cuenta su contexto clínico actual.\n\n" +
-                    "### CONTEXTO CLÍNICO DEL PACIENTE\n" +
-                    "- Factor de Sensibilidad (ISF): %.1f mg/dL.\n" +
-                    "- Ratio Insulina-Carbohidrato (IC): %.1f g.\n" +
-                    "- Peso Actual: %.1f kg.\n" +
-                    "- Altura: %.2f m.\n" +
-                    "- Esquema Basal-Bolus (Insulina Lenta/Rápida): %s.\n" +
-                    "- PARÁMETROS CLÍNICOS ESTRICTOS: Considera hipoglucemia por debajo de %d mg/dL e hiperglucemia por encima de %d mg/dL.\n\n" +
-                    "%s\n" +
-                    "### PREGUNTA O MENSAJE DEL PACIENTE\n" +
-                    "\"%s\"\n\n" +
-                    "### FORMATO DE RESPUESTA\n" +
-                    "Responde ESTRICTAMENTE con un objeto JSON válido. " +
+            // Construir el payload JSON con el perfil del paciente, timeline y el mensaje
+            String payloadJson = PromptBuilderUtil.buildChatPayload(usuario, pcChat, timeline, mensajeUsuario);
+
+            String systemPrompt = "Actúa como VitalSY, tu asistente de Inteligencia Artificial especializado en Diabetes Tipo 1. Eres un compañero empático, cercano y humano. " +
+                    "Tu tarea es conversar con el usuario, escuchar sus inquietudes y ayudarle a entender sus patrones de glucosa de forma fluida, natural " +
+                    "y conversacional.\n\n" +
+                    "--- REGLAS DE CONVERSACIÓN Y SEGURIDAD CLÍNICA (CRÍTICO) ---\n" +
+                    "1. ROL DE ASISTENTE, NO MÉDICO: Habla como un asistente inteligente y empático, NO como un médico humano. NUNCA uses frases como 'agendemos una consulta', 'te receto', ni actúes como si fueras su doctor tratante.\n" +
+                    "2. CONVERSACIONAL Y EMPÁTICO: Responde en uno o dos párrafos fluidos. Haz que el usuario sienta que habla con un compañero comprensivo y humano que se preocupa por él, sin sonar robótico.\n" +
+                    "3. CONTEXTO COMPLETO: Tienes acceso a un JSON con los últimos 7 días de datos cronológicos del usuario (glucosa, insulina, comidas, parámetros). Úsalos para darle retroalimentación valiosa si la pregunta lo amerita.\n" +
+                    "4. ANTI-ALUCINACIÓN: Basa tus comentarios EXCLUSIVAMENTE en el contexto clínico y la línea de tiempo provistos. No asumas ni inventes dosis, horarios o síntomas.\n" +
+                    "5. SEGURIDAD: Si detectas un riesgo crítico en sus datos (como hiperglucemia persistente severa o caída brusca), sugiérele amablemente que contacte a su médico o busque atención de urgencia.\n" +
+                    "6. Usa negritas (**texto**) moderadamente solo para resaltar valores o alertas importantes.\n\n" +
+                    "### FORMATO DE SALIDA\n" +
+                    "Responde ESTRICTAMENTE con un objeto JSON válido con la siguiente estructura:\n" +
                     "{\n" +
-                    "  \"respuesta\": \"Escribe aquí tu respuesta directa a la inquietud del paciente.\"\n" +
-                    "}\n\n" +
-                    "--- REGLAS ESTRICTAS DE FORMATO (CRÍTICO) ---\n" +
-                    "1. PROHIBIDO usar párrafos normales. TODA tu respuesta debe estar estructurada obligatoriamente como una lista de viñetas (-).\n" +
-                    "2. Cada viñeta debe ser una instrucción corta y directa (máximo 2 oraciones por punto).\n" +
-                    "3. Usa negritas (**texto**) para resaltar valores médicos, métricas y acciones críticas de emergencia. " +
-                    "Considera el tiempo de acción esperado para el tipo de insulina utilizado (%s), así como el peso (%.1f kg) y la altura (%.2f m) del paciente al formular tu análisis, recomendaciones o alertas.\n" +
-                    "Ignora el estándar médico general de 70-180 mg/dL y basa todo tu análisis, alertas de tendencia y recomendaciones EXCLUSIVAMENTE en los parámetros clínicos estrictos de este paciente.";
+                    "  \"respuesta\": \"Tu respuesta conversacional en párrafos normales aquí.\"\n" +
+                    "}";
 
-            String prompt = String.format(basePrompt,
-                    isf, ratioIc, peso, altura, tipoInsulinaChat,
-                    usuario.getRangoGlucosaMin(), usuario.getRangoGlucosaMax(),
-                    history.toString(), mensajeUsuario,
-                    tipoInsulinaChat, peso, altura);
-            log.debug("Prompt de Chat final a enviar a Gemini:\n{}", prompt);
+            log.debug("Enviando Chat Payload a Gemini para usuario {}", usuario.getId());
 
             GeminiRequest request = new GeminiRequest(
-                    List.of(new GeminiRequest.Content(List.of(new GeminiRequest.Part(prompt)))),
+                    List.of(new GeminiRequest.Content(List.of(
+                            new GeminiRequest.Part(systemPrompt),
+                            new GeminiRequest.Part(payloadJson)
+                    ))),
                     new GeminiRequest.GenerationConfig("application/json")
             );
 

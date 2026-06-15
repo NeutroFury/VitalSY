@@ -350,4 +350,68 @@ public class PromptBuilderUtil {
         if (secondary != null) return secondary;
         return defaultValue;
     }
+
+    /**
+     * Construye el payload JSON para el contexto del chat.
+     * Incluye el perfil del paciente y la línea de tiempo completa de los últimos 7 días,
+     * para que la IA tenga contexto profundo antes de responder al mensaje del paciente.
+     */
+    public static String buildChatPayload(
+            Usuario usuario,
+            ParametroClinico pc,
+            List<TimelineEventDto> timeline,
+            String mensajeUsuario
+    ) {
+        // 1. Resolver parámetros clínicos
+        double isf      = resolveDouble(pc != null ? pc.getFactorSensibilidad()  : null, usuario.getFactorIs(),  50.0);
+        double ratioIc  = resolveDouble(pc != null ? pc.getRatioCarbohidratos()  : null, usuario.getRatioIc(),   15.0);
+        int    targetMin= pc != null && pc.getObjetivoGlucemiaMin() != null ? pc.getObjetivoGlucemiaMin() : usuario.getRangoGlucosaMin();
+        int    targetMax= pc != null && pc.getObjetivoGlucemiaMax() != null ? pc.getObjetivoGlucemiaMax() : usuario.getRangoGlucosaMax();
+        int    iobHours = pc != null && pc.getTiempoAccionInsulina() != null ? pc.getTiempoAccionInsulina() : 3;
+        double peso     = resolveDouble(usuario.getPesoActual(), null, 74.0);
+        double altura   = resolveDouble(usuario.getAltura(),     null, 1.70);
+        String basalName= usuario.getInsulinaLenta()  != null && !usuario.getInsulinaLenta().isBlank()  ? usuario.getInsulinaLenta()  : "Lantus";
+        String bolusName= usuario.getInsulinaRapida() != null && !usuario.getInsulinaRapida().isBlank() ? usuario.getInsulinaRapida() : "Humalog";
+
+        Integer edad = null;
+        if (usuario.getFechaNacimiento() != null) {
+            edad = Period.between(usuario.getFechaNacimiento(), LocalDate.now()).getYears();
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+
+        // Context
+        Map<String, Object> context = new LinkedHashMap<>();
+        context.put("generated_at", ZonedDateTime.now(usuario.getZoneId()).toString());
+        context.put("timezone", usuario.getZonaHoraria() != null ? usuario.getZonaHoraria() : "UTC");
+        payload.put("context", context);
+
+        // Profile
+        Map<String, Object> profile = new LinkedHashMap<>();
+        if (edad != null) profile.put("age_years", edad);
+        profile.put("weight_kg",  peso);
+        profile.put("height_m",   altura);
+        profile.put("insulin_regimen", Map.of("basal", basalName, "bolus", bolusName));
+        
+        Map<String, Object> clinicalParams = new LinkedHashMap<>();
+        clinicalParams.put("isf_mgdl_per_unit",    isf);
+        clinicalParams.put("ic_ratio_g_per_unit",   ratioIc);
+        clinicalParams.put("target_range_mgdl",     Map.of("min", targetMin, "max", targetMax));
+        clinicalParams.put("insulin_action_hours",  iobHours);
+        profile.put("clinical_params", clinicalParams);
+        
+        payload.put("patient_profile", profile);
+
+        // Timeline de 7 días
+        payload.put("timeline_7_days", timeline);
+
+        // Mensaje del paciente
+        payload.put("user_message", mensajeUsuario);
+
+        try {
+            return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Error serializando el payload de chat a JSON: " + e.getMessage(), e);
+        }
+    }
 }
