@@ -14,6 +14,20 @@ export interface ChatResponse {
   respuesta: string;
 }
 
+export interface PredictiveAlert {
+  type: string;
+  probability: number;
+  description: string;
+}
+
+export interface PredictiveAnalysisResponse {
+  trend_summary: string;
+  risk_level: string;
+  predictive_alerts: PredictiveAlert[];
+  recommendations: string[];
+  data_quality_notes: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -54,6 +68,16 @@ export class IaService {
       catchError(err => {
         console.error('IA_SERVICE: Error en el chat:', err);
         return throwError(() => new Error('IA_SERVER_UNAVAILABLE'));
+      })
+    );
+  }
+
+  getPredictiveAnalysis(days: number = 7): Observable<PredictiveAnalysisResponse> {
+    console.log(`IA_SERVICE: Pidiendo análisis predictivo para ${days} días...`);
+    return this.http.get<PredictiveAnalysisResponse>(`${this.apiUrl}/predictivo?days=${days}`).pipe(
+      catchError(err => {
+        console.error('IA_SERVICE: Error obteniendo análisis predictivo:', err);
+        return throwError(() => new Error('IA_PREDICTIVE_ERROR'));
       })
     );
   }

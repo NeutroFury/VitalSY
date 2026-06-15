@@ -3,6 +3,8 @@ package com.jonesys.vitalsy.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonesys.vitalsy.dto.response.ChatResponse;
 import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
+import com.jonesys.vitalsy.dto.response.PredictiveAnalysisResponse;
+import com.jonesys.vitalsy.dto.response.TimelineEventDto;
 import com.jonesys.vitalsy.dto.gemini.GeminiRequest;
 import com.jonesys.vitalsy.dto.gemini.GeminiResponse;
 import com.jonesys.vitalsy.model.ParametroClinico;
@@ -10,6 +12,7 @@ import com.jonesys.vitalsy.repository.ParametroClinicoRepository;
 import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
+import com.jonesys.vitalsy.util.PromptBuilderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,7 @@ public class IaService {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final GlucoseReadingRepository glucoseRepository;
+    private final TimelineAssemblerService timelineAssemblerService;
 
     @Value("${gemini.api.url}")
     private String geminiUrl;
@@ -38,11 +42,15 @@ public class IaService {
     @Value("${gemini.api.key}")
     private String geminiKey;
 
-    public IaService(GlucoseReadingRepository glucoseRepository, ParametroClinicoRepository clinicalRepository) {
+    public IaService(
+            GlucoseReadingRepository glucoseRepository,
+            ParametroClinicoRepository clinicalRepository,
+            TimelineAssemblerService timelineAssemblerService
+    ) {
         this.glucoseRepository = glucoseRepository;
         this.clinicalRepository = clinicalRepository;
+        this.timelineAssemblerService = timelineAssemblerService;
 
-        
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(5000);
         requestFactory.setReadTimeout(30000);
@@ -59,8 +67,11 @@ public class IaService {
         log.info("Iniciando análisis de IA para usuario: {}", usuario.getId());
         
         // 1. Obtener lecturas de los últimos 30 días para estadísticas
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime thirtyDaysAgo = now.minusDays(30);
+        // CRÍTICO: usar la zona horaria del usuario para que el límite del día
+        // corresponda a su realidad local y no a UTC del servidor.
+        ZonedDateTime now = ZonedDateTime.now(usuario.getZoneId());
+        ZonedDateTime thirtyDaysAgo = now.minusDays(30).toLocalDate()
+                .atStartOfDay(usuario.getZoneId());
         List<GlucoseReading> last30DaysReadings = glucoseRepository.findByUsuarioAndFechaHoraBetween(usuario, thirtyDaysAgo, now);
 
         double mean = 0.0;
@@ -324,5 +335,140 @@ public class IaService {
             log.error("CHAT_IA_ERROR: {}", e.getMessage(), e);
             throw new RuntimeException("IA_SERVER_UNAVAILABLE");
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // NUEVO FLUJO: Análisis Predictivo Causal basado en ventana de tiempo
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Genera un análisis predictivo causal enviando al LLM la línea de tiempo
+     * cronológica completa (glucosa + insulina + comidas) de los últimos {@code windowDays} días.
+     *
+     * FLUJO:
+     *   1. TimelineAssemblerService   → extrae y une los eventos cronológicamente
+     *   2. ParametroClinicoRepository → obtiene los parámetros clínicos del paciente
+     *   3. PromptBuilderUtil          → construye el JSON payload + System Prompt
+     *   4. Gemini API (REST)          → recibe el payload, forzando response_mime_type JSON
+     *   5. ObjectMapper               → deserializa la respuesta a PredictiveAnalysisResponse
+     *
+     * ANTI-ALUCINACIÓN:
+     *   El System Prompt (5 reglas duras) se envía como primer Part del Content antes del payload.
+     *   La API de Gemini trata el primer Part como contexto de sistema cuando solo hay un Content.
+     *
+     * @param usuario    Paciente a analizar
+     * @param windowDays Número de días de historial a incluir (recomendado: 7)
+     * @return Respuesta predictiva estructurada con alertas, risk_level y recomendaciones
+     */
+    public PredictiveAnalysisResponse generarAnalisisPredictivo(Usuario usuario, int windowDays) {
+        log.info("🔮 Iniciando análisis predictivo causal para usuario={}, ventana={} días",
+                usuario.getId(), windowDays);
+
+        // ── 1. Obtener la línea de tiempo cronológica unificada ────────────────
+        List<TimelineEventDto> timeline = timelineAssemblerService.buildTimeline(usuario, windowDays);
+
+        if (timeline.isEmpty()) {
+            log.warn("⚠️ Timeline vacío para usuario={}. Retornando análisis por defecto.", usuario.getId());
+            return new PredictiveAnalysisResponse(
+                    "Sin datos suficientes para el período analizado.",
+                    "BAJO",
+                    List.of(),
+                    List.of("Registra lecturas de glucosa, dosis de insulina y comidas para obtener un análisis predictivo."),
+                    List.of("No se encontraron eventos en la ventana de " + windowDays + " días.")
+            );
+        }
+
+        log.info("📊 Timeline con {} eventos. Construyendo payload para Gemini.", timeline.size());
+
+        // ── 2. Obtener parámetros clínicos (pc puede ser null; hay fallback en buildPredictivePayload) ─
+        ParametroClinico pc = clinicalRepository.findByUsuario(usuario).orElse(null);
+
+        // ── 3. Construir el payload JSON con perfil del paciente + timeline + instrucciones ─
+        String payloadJson;
+        try {
+            payloadJson = PromptBuilderUtil.buildPredictivePayload(usuario, pc, timeline, windowDays);
+        } catch (IllegalStateException e) {
+            log.error("❌ Error construyendo el payload predictivo: {}", e.getMessage(), e);
+            throw new RuntimeException("PREDICTIVE_PAYLOAD_BUILD_ERROR");
+        }
+
+        log.debug("📤 Payload predictivo (primeros 500 chars): {}", payloadJson.length() > 500
+                ? payloadJson.substring(0, 500) + "..." : payloadJson);
+
+        // ── 4. Enviar a Gemini: System Prompt + Payload como dos Parts en un solo Content ─
+        //
+        // DISEÑO: La API de Gemini (REST) no tiene un campo "systemInstruction" en la versión
+        // básica. Se envían dos Parts en el mismo Content:
+        //   Part[0] = System Prompt (reglas anti-alucinación)
+        //   Part[1] = Payload JSON con los datos del paciente
+        // Gemini los procesa secuencialmente, aplicando las reglas del Part[0] al analizar el Part[1].
+        try {
+            GeminiRequest request = new GeminiRequest(
+                    List.of(new GeminiRequest.Content(
+                            List.of(
+                                    new GeminiRequest.Part(PromptBuilderUtil.SYSTEM_PROMPT),
+                                    new GeminiRequest.Part(payloadJson)
+                            )
+                    )),
+                    new GeminiRequest.GenerationConfig("application/json") // Fuerza JSON puro
+            );
+
+            String targetUri = geminiUrl + "?key=" + geminiKey;
+            String rawJson = restClient.post()
+                    .uri(targetUri)
+                    .body(request)
+                    .retrieve()
+                    .body(String.class);
+
+            if (rawJson == null || rawJson.isBlank()) {
+                throw new RuntimeException("Gemini no retornó respuesta al análisis predictivo.");
+            }
+
+            // ── 5. Parsear la respuesta de Gemini ─────────────────────────────
+            GeminiResponse geminiResponse = objectMapper.readValue(rawJson, GeminiResponse.class);
+
+            if (geminiResponse == null
+                    || geminiResponse.candidates() == null
+                    || geminiResponse.candidates().isEmpty()) {
+                throw new RuntimeException("Gemini no retornó candidatos para el análisis predictivo.");
+            }
+
+            String rawText = geminiResponse.candidates().get(0).content().parts().get(0).text();
+            log.debug("📥 Respuesta cruda de Gemini (primeros 300 chars): {}",
+                    rawText.length() > 300 ? rawText.substring(0, 300) + "..." : rawText);
+
+            // Limpiar posibles bloques markdown residuales (defensa extra aunque response_mime_type=JSON)
+            String cleanJson = cleanMarkdownFences(rawText);
+
+            PredictiveAnalysisResponse result = objectMapper.readValue(cleanJson, PredictiveAnalysisResponse.class);
+            log.info("✅ Análisis predictivo completado. risk_level={}, alertas={}",
+                    result.riskLevel(),
+                    result.predictiveAlerts() != null ? result.predictiveAlerts().size() : 0);
+            return result;
+
+        } catch (Exception e) {
+            log.error("❌ PREDICTIVE_IA_ERROR para usuario={}: {}", usuario.getId(), e.getMessage(), e);
+            throw new RuntimeException("PREDICTIVE_IA_SERVER_UNAVAILABLE");
+        }
+    }
+
+    /**
+     * Elimina bloques de código markdown (```json ... ```) que Gemini puede incluir
+     * aunque se le configure response_mime_type=application/json.
+     * Es una defensa adicional que no falla si el JSON ya viene limpio.
+     */
+    private String cleanMarkdownFences(String text) {
+        if (text == null) return "{}";
+        String trimmed = text.trim();
+        if (trimmed.startsWith("```json")) trimmed = trimmed.substring(7);
+        else if (trimmed.startsWith("```"))  trimmed = trimmed.substring(3);
+        if (trimmed.endsWith("```")) trimmed = trimmed.substring(0, trimmed.length() - 3);
+        // Extraer solo el objeto JSON en caso de texto residual alrededor
+        int first = trimmed.indexOf('{');
+        int last  = trimmed.lastIndexOf('}');
+        if (first != -1 && last != -1 && first < last) {
+            return trimmed.substring(first, last + 1);
+        }
+        return trimmed.trim();
     }
 }

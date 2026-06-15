@@ -46,6 +46,9 @@ services:
       MAIL_USERNAME: ${MAIL_USERNAME:-}
       MAIL_PASSWORD: ${MAIL_PASSWORD:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8100}
+      # --- Integridad de Timestamps (defensa en profundidad) ---
+      TZ: UTC                                                    # Zona del contenedor Linux
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=UTC -Dfile.encoding=UTF-8" # Zona de la JVM
     ports:
       - "${BACKEND_PORT:-8080}:8080"
     depends_on:

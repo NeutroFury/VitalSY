@@ -22,7 +22,7 @@ import {
   linkOutline
 } from 'ionicons/icons';
 import { HeaderComponent } from '../header/header.component';
-import { IaService, IaAnalysis } from '../../services/ia.service';
+import { IaService, PredictiveAnalysisResponse } from '../../services/ia.service';
 import { GlucoseService } from '../../services/glucose.service';
 import { NotificationService } from '../../services/notification.service';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
@@ -37,7 +37,7 @@ import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   
-  iaAnalysis: IaAnalysis | null = null;
+  iaAnalysis: PredictiveAnalysisResponse | null = null;
   isIaLoading = false;
   iaError: string | null = null;
   currentReading: number = 0;
@@ -240,17 +240,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.iaError = null;
     this.iaAnalysis = null; // Limpiamos el análisis anterior para forzar el estado de carga
     
-    this.iaService.getLatestAnalysis().subscribe({
+    this.iaService.getPredictiveAnalysis(7).subscribe({
       next: (analysis) => {
         if (!analysis) {
           this.iaError = 'No hay lecturas recientes para analizar';
         } else {
           this.iaAnalysis = analysis;
           // Validación de riesgo para notificaciones proactivas
-          if (analysis.nivel_de_riesgo === 'Alto' || analysis.nivel_de_riesgo === 'Crítico') {
+          if (analysis.risk_level === 'ALTO' || analysis.risk_level === 'CRITICO') {
             this.notificationService.scheduleUrgentNotification(
-              '🚨 Alerta de Riesgo IA',
-              analysis.consejo_breve,
+              '🚨 Alerta Predictiva IA',
+              analysis.trend_summary,
               'warning'
             );
           }

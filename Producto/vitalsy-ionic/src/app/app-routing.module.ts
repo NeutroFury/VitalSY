@@ -57,6 +57,11 @@ const routes: Routes = [
     loadComponent: () => import('./components/paciente-detalle/paciente-detalle.component').then(m => m.PacienteDetalleComponent)
   },
   {
+    path: 'predictive',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/predictive/predictive.component').then(m => m.PredictiveComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

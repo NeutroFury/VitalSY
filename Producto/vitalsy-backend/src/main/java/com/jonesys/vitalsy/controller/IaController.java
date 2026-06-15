@@ -3,6 +3,7 @@ package com.jonesys.vitalsy.controller;
 import com.jonesys.vitalsy.dto.request.ChatRequest;
 import com.jonesys.vitalsy.dto.response.ChatResponse;
 import com.jonesys.vitalsy.dto.response.IaAnalysisResponse;
+import com.jonesys.vitalsy.dto.response.PredictiveAnalysisResponse;
 import com.jonesys.vitalsy.model.GlucoseReading;
 import com.jonesys.vitalsy.model.Usuario;
 import com.jonesys.vitalsy.repository.GlucoseReadingRepository;
@@ -85,6 +86,36 @@ public class IaController {
         log.info("Petición de chat IA para usuario: {}", usuario.getEmail());
 
         ChatResponse response = iaService.chatear(usuario, request.getMensaje());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Endpoint del análisis predictivo causal basado en ventana de tiempo.
+     *
+     * GET /api/v1/ia/predictivo?days=7
+     *
+     * @param days     Número de días de historial a analizar (default: 7, rango: 1-30)
+     * @param authentication Usuario autenticado via JWT
+     * @return PredictiveAnalysisResponse con trend_summary, risk_level, alertas y recomendaciones
+     */
+    @GetMapping("/predictivo")
+    public ResponseEntity<PredictiveAnalysisResponse> analisisPredictivo(
+            @RequestParam(name = "days", defaultValue = "7") int days,
+            Authentication authentication
+    ) {
+        // Validar rango del parámetro days
+        if (days < 1 || days > 30) {
+            log.warn("Parámetro 'days' fuera de rango ({}). Ajustando a 7.", days);
+            days = 7;
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        log.info("🔮 Petición de análisis predictivo para usuario={}, days={}",
+                usuario.getEmail(), days);
+
+        PredictiveAnalysisResponse response = iaService.generarAnalisisPredictivo(usuario, days);
         return ResponseEntity.ok(response);
     }
 }

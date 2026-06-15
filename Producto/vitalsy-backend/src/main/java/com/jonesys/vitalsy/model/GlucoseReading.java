@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -59,8 +60,22 @@ public class GlucoseReading {
         }
     }
 
+    /**
+     * Deriva el momento del día desde la fecha y hora del registro.
+     *
+     * Las entidades se rehidratan en UTC (vía ZonedDateTimeConverter), por lo
+     * que se usa withZoneSameInstant(ZoneOffset.UTC) para obtener la hora local
+     * del servidor. En el contexto del LLM, el timestamp ISO-8601 con offset
+     * ya porta la zona del paciente; este campo es sólo un hint de legibilidad.
+     */
     public String getMomento() {
-        return null;
+        if (fechaHora == null) return "DESCONOCIDO";
+        int hora = fechaHora.withZoneSameInstant(ZoneOffset.UTC).getHour();
+        if (hora >= 6  && hora < 12) return "MAÑANA";
+        if (hora >= 12 && hora < 15) return "MEDIODIA";
+        if (hora >= 15 && hora < 20) return "TARDE";
+        if (hora >= 20)              return "NOCHE";
+        return "MADRUGADA";
     }
 
     public String getNotas() {
