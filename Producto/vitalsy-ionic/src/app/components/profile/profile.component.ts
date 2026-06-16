@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { take } from 'rxjs/operators';
 import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { 
-  personOutline, 
-  settingsOutline, 
-  fitnessOutline, 
-  logOutOutline, 
+import {
+  personOutline,
+  settingsOutline,
+  fitnessOutline,
+  logOutOutline,
   linkOutline,
   waterOutline,
   notificationsOutline,
@@ -25,13 +25,15 @@ import {
   chevronForwardOutline,
   refreshOutline,
   closeOutline,
-  checkmarkOutline
+  checkmarkOutline,
+  cameraOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
 import { UserService, UserProfile } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
+import { CognitivoService } from '../../services/cognitivo.service';
 
 @Component({
   selector: 'app-profile',
@@ -54,6 +56,7 @@ export class ProfileComponent implements OnInit {
   libreLastSync = '';
   isLibreLoading = false;
   isSyncing = false;
+  isScanning = false;
 
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
@@ -61,13 +64,14 @@ export class ProfileComponent implements OnInit {
   private navCtrl = inject(NavController);
   private toastCtrl = inject(ToastController);
   private libreService = inject(LibreLinkUpService);
+  private cognitivoService = inject(CognitivoService);
 
   constructor() {
-    addIcons({ 
-      personOutline, 
-      settingsOutline, 
-      fitnessOutline, 
-      logOutOutline, 
+    addIcons({
+      personOutline,
+      settingsOutline,
+      fitnessOutline,
+      logOutOutline,
       linkOutline,
       waterOutline,
       notificationsOutline,
@@ -84,11 +88,12 @@ export class ProfileComponent implements OnInit {
       chevronForwardOutline,
       refreshOutline,
       closeOutline,
-      checkmarkOutline
+      checkmarkOutline,
+      cameraOutline
     });
-    
+
     this.username = this.authService.getUsername();
-    
+
     this.profileForm = this.fb.group({
       nombre: ['', [Validators.required]],
       pesoActual: [null, [Validators.required, Validators.min(1)]],
@@ -123,7 +128,7 @@ export class ProfileComponent implements OnInit {
           insulinaLenta: profile.insulinaLenta || this.profileForm.get('insulinaLenta')?.value || 'Tresiba (Degludec)',
           insulinaRapida: profile.insulinaRapida || this.profileForm.get('insulinaRapida')?.value || 'Humalog (Lispro)'
         });
-        
+
         if (profile.nombre) {
           localStorage.setItem('username', profile.nombre);
           this.username = profile.nombre;
@@ -172,7 +177,7 @@ export class ProfileComponent implements OnInit {
       this.isLoading = true;
       const data = this.profileForm.getRawValue();
       console.log('DATOS A GUARDAR:', JSON.stringify(data));
-      
+
       // Enviamos el objeto de manera one-shot y sin llamar de vuelta a loadProfile()
       this.userService.updateUserProfile(data).pipe(take(1)).subscribe({
         next: (updatedProfile) => {
@@ -284,5 +289,37 @@ export class ProfileComponent implements OnInit {
         this.isSyncing = false;
       }
     });
+  }
+
+  onFileSelected(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    const fileList: FileList | null = element.files;
+    if (fileList && fileList.length > 0) {
+      const file = fileList[0];
+      this.isScanning = true;
+      this.showToast('Analizando pauta médica con Inteligencia Artificial...', 'tertiary');
+
+      this.cognitivoService.subirPautaMedica(file).subscribe({
+        next: (res) => {
+          this.isScanning = false;
+          this.showToast(`${res.mensaje} (${res.reglasExtraidas} reglas guardadas)`, 'success');
+        },
+        error: (err) => {
+          console.error(err);
+          this.isScanning = false;
+          this.showToast('Error al procesar la pauta médica', 'danger');
+        }
+      });
+
+      // Reiniciar el input
+      element.value = '';
+    }
+  }
+
+  triggerCameraInput() {
+    const input = document.getElementById('cameraInput') as HTMLInputElement;
+    if (input) {
+      input.click();
+    }
   }
 }

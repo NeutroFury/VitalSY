@@ -156,6 +156,28 @@
 
     </div>
 
+    <!-- MOTOR COGNITIVO INTEGRATION -->
+    <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4 px-2">Digitalización de Pauta Médica (IA)</h3>
+    <div class="bg-[#0c0c0c] rounded-[32px] p-6 flex flex-col gap-4 border border-zinc-900 shadow-xl relative overflow-hidden">
+      <!-- Glow Effect -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 blur-[40px] rounded-full pointer-events-none"></div>
+
+      <p class="text-[11px] text-zinc-500 leading-relaxed relative z-10">
+        Usa la Inteligencia Artificial de <strong>Gemini</strong> para escanear tu receta médica. Extraeremos automáticamente tu matriz de dosis fijas.
+      </p>
+
+      <div class="flex items-center gap-4 relative z-10 mt-2">
+        <!-- Hidden File Input -->
+        <input type="file" id="cameraInput" accept="image/*,application/pdf" capture="environment" class="hidden" (change)="onFileSelected($event)" />
+        
+        <button (click)="triggerCameraInput()" [disabled]="isScanning"
+                class="w-full h-14 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(168,85,247,0.15)] disabled:opacity-50">
+          <ion-icon [name]="isScanning ? 'refresh-outline' : 'camera-outline'" class="text-xl" [class.animate-spin]="isScanning"></ion-icon>
+          <span>{{ isScanning ? 'Analizando...' : 'Escanear Pauta' }}</span>
+        </button>
+      </div>
+    </div>
+
     <!-- LIBRELINKUP INTEGRATION -->
     <h3 class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0 mt-4 px-2">Integración de Sensor (LibreLinkUp)</h3>
     <div class="bg-[#0c0c0c] rounded-[32px] p-6 flex flex-col gap-6 border border-zinc-900 shadow-xl">
