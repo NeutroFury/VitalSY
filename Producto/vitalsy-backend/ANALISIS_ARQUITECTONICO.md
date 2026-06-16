@@ -522,9 +522,7 @@ spring.datasource.password=postgres
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 
-spring.ai.openai.base-url=http://localhost:1234
-spring.ai.openai.api-key=vitalsy-local
-spring.ai.openai.chat.options.model=google/gemma-4-e2b:2
+# (Gemma / Spring AI eliminado)
 
 spring.jpa.open-in-view=false
 ```
@@ -569,8 +567,7 @@ spring.jpa.properties.hibernate.format_sql=true
 logging.level.root=INFO
 logging.level.com.jonesys.vitalsy=DEBUG
 
-spring.ai.openai.base-url=http://localhost:1234
-spring.ai.openai.api-key=vitalsy-local
+# (Gemma eliminado)
 ```
 
 #### application-prod.properties
@@ -691,7 +688,7 @@ if (usuarioRepository.count() == 0) {
 ```
 
 ### IaService/IaController
-✅ **Integración con Gemma correcta**
+✅ **Integración con Gemini correcta**
 
 ⚠️ **Problemas**:
 1. Sin autenticación (requiere usuario logueado)

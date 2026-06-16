@@ -295,11 +295,11 @@ export class ProfileComponent implements OnInit {
     const element = event.currentTarget as HTMLInputElement;
     const fileList: FileList | null = element.files;
     if (fileList && fileList.length > 0) {
-      const file = fileList[0];
+      const files: File[] = Array.from(fileList);
       this.isScanning = true;
       this.showToast('Analizando pauta médica con Inteligencia Artificial...', 'tertiary');
 
-      this.cognitivoService.subirPautaMedica(file).subscribe({
+      this.cognitivoService.subirPautaMedica(files).subscribe({
         next: (res) => {
           this.isScanning = false;
           this.showToast(`${res.mensaje} (${res.reglasExtraidas} reglas guardadas)`, 'success');

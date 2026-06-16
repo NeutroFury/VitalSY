@@ -196,7 +196,7 @@ public class IaService {
             log.debug("Prompt final a enviar a Gemini:\n{}", prompt);
 
             GeminiRequest request = new GeminiRequest(
-                    List.of(new GeminiRequest.Content(List.of(new GeminiRequest.Part(prompt)))),
+                    List.of(new GeminiRequest.Content(List.of(GeminiRequest.Part.textPart(prompt)))),
                     new GeminiRequest.GenerationConfig("application/json")
             );
 
@@ -271,8 +271,8 @@ public class IaService {
 
             GeminiRequest request = new GeminiRequest(
                     List.of(new GeminiRequest.Content(List.of(
-                            new GeminiRequest.Part(systemPrompt),
-                            new GeminiRequest.Part(payloadJson)
+                            GeminiRequest.Part.textPart(systemPrompt),
+                            GeminiRequest.Part.textPart(payloadJson)
                     ))),
                     new GeminiRequest.GenerationConfig("application/json")
             );
@@ -376,8 +376,8 @@ public class IaService {
             GeminiRequest request = new GeminiRequest(
                     List.of(new GeminiRequest.Content(
                             List.of(
-                                    new GeminiRequest.Part(PromptBuilderUtil.SYSTEM_PROMPT),
-                                    new GeminiRequest.Part(payloadJson)
+                                    GeminiRequest.Part.textPart(PromptBuilderUtil.SYSTEM_PROMPT),
+                                    GeminiRequest.Part.textPart(payloadJson)
                             )
                     )),
                     new GeminiRequest.GenerationConfig("application/json") // Fuerza JSON puro

@@ -14,6 +14,7 @@ import { HeaderComponent } from '../header/header.component';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
 import { GlucoseService } from '../../services/glucose.service';
 import { UserService } from '../../services/user.service';
+import { CognitivoService, CalculoDosisRequest, CalculoDosisResponse } from '../../services/cognitivo.service';
 
 @Component({
   selector: 'app-calculator',
@@ -25,20 +26,23 @@ export class CalculatorComponent implements OnInit {
   private libreService = inject(LibreLinkUpService);
   private glucoseService = inject(GlucoseService);
   private userService = inject(UserService);
+  private cognitivoService = inject(CognitivoService);
+
+  userId: number = 0;
+  comidasDisponibles: string[] = [];
+  selectedComida: string = '';
+  customComida: string = '';
 
   currentGlucose: number | null = null;
   carbsToConsume: number | null = null;
-  icRatio: number = 10;
-  
-  targetGlucose: number = 100;
-  isSensitivy: number = 40;
   
   isCalculated: boolean = false;
   isSyncing: boolean = false;
+  isCalculating: boolean = false;
 
-  correctionDose: number = 0;
-  carbohydrateDose: number = 0;
   totalDose: number = 0;
+  methodUsed: string = '';
+  mensajeInfo: string = '';
 
   constructor() {
     addIcons({ calculatorOutline, radioOutline, informationCircleOutline, medkitOutline });
@@ -51,14 +55,9 @@ export class CalculatorComponent implements OnInit {
   private loadUserProfile() {
     this.userService.getUserProfile().subscribe({
       next: (profile) => {
-        if (profile) {
-          if (profile.ratioIc) this.icRatio = profile.ratioIc;
-          if (profile.factorIs) this.isSensitivy = profile.factorIs;
-          
-          // Establecer la glucosa objetivo como el punto medio del rango de glucosa si está disponible
-          if (profile.rangoGlucosaMin && profile.rangoGlucosaMax) {
-            this.targetGlucose = Math.round((profile.rangoGlucosaMin + profile.rangoGlucosaMax) / 2);
-          }
+        if (profile && profile.id) {
+          this.userId = profile.id;
+          this.loadComidas();
         }
       },
       error: (err) => {
@@ -67,18 +66,30 @@ export class CalculatorComponent implements OnInit {
     });
   }
 
+  private loadComidas() {
+    this.cognitivoService.getComidas(this.userId).subscribe({
+      next: (comidas) => {
+        this.comidasDisponibles = comidas;
+        if (comidas.length > 0) {
+          this.selectedComida = comidas[0];
+        } else {
+          this.selectedComida = 'otra';
+        }
+      },
+      error: (err) => console.error('Error al cargar comidas', err)
+    });
+  }
+
   handleSyncSensor() {
     if (this.isSyncing) return;
     this.isSyncing = true;
 
-    // Fuerzo la sincronización con la nube de LibreView (LibreLinkUp)
     this.libreService.forceSync().subscribe({
       next: () => {
         this.fetchLatestReading();
       },
       error: (err) => {
         console.error('Error al sincronizar con LibreLinkUp, intentando leer último dato local', err);
-        // Si falla la sincronización (ej: sin red, o credenciales erróneas), intento usar el último de la base de datos
         this.fetchLatestReading();
       }
     });
@@ -88,7 +99,6 @@ export class CalculatorComponent implements OnInit {
     this.glucoseService.getRecentReadings().subscribe({
       next: (readings) => {
         if (readings && readings.length > 0) {
-          // Tomar la lectura más reciente de la base de datos local
           const latestReading = readings[readings.length - 1];
           this.currentGlucose = latestReading.valorMgdl;
         } else {
@@ -105,26 +115,35 @@ export class CalculatorComponent implements OnInit {
   }
 
   generateDose() {
-    const g = this.currentGlucose || 0;
-    const tg = this.targetGlucose || 100;
-    const is = this.isSensitivy || 40;
-    const c = this.carbsToConsume || 0;
-    const ic = this.icRatio || 10;
+    if (this.currentGlucose === null || this.carbsToConsume === null) return;
 
-    let correction = (g - tg) / is;
-    if (correction < 0) correction = 0; 
-    
-    let carbs = c / ic;
+    let comidaName = this.selectedComida === 'otra' ? this.customComida : this.selectedComida;
+    if (!comidaName || comidaName.trim() === '') {
+      comidaName = 'Desconocida';
+    }
 
-    this.correctionDose = correction;
-    this.carbohydrateDose = carbs;
-    
-    let total = correction + carbs;
-    
-    this.correctionDose = Math.round(this.correctionDose * 10) / 10;
-    this.carbohydrateDose = Math.round(this.carbohydrateDose * 10) / 10;
-    this.totalDose = Math.round(total * 10) / 10;
+    const request: CalculoDosisRequest = {
+      usuarioId: this.userId,
+      nombreComida: comidaName.trim(),
+      glicemiaActual: this.currentGlucose,
+      carbohidratosGr: this.carbsToConsume
+    };
 
-    this.isCalculated = true;
+    this.isCalculating = true;
+    this.isCalculated = false;
+
+    this.cognitivoService.calcularDosis(request).subscribe({
+      next: (res: CalculoDosisResponse) => {
+        this.totalDose = res.dosisRecomendada;
+        this.methodUsed = res.metodoCalculo;
+        this.mensajeInfo = res.mensajeInfo || '';
+        this.isCalculated = true;
+        this.isCalculating = false;
+      },
+      error: (err) => {
+        console.error('Error al calcular dosis', err);
+        this.isCalculating = false;
+      }
+    });
   }
 }

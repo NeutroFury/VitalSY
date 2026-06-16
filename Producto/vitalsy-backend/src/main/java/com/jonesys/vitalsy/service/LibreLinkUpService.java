@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LibreLinkUpService {
@@ -32,6 +33,9 @@ public class LibreLinkUpService {
     private final GlucoseReadingRepository glucoseRepository;
     private final EncryptionUtil encryptionUtil;
     private final RestClient baseRestClient;
+
+    // Caché en memoria para las sesiones de Abbott (evita logins excesivos)
+    private final Map<Integer, AbbottSession> sessionCache = new ConcurrentHashMap<>();
 
     public LibreLinkUpService(LibreLinkUpConfigRepository configRepository,
                               GlucoseReadingRepository glucoseRepository,
@@ -76,32 +80,51 @@ public class LibreLinkUpService {
         
         log.info("🔄 Sincronizando glucosa para usuario: {}", usuario.getEmail());
 
-        // 1. Login y obtención del JWT y BaseURL adecuada (con redirección regional)
-        AbbottSession session = login(config.getLibreEmail(), password);
+        // Obtener sesión desde la caché o realizar login si no existe
+        AbbottSession session = sessionCache.computeIfAbsent(usuario.getId(), 
+                k -> login(config.getLibreEmail(), password));
         
-        // 2. Obtención de conexiones (pacientes seguidos)
         String patientId = config.getLibrePatientId();
-        if (patientId == null || patientId.isEmpty()) {
-            List<Map<String, Object>> connections = getConnections(session);
-            if (connections.isEmpty()) {
-                throw new RuntimeException("La cuenta de LibreLinkUp no sigue a ningún paciente.");
+        
+        try {
+            if (patientId == null || patientId.isEmpty()) {
+                patientId = fetchPatientIdAndSave(config, session);
             }
-            // Elegimos el primero por defecto
-            patientId = (String) connections.get(0).get("patientId");
-            config.setLibrePatientId(patientId);
-            configRepository.save(config);
-            log.info("📌 Conexión detectada y guardada. Patient ID: {}", patientId);
+            Map<String, Object> graphResponse = getGraphData(session, patientId);
+            return finalizeSync(usuario, config, graphResponse);
+        } catch (Exception e) {
+            log.warn("⚠️ Llamada a la API de Abbott falló. Posible expiración de token. Reintentando login: {}", e.getMessage());
+            
+            // Invalidar caché y forzar nuevo login
+            sessionCache.remove(usuario.getId());
+            session = login(config.getLibreEmail(), password);
+            sessionCache.put(usuario.getId(), session);
+            
+            // Reintentar flujo
+            if (patientId == null || patientId.isEmpty()) {
+                patientId = fetchPatientIdAndSave(config, session);
+            }
+            Map<String, Object> graphResponse = getGraphData(session, patientId);
+            return finalizeSync(usuario, config, graphResponse);
         }
+    }
 
-        // 3. Obtención del histórico y medición en tiempo real
-        Map<String, Object> graphResponse = getGraphData(session, patientId);
-        
-        // 4. Mapear y filtrar duplicados
+    private String fetchPatientIdAndSave(LibreLinkUpConfig config, AbbottSession session) {
+        List<Map<String, Object>> connections = getConnections(session);
+        if (connections.isEmpty()) {
+            throw new RuntimeException("La cuenta de LibreLinkUp no sigue a ningún paciente.");
+        }
+        String patientId = (String) connections.get(0).get("patientId");
+        config.setLibrePatientId(patientId);
+        configRepository.save(config);
+        log.info("📌 Conexión detectada y guardada. Patient ID: {}", patientId);
+        return patientId;
+    }
+
+    private int finalizeSync(Usuario usuario, LibreLinkUpConfig config, Map<String, Object> graphResponse) {
         int guardados = processAndSaveGraphData(usuario, graphResponse);
-        
         config.setUltimoSync(ZonedDateTime.now());
         configRepository.save(config);
-        
         log.info("✅ Sincronización exitosa. Registros nuevos guardados: {}", guardados);
         return guardados;
     }
