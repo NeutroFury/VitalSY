@@ -49,7 +49,7 @@ public class GeminiInferenceService {
             
             // 2. Preparar el DTO de Petición
             GeminiRequest request = new GeminiRequest(
-                    List.of(new GeminiRequest.Content(List.of(new GeminiRequest.Part(prompt)))),
+                    List.of(new GeminiRequest.Content(List.of(GeminiRequest.Part.textPart(prompt)))),
                     new GeminiRequest.GenerationConfig("application/json") // Fuerza formato JSON en Gemini 1.5+
             );
 

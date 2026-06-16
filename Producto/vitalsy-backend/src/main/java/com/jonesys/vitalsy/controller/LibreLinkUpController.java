@@ -84,6 +84,10 @@ public class LibreLinkUpController {
 
         LibreLinkUpConfig config = configRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("LibreLinkUp no configurado para este usuario."));
+        
+        // Fix LazyInitializationException: the config object is detached here. 
+        // We inject the fully loaded user to avoid proxy initialization errors in the service.
+        config.setUsuario(usuario);
 
         try {
             int guardados = service.syncUserReadings(config);

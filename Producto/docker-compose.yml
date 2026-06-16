@@ -33,6 +33,8 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://vitalsy-db:5432/${POSTGRES_DB:-vitalsy_db}}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-${POSTGRES_USER:-postgres}}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-${POSTGRES_PASSWORD:-postgres}}
+      # Hibernate DDL Auto (overridable via .env)
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-validate}
       # JWT (Spring relaxed binding: jwt.secret → JWT_SECRET)
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production-vitalsy-2024}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}

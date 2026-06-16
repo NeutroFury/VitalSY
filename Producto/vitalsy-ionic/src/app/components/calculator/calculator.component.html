@@ -7,12 +7,12 @@
     <section class="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 relative shadow-lg">
       
       <!-- Overlay Sincronizando Sensor -->
-      @if (isSyncing) {
+      @if (isSyncing || isCalculating) {
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md z-20 flex flex-col items-center justify-center gap-4 rounded-3xl">
           <div class="w-16 h-16 rounded-full border-2 border-neon-green flex items-center justify-center neon-glow animate-pulse">
             <ion-icon name="radio-outline" class="text-3xl text-neon-green"></ion-icon>
           </div>
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-neon-green m-0">Rescatando...</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-neon-green m-0">Procesando...</p>
         </div>
       }
 
@@ -22,7 +22,7 @@
           <div class="bg-neon-green w-8 h-8 rounded-xl flex items-center justify-center shadow-neon">
             <ion-icon name="calculator-outline" class="text-lg text-black"></ion-icon>
           </div>
-          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-300">Parámetros del Paciente</span>
+          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-300">Variables de Comida</span>
         </div>
         <button 
           type="button"
@@ -31,7 +31,7 @@
           class="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg hover:bg-zinc-700 transition-all active:scale-95 group disabled:opacity-50"
         >
           <ion-icon name="radio-outline" class="text-[12px] text-neon-green group-hover:animate-pulse"></ion-icon>
-          <span class="text-[8px] font-bold text-zinc-300 uppercase tracking-wider">Rescatar</span>
+          <span class="text-[8px] font-bold text-zinc-300 uppercase tracking-wider">Rescatar Glicemia</span>
         </button>
       </div>
 
@@ -68,21 +68,30 @@
           </div>
         </div>
 
-        <!-- Campo 3: RATIO INSULINA/CARBOHIDRATO -->
+        <!-- Campo 3: NOMBRE COMIDA -->
         <div class="flex flex-col gap-1 w-full">
-          <label class="text-zinc-500 text-[9px] ml-1 uppercase font-bold tracking-widest">Ratio Insulina/Carbohidrato</label>
+          <label class="text-zinc-500 text-[9px] ml-1 uppercase font-bold tracking-widest">Comida / Momento del Día</label>
           <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
-            <input
-              type="number"
-              [(ngModel)]="icRatio"
-              placeholder="10"
-              class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-xl font-black w-full"
-            />
-            <div class="bg-neutral-800 rounded-lg px-2 py-1 shrink-0">
-              <span class="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">g/U</span>
-            </div>
+            <select [(ngModel)]="selectedComida" class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-sm font-black w-full appearance-none">
+              <option *ngFor="let comida of comidasDisponibles" [value]="comida" class="bg-zinc-900 text-white">{{ comida }}</option>
+              <option value="otra" class="bg-zinc-900 text-white italic">Otra (Ingreso manual)</option>
+            </select>
           </div>
         </div>
+
+        <!-- OTRA COMIDA INPUT -->
+        @if (selectedComida === 'otra') {
+          <div class="flex flex-col gap-1 w-full animate-fade-in">
+            <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
+              <input
+                type="text"
+                [(ngModel)]="customComida"
+                placeholder="Nombre de la comida"
+                class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-sm font-black w-full"
+              />
+            </div>
+          </div>
+        }
 
       </div>
 
@@ -90,10 +99,10 @@
       <div class="mt-5">
         <button 
           (click)="generateDose()"
-          [disabled]="currentGlucose === null"
+          [disabled]="currentGlucose === null || carbsToConsume === null || (selectedComida === 'otra' && !customComida)"
           class="w-full py-3 text-xs font-bold uppercase tracking-widest bg-neon-green text-black rounded-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:bg-zinc-700 disabled:text-zinc-500"
         >
-          Generar Dosis Recomendada
+          Calcular Dosis Inteligente
         </button>
       </div>
 
@@ -108,8 +117,11 @@
             <ion-icon name="medkit-outline" class="text-lg text-neon-green"></ion-icon>
             <span class="text-[10px] font-black uppercase tracking-widest text-neon-green">Dosis Recomendada</span>
           </div>
+          
           <div class="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1">
-            <span class="text-[8px] font-bold text-zinc-400 uppercase tracking-wider">Última Dosis: -- U</span>
+            <span class="text-[8px] font-bold uppercase tracking-wider" [ngClass]="methodUsed === 'TABLA_MEDICA_FIJA' ? 'text-sky-400' : 'text-amber-400'">
+              {{ methodUsed === 'TABLA_MEDICA_FIJA' ? 'PAUTA MÉDICA EXACTA' : 'ALGORITMO ESTÁNDAR' }}
+            </span>
           </div>
         </div>
         
@@ -118,16 +130,11 @@
           <span class="text-neon-green font-black italic text-2xl uppercase tracking-tighter ml-2">U</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 pt-3 border-t border-zinc-800">
-          <div class="text-center">
-            <p class="text-[9px] uppercase font-bold tracking-widest text-zinc-500 mb-1 mt-0">Corrección</p>
-            <p class="text-lg font-black text-white m-0">{{ correctionDose }} <span class="text-xs text-zinc-500 font-normal">U</span></p>
+        @if (mensajeInfo) {
+          <div class="pt-3 border-t border-zinc-800 text-center">
+            <p class="text-[10px] text-zinc-400 italic m-0">{{ mensajeInfo }}</p>
           </div>
-          <div class="text-center border-l border-neutral-700">
-            <p class="text-[9px] uppercase font-bold tracking-widest text-zinc-500 mb-1 mt-0">Carbohidratos</p>
-            <p class="text-lg font-black text-white m-0">{{ carbohydrateDose }} <span class="text-xs text-zinc-500 font-normal">U</span></p>
-          </div>
-        </div>
+        }
 
       </div>
     }
@@ -136,9 +143,7 @@
     <div class="flex items-start gap-2 p-3 bg-zinc-900 rounded-2xl border border-zinc-800 mt-auto">
       <ion-icon name="information-circle-outline" class="text-lg text-zinc-500 shrink-0 mt-0.5"></ion-icon>
       <p class="text-[9px] leading-relaxed text-zinc-400 font-medium m-0">
-        Cálculo estimativo. Verifica con tu médico. 
-        <br>
-        <span class="text-zinc-600">Fórmula: (Glicemia Actual - Objetivo) / ISF + (Carbohidratos / Ratio).</span>
+        Cálculo estimativo. Si utiliza Pauta Médica, el cálculo es exacto basado en la tabla indicada por su médico. Si utiliza Algoritmo Estándar, se basa en su sensibilidad a la insulina (ISF) y ratio de carbohidratos (IC).
       </p>
     </div>
     
