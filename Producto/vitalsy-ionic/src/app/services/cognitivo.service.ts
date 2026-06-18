@@ -13,13 +13,14 @@ export interface CalculoDosisRequest {
   usuarioId: number;
   nombreComida: string;
   glicemiaActual: number;
-  carbohidratosGr: number;
+  carbohidratos: number;
 }
 
 export interface CalculoDosisResponse {
-  dosisRecomendada: number;
-  metodoCalculo: string;
-  mensajeInfo?: string;
+  dosisCarbohidratos: number;
+  dosisGlicemia: number;
+  dosisTotal: number;
+  metodoAplicado: string;
 }
 
 @Injectable({
@@ -44,5 +45,9 @@ export class CognitivoService {
 
   calcularDosis(request: CalculoDosisRequest): Observable<CalculoDosisResponse> {
     return this.http.post<CalculoDosisResponse>(`${this.calcUrl}/calcular`, request);
+  }
+
+  inyectarPautaMock(dtos: any[]): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/pauta/mock`, dtos);
   }
 }

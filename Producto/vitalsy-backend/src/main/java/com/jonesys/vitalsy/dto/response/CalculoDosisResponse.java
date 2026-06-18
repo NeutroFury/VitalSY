@@ -1,8 +1,9 @@
 package com.jonesys.vitalsy.dto.response;
 
 public record CalculoDosisResponse(
-        Double dosisSugerida,
-        String metodoCalculo,
-        String advertencia
+        Double dosisCarbohidratos,
+        Double dosisGlicemia,
+        Double dosisTotal,
+        String metodoAplicado
 ) {
 }

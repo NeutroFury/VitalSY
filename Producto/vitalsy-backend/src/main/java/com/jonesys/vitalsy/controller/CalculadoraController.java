@@ -11,12 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/calculadora")
 @Tag(name = "Calculadora Híbrida", description = "Endpoints para la calculadora de dosis y digitalización de pautas médicas")
 public class CalculadoraController {
 
+    private static final Logger log = LoggerFactory.getLogger(CalculadoraController.class);
     private final CalculadoraService calculadoraService;
 
     public CalculadoraController(CalculadoraService calculadoraService) {
@@ -26,6 +29,11 @@ public class CalculadoraController {
     @Operation(summary = "Calcular dosis recomendada", description = "Calcula la dosis de insulina usando tabla médica o algoritmo fallback")
     @PostMapping("/calcular")
     public ResponseEntity<CalculoDosisResponse> calcularDosis(@Valid @RequestBody CalculoDosisRequest request) {
+        log.info("=========================================");
+        log.info("Payload recibido desde Ionic: {}", request);
+        log.info("Carbohidratos mapeados en el Backend: {}", request.carbohidratos());
+        log.info("=========================================");
+        
         CalculoDosisResponse response = calculadoraService.calcularDosisRecomendada(request);
         return ResponseEntity.ok(response);
     }

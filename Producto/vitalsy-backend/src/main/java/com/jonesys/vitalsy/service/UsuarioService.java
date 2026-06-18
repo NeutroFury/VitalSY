@@ -57,6 +57,9 @@ public class UsuarioService {
         if (request.getRecordatorioComidas() != null) {
             usuario.setRecordatorioComidas(request.getRecordatorioComidas());
         }
+        if (request.getGlicemiaObjetivo() != null) {
+            usuario.setGlicemiaObjetivo(request.getGlicemiaObjetivo());
+        }
         if (request.getZonaHoraria() != null && !request.getZonaHoraria().isBlank()) {
             usuario.setZonaHoraria(request.getZonaHoraria());
         }

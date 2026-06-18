@@ -417,7 +417,9 @@ public class IaService {
             return result;
 
         } catch (Exception e) {
-            log.error("❌ PREDICTIVE_IA_ERROR para usuario={}: {}", usuario.getId(), e.getMessage(), e);
+            log.error("❌ PREDICTIVE_IA_ERROR para usuario={}: {} | Causa: {}",
+                    usuario.getId(), e.getMessage(),
+                    e.getCause() != null ? e.getCause().getMessage() : "sin causa", e);
             throw new RuntimeException("PREDICTIVE_IA_SERVER_UNAVAILABLE");
         }
     }
