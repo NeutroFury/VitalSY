@@ -101,11 +101,24 @@ public class MotorCognitivoService {
             log.info("Enviando archivo {} a Gemini API...", archivo.getOriginalFilename());
 
             String targetUri = geminiUrl + "?key=" + geminiKey;
-            String responseString = restClient.post()
-                    .uri(targetUri)
-                    .body(request)
-                    .retrieve()
-                    .body(String.class);
+            String responseString;
+            try {
+                responseString = restClient.post()
+                        .uri(targetUri)
+                        .body(request)
+                        .retrieve()
+                        .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                                (req, res) -> {
+                                    String errorBody = new String(res.getBody().readAllBytes());
+                                    log.error("Error de Gemini API [{}]: {}", res.getStatusCode(), errorBody);
+                                    throw new RuntimeException("Gemini API retornó " + res.getStatusCode() + ": " + errorBody);
+                                })
+                        .body(String.class);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException("Error al comunicarse con Gemini API: " + e.getMessage(), e);
+            }
             
             GeminiResponse response = objectMapper.readValue(responseString, GeminiResponse.class);
 

@@ -40,9 +40,7 @@ export class CalculatorComponent implements OnInit {
   isSyncing: boolean = false;
   isCalculating: boolean = false;
 
-  totalDose: number = 0;
-  methodUsed: string = '';
-  mensajeInfo: string = '';
+  public resultado: CalculoDosisResponse | null = null;
 
   constructor() {
     addIcons({ calculatorOutline, radioOutline, informationCircleOutline, medkitOutline });
@@ -126,7 +124,7 @@ export class CalculatorComponent implements OnInit {
       usuarioId: this.userId,
       nombreComida: comidaName.trim(),
       glicemiaActual: this.currentGlucose,
-      carbohidratosGr: this.carbsToConsume
+      carbohidratos: this.carbsToConsume
     };
 
     this.isCalculating = true;
@@ -134,9 +132,7 @@ export class CalculatorComponent implements OnInit {
 
     this.cognitivoService.calcularDosis(request).subscribe({
       next: (res: CalculoDosisResponse) => {
-        this.totalDose = res.dosisRecomendada;
-        this.methodUsed = res.metodoCalculo;
-        this.mensajeInfo = res.mensajeInfo || '';
+        this.resultado = res;
         this.isCalculated = true;
         this.isCalculating = false;
       },

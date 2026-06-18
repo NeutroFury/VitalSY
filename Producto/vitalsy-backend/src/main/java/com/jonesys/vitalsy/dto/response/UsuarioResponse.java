@@ -23,6 +23,7 @@ public class UsuarioResponse {
     private Boolean recordatorioComidas;
     private Integer rangoGlucosaMin;
     private Integer rangoGlucosaMax;
+    private Integer glicemiaObjetivo;
     private String zonaHoraria;
     private String rol;
     private Boolean activo;
