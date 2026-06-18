@@ -17,6 +17,7 @@ export interface UserProfile {
   recordatorioComidas: boolean;
   rangoGlucosaMin?: number;
   rangoGlucosaMax?: number;
+  glicemiaObjetivo?: number;
   zonaHoraria?: string;
 }
 

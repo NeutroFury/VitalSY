@@ -102,6 +102,7 @@ export class ProfileComponent implements OnInit {
       insulinaRapida: ['Humalog (Lispro)', [Validators.required]],
       ratioIc: [10, [Validators.required, Validators.min(0.1)]],
       factorIs: [40, [Validators.required, Validators.min(1)]],
+      glicemiaObjetivo: [100, [Validators.required, Validators.min(50)]],
       alertasGlucosa: [true],
       recordatorioComidas: [false]
     });
@@ -122,6 +123,7 @@ export class ProfileComponent implements OnInit {
           altura: profile.altura || this.profileForm.get('altura')?.value,
           ratioIc: profile.ratioIc || this.profileForm.get('ratioIc')?.value || 10,
           factorIs: profile.factorIs || this.profileForm.get('factorIs')?.value || 40,
+          glicemiaObjetivo: profile.glicemiaObjetivo || this.profileForm.get('glicemiaObjetivo')?.value || 100,
           alertasGlucosa: profile.alertasGlucosa !== null && profile.alertasGlucosa !== undefined ? profile.alertasGlucosa : true,
           recordatorioComidas: profile.recordatorioComidas !== null && profile.recordatorioComidas !== undefined ? profile.recordatorioComidas : false,
           // Evitar que null sobreescriba los valores con vacíos si el usuario ya tenía uno seleccionado
@@ -292,26 +294,138 @@ export class ProfileComponent implements OnInit {
   }
 
   onFileSelected(event: Event) {
+    this.isScanning = true;
+    this.showToast('Inyectando Pauta Médica Completa...', 'tertiary');
+
+    const mockData = [
+      // === MATRIZ DESAYUNO ===
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 0, "dosisInsulina": 0},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 6, "dosisInsulina": 1},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 12, "dosisInsulina": 2},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 18, "dosisInsulina": 3},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 24, "dosisInsulina": 4},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 30, "dosisInsulina": 5},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 36, "dosisInsulina": 6},
+      
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 0, "dosisInsulina": 1},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 6, "dosisInsulina": 2},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 12, "dosisInsulina": 3},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 18, "dosisInsulina": 4},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 24, "dosisInsulina": 5},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 30, "dosisInsulina": 6},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 36, "dosisInsulina": 7},
+
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 12, "dosisInsulina": 4},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 18, "dosisInsulina": 5},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 161, "glicemiaMax": 190, "carbohidratosGr": 12, "dosisInsulina": 5},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 161, "glicemiaMax": 190, "carbohidratosGr": 18, "dosisInsulina": 6},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 191, "glicemiaMax": 220, "carbohidratosGr": 12, "dosisInsulina": 6},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 191, "glicemiaMax": 220, "carbohidratosGr": 18, "dosisInsulina": 7},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 221, "glicemiaMax": 250, "carbohidratosGr": 12, "dosisInsulina": 7},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 221, "glicemiaMax": 250, "carbohidratosGr": 18, "dosisInsulina": 8},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 251, "glicemiaMax": 280, "carbohidratosGr": 12, "dosisInsulina": 8},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 251, "glicemiaMax": 280, "carbohidratosGr": 18, "dosisInsulina": 9},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 281, "glicemiaMax": 310, "carbohidratosGr": 12, "dosisInsulina": 9},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 281, "glicemiaMax": 310, "carbohidratosGr": 18, "dosisInsulina": 10},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 311, "glicemiaMax": 340, "carbohidratosGr": 12, "dosisInsulina": 10},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 311, "glicemiaMax": 340, "carbohidratosGr": 18, "dosisInsulina": 11},
+
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 12, "dosisInsulina": 11},
+      {"momentoDia": "DESAYUNO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 18, "dosisInsulina": 12},
+      // === MATRIZ ALMUERZO ===
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 0, "dosisInsulina": 0},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 10, "dosisInsulina": 2},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 20, "dosisInsulina": 4},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 30, "dosisInsulina": 6},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 40, "dosisInsulina": 8},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 50, "dosisInsulina": 10},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 60, "dosisInsulina": 12},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 70, "dosisInsulina": 14},
+
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 0, "dosisInsulina": 1},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 10, "dosisInsulina": 3},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 20, "dosisInsulina": 5},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 30, "dosisInsulina": 7},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 40, "dosisInsulina": 9},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 50, "dosisInsulina": 11},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 60, "dosisInsulina": 13},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 70, "dosisInsulina": 15},
+
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 30, "dosisInsulina": 8},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 161, "glicemiaMax": 190, "carbohidratosGr": 30, "dosisInsulina": 9},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 191, "glicemiaMax": 220, "carbohidratosGr": 30, "dosisInsulina": 10},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 221, "glicemiaMax": 250, "carbohidratosGr": 30, "dosisInsulina": 11},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 251, "glicemiaMax": 280, "carbohidratosGr": 30, "dosisInsulina": 12},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 281, "glicemiaMax": 310, "carbohidratosGr": 30, "dosisInsulina": 13},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 311, "glicemiaMax": 340, "carbohidratosGr": 30, "dosisInsulina": 14},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 20, "dosisInsulina": 13},
+      {"momentoDia": "ALMUERZO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 30, "dosisInsulina": 15},
+
+      // === MATRIZ ONCE/CENA (SIN EJERCICIO) ===
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 0, "dosisInsulina": 0},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 15, "dosisInsulina": 2.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 30, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 45, "dosisInsulina": 6.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 60, "dosisInsulina": 8.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 75, "dosisInsulina": 10.5},
+      
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 0, "dosisInsulina": 1},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 15, "dosisInsulina": 3.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 30, "dosisInsulina": 5.5},
+      
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 15, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 30, "dosisInsulina": 6.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 161, "glicemiaMax": 190, "carbohidratosGr": 15, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 161, "glicemiaMax": 190, "carbohidratosGr": 30, "dosisInsulina": 6.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 191, "glicemiaMax": 220, "carbohidratosGr": 15, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 191, "glicemiaMax": 220, "carbohidratosGr": 30, "dosisInsulina": 6.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 221, "glicemiaMax": 250, "carbohidratosGr": 15, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 221, "glicemiaMax": 250, "carbohidratosGr": 30, "dosisInsulina": 6.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 251, "glicemiaMax": 280, "carbohidratosGr": 15, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 251, "glicemiaMax": 280, "carbohidratosGr": 30, "dosisInsulina": 6.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 281, "glicemiaMax": 310, "carbohidratosGr": 15, "dosisInsulina": 5.0},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 281, "glicemiaMax": 310, "carbohidratosGr": 30, "dosisInsulina": 6.5},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 311, "glicemiaMax": 340, "carbohidratosGr": 15, "dosisInsulina": 5.5},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 311, "glicemiaMax": 340, "carbohidratosGr": 30, "dosisInsulina": 7.0},
+
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 15, "dosisInsulina": 12.0},
+      {"momentoDia": "ONCE_CENA_SIN_EJERCICIO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 30, "dosisInsulina": 13.5},
+
+      // === MATRIZ ONCE/CENA (CON EJERCICIO) ===
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 0, "dosisInsulina": 0},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 15, "dosisInsulina": 1.5},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 30, "dosisInsulina": 3.0},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 45, "dosisInsulina": 4.5},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 60, "dosisInsulina": 6.0},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 0, "glicemiaMax": 100, "carbohidratosGr": 75, "dosisInsulina": 7.5},
+      
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 0, "dosisInsulina": 1},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 15, "dosisInsulina": 2.5},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 101, "glicemiaMax": 130, "carbohidratosGr": 30, "dosisInsulina": 4.0},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 131, "glicemiaMax": 160, "carbohidratosGr": 15, "dosisInsulina": 3.5},
+      {"momentoDia": "ONCE_CENA_CON_EJERCICIO", "glicemiaMin": 341, "glicemiaMax": 999, "carbohidratosGr": 30, "dosisInsulina": 12.0}
+    ];
+
+    this.cognitivoService.inyectarPautaMock(mockData).subscribe({
+      next: (res) => {
+        this.isScanning = false;
+        this.showToast(res.mensaje || '¡Pauta Médica Completa Inyectada en Supabase!', 'success');
+      },
+      error: (err) => {
+        console.error(err);
+        this.isScanning = false;
+        this.showToast('Error al inyectar la pauta médica', 'danger');
+      }
+    });
+
     const element = event.currentTarget as HTMLInputElement;
-    const fileList: FileList | null = element.files;
-    if (fileList && fileList.length > 0) {
-      const files: File[] = Array.from(fileList);
-      this.isScanning = true;
-      this.showToast('Analizando pauta médica con Inteligencia Artificial...', 'tertiary');
-
-      this.cognitivoService.subirPautaMedica(files).subscribe({
-        next: (res) => {
-          this.isScanning = false;
-          this.showToast(`${res.mensaje} (${res.reglasExtraidas} reglas guardadas)`, 'success');
-        },
-        error: (err) => {
-          console.error(err);
-          this.isScanning = false;
-          this.showToast('Error al procesar la pauta médica', 'danger');
-        }
-      });
-
-      // Reiniciar el input
+    if (element) {
       element.value = '';
     }
   }

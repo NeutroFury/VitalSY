@@ -60,10 +60,13 @@ public class Usuario {
     private Boolean recordatorioComidas = false;
 
     @Column(name = "rango_glucosa_min")
-    private Integer rangoGlucosaMin = 70;
+    private Integer rangoGlucosaMin;
     
     @Column(name = "rango_glucosa_max")
-    private Integer rangoGlucosaMax = 180;
+    private Integer rangoGlucosaMax;
+    
+    @Column(name = "glicemia_objetivo")
+    private Integer glicemiaObjetivo;
 
     public Integer getRangoGlucosaMin() {
         return rangoGlucosaMin != null ? rangoGlucosaMin : 70;

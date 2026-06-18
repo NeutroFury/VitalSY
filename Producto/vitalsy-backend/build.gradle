@@ -63,6 +63,9 @@ dependencies {
 	// JFreeChart (For PDF AGP Generation)
 	implementation 'org.jfree:jfreechart:1.5.3'
 
+	// Apache POI (Procesamiento de Pautas Médicas Excel)
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
 	// Email (Password Recovery)
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 

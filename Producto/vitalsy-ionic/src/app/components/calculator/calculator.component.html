@@ -119,22 +119,26 @@
           </div>
           
           <div class="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1">
-            <span class="text-[8px] font-bold uppercase tracking-wider" [ngClass]="methodUsed === 'TABLA_MEDICA_FIJA' ? 'text-sky-400' : 'text-amber-400'">
-              {{ methodUsed === 'TABLA_MEDICA_FIJA' ? 'PAUTA MÉDICA EXACTA' : 'ALGORITMO ESTÁNDAR' }}
+            <span class="text-[8px] font-bold uppercase tracking-wider" [ngClass]="resultado?.metodoAplicado === 'TABLA_MEDICA_FIJA' ? 'text-sky-400' : 'text-amber-400'">
+              {{ resultado?.metodoAplicado === 'TABLA_MEDICA_FIJA' ? 'PAUTA MÉDICA EXACTA' : 'ALGORITMO ESTÁNDAR' }}
             </span>
           </div>
         </div>
         
-        <div class="flex items-baseline justify-center mb-4">
-          <span class="text-5xl font-black italic text-white leading-none tracking-tighter">{{ totalDose }}</span>
-          <span class="text-neon-green font-black italic text-2xl uppercase tracking-tighter ml-2">U</span>
-        </div>
-
-        @if (mensajeInfo) {
-          <div class="pt-3 border-t border-zinc-800 text-center">
-            <p class="text-[10px] text-zinc-400 italic m-0">{{ mensajeInfo }}</p>
-          </div>
-        }
+        <ion-list class="bg-transparent" lines="none">
+          <ion-item color="transparent">
+            <ion-label class="text-zinc-300">Dosis por Carbohidratos</ion-label>
+            <ion-note slot="end" color="primary" class="font-bold">{{ resultado?.dosisCarbohidratos }} U</ion-note>
+          </ion-item>
+          <ion-item color="transparent">
+            <ion-label class="text-zinc-300">Dosis por Glicemia</ion-label>
+            <ion-note slot="end" color="primary" class="font-bold">{{ resultado?.dosisGlicemia }} U</ion-note>
+          </ion-item>
+          <ion-item color="transparent" class="total-row mt-2 border-t border-zinc-700 pt-2">
+            <ion-label class="text-white text-lg"><strong>Dosis Total:</strong></ion-label>
+            <ion-note slot="end" color="success" class="text-2xl"><strong>{{ resultado?.dosisTotal }} U</strong></ion-note>
+          </ion-item>
+        </ion-list>
 
       </div>
     }

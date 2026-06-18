@@ -41,38 +41,50 @@ public class CalculadoraService {
                 usuario.getId(),
                 request.nombreComida(),
                 request.glicemiaActual(),
-                request.carbohidratosGr()
+                request.carbohidratos()
         );
 
         if (dosisFijaOpt.isPresent()) {
             EscalaDosisFija dosisFija = dosisFijaOpt.get();
             return new CalculoDosisResponse(
+                    0.0,
+                    0.0,
                     redondear(dosisFija.getDosisInsulina()),
-                    "TABLA_MEDICA_FIJA",
-                    null
+                    "TABLA_MEDICA_FIJA"
             );
         }
 
-        // 3. Fallback: Lógica Algorítmica Tradicional
-        ParametroClinico parametros = parametroClinicoRepository.findByUsuario(usuario)
-                .orElseThrow(() -> new com.jonesys.vitalsy.exception.UsuarioSinConfiguracionException(
-                        "El usuario no tiene pauta médica ni parámetros clínicos basales configurados para calcular la dosis de insulina."
-                ));
+        // 3. Fallback: Lógica Algorítmica Tradicional (Basal-Bolo)
+        if (usuario.getRatioIc() == null || usuario.getRatioIc() <= 0 ||
+            usuario.getFactorIs() == null || usuario.getFactorIs() <= 0) {
+            throw new com.jonesys.vitalsy.exception.UsuarioSinConfiguracionException(
+                    "El usuario no tiene pauta médica ni parámetros clínicos configurados para calcular la dosis de insulina."
+            );
+        }
 
         // Dosis = ((Glicemia Actual - Objetivo) / ISF) + (Carbohidratos / Ratio)
-        double glicemiaDiff = request.glicemiaActual() - parametros.getObjetivoGlucemiaMax();
-        // Si la glicemia está por debajo del objetivo, la corrección es 0 (no restamos insulina de la comida)
-        double correccionGlicemia = Math.max(0.0, glicemiaDiff / parametros.getFactorSensibilidad());
+        double glicemiaActual = request.glicemiaActual() != null ? (double) request.glicemiaActual() : 0.0;
+        double objetivoGlicemia = usuario.getGlicemiaObjetivo() != null ? (double) usuario.getGlicemiaObjetivo() : 100.0;
+        double factorIs = usuario.getFactorIs() != null ? usuario.getFactorIs() : 1.0;
+        double ratioIc = usuario.getRatioIc() != null ? usuario.getRatioIc() : 1.0;
+        double carbohidratos = request.carbohidratos() != null ? request.carbohidratos() : 0.0;
+
+        double glicemiaDiff = glicemiaActual - objetivoGlicemia;
         
-        double dosisComida = request.carbohidratosGr() / parametros.getRatioCarbohidratos();
+        // 1. Bolo de Corrección (Dosis por Glicemia)
+        double dosisGlicemia = Math.max(0.0, glicemiaDiff / factorIs);
         
-        double dosisTotal = correccionGlicemia + dosisComida;
-        double dosisFinal = Math.max(0.0, dosisTotal);
+        // 2. Bolo de Alimentos (Dosis por Carbohidratos)
+        double dosisCarbohidratos = carbohidratos / ratioIc;
+        
+        // 3. Sumatoria Final Explícita
+        double dosisTotal = dosisCarbohidratos + dosisGlicemia;
 
         return new CalculoDosisResponse(
-                redondear(dosisFinal),
-                "ALGORITMO_FALLBACK",
-                "No se encontró pauta fija exacta. Se utilizó fórmula basada en parámetros clínicos."
+                redondear(dosisCarbohidratos),
+                redondear(dosisGlicemia),
+                redondear(dosisTotal),
+                "ALGORITMO_BASAL_BOLO"
         );
     }
 
