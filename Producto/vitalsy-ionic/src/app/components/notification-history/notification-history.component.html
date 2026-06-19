@@ -1,0 +1,97 @@
+<div class="flex flex-col gap-6 w-full h-full bg-background rounded-t-3xl pt-2 pb-10">
+  
+  <!-- Header -->
+  <div class="px-6 flex items-center justify-between sticky top-0 bg-background/90 backdrop-blur-md z-20 py-4 border-b border-secondary/20">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+        <ion-icon name="notifications-outline" class="text-base text-primary"></ion-icon>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[10px] font-black uppercase tracking-widest text-secondary m-0 leading-none">Centro de</span>
+        <h2 class="text-sm font-black text-text uppercase tracking-widest m-0 leading-tight">Notificaciones</h2>
+      </div>
+    </div>
+    <!-- No close button needed if modal handles it, but let's add one just in case -->
+    <button (click)="close()" class="w-8 h-8 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-secondary active:scale-95 transition-all">
+      <ion-icon name="close-outline" class="text-lg"></ion-icon>
+    </button>
+  </div>
+
+  <div class="px-6 flex flex-col gap-8 overflow-y-auto pb-8">
+    @if (isLoading) {
+      <div class="flex justify-center items-center py-10">
+        <ion-spinner name="crescent" class="text-primary"></ion-spinner>
+      </div>
+    } @else {
+
+      <!-- ALERTAS PREDICTIVAS (IA) -->
+      <section class="flex flex-col gap-4">
+        <h3 class="text-[10px] font-black uppercase tracking-widest text-secondary m-0 flex items-center gap-2">
+          <ion-icon name="warning-outline" class="text-accent-alert"></ion-icon>
+          Alertas Clínicas (IA)
+        </h3>
+
+        @if (alertas.length === 0) {
+          <div class="bg-surface rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-secondary/20 border-dashed">
+            <ion-icon name="checkmark-circle-outline" class="text-4xl text-primary mb-2 opacity-50"></ion-icon>
+            <span class="text-xs font-black text-secondary uppercase tracking-widest">Sin alertas vigentes</span>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-3">
+            @for (alerta of alertas; track alerta) {
+              <div class="bg-surface border-l-4 border-l-accent-alert border-y border-r border-secondary/20 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-black text-accent-alert uppercase tracking-widest bg-accent-alert/10 px-2 py-1 rounded-full border border-accent-alert/20">
+                    {{ alerta.type?.replace('_', ' ') || 'Alerta' }}
+                  </span>
+                  <span class="text-xs font-black text-text italic">{{ getProbabilityPercentage(alerta.probability) }}% Prob.</span>
+                </div>
+                <p class="text-xs text-secondary leading-relaxed mb-3">{{ alerta.recommended_action }}</p>
+                <div class="flex items-center gap-2 text-[9px] font-bold text-secondary uppercase tracking-wider">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Ventana: {{ alerta.timeframe }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- RECORDATORIOS ACTIVOS -->
+      <section class="flex flex-col gap-4">
+        <h3 class="text-[10px] font-black uppercase tracking-widest text-secondary m-0 flex items-center gap-2">
+          <ion-icon name="time-outline" class="text-primary"></ion-icon>
+          Recordatorios Activos
+        </h3>
+
+        @if (recordatorios.length === 0) {
+          <div class="bg-surface rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-secondary/20 border-dashed">
+            <ion-icon name="time-outline" class="text-4xl text-secondary mb-2 opacity-30"></ion-icon>
+            <span class="text-xs font-black text-secondary uppercase tracking-widest">Sin recordatorios</span>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-3">
+            @for (rec of recordatorios; track rec.id) {
+              <div class="bg-surface border border-secondary/20 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                    <ion-icon [name]="getRecordatorioIcon(rec.tipo)" class="text-xl text-primary"></ion-icon>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-black text-text uppercase">{{ rec.titulo }}</span>
+                    <span class="text-[10px] font-bold text-secondary tracking-widest">{{ rec.mensaje }}</span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end">
+                  <span class="text-sm font-black text-primary italic">{{ rec.hora }}</span>
+                  <span class="text-[9px] font-black text-secondary uppercase tracking-widest mt-1 bg-secondary/10 px-2 py-0.5 rounded">{{ rec.frecuencia }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+    }
+  </div>
+</div>

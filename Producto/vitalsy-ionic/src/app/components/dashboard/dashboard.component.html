@@ -1,39 +1,12 @@
-<div class="min-h-full bg-background pb-24 px-6 space-y-6 pt-6 overflow-y-auto animate-fade-in">
+<div class="min-h-full bg-background pb-32 px-6 space-y-6 pt-6 animate-fade-in">
   
   <app-header [showBack]="false" [showGreeting]="true" [showActions]="true"></app-header>
 
-  <!-- Barra de Navegación de Iconos (Premium Restored) -->
-  <div class="flex justify-between items-center py-2 px-1 border-b border-secondary/30">
-    <button (click)="navigateTo('dashboard')" class="flex flex-col items-center gap-1 text-primary active:scale-95 transition-transform">
-      <div class="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-        <ion-icon name="pulse-outline" class="text-xl"></ion-icon>
-      </div>
-    </button>
-    <button (click)="navigateTo('history')" class="flex flex-col items-center gap-1 text-secondary hover:text-text active:scale-95 transition-all">
-      <div class="w-10 h-10 rounded-2xl flex items-center justify-center">
-        <ion-icon name="time-outline" class="text-xl"></ion-icon>
-      </div>
-    </button>
-    <button (click)="navigateTo('registro')" class="flex flex-col items-center gap-1 text-secondary hover:text-text active:scale-95 transition-all">
-      <div class="w-10 h-10 rounded-2xl flex items-center justify-center">
-        <ion-icon name="add-outline" class="text-xl"></ion-icon>
-      </div>
-    </button>
-    <button (click)="navigateTo('calculator')" class="flex flex-col items-center gap-1 text-secondary hover:text-text active:scale-95 transition-all">
-      <div class="w-10 h-10 rounded-2xl flex items-center justify-center">
-        <ion-icon name="calculator-outline" class="text-xl"></ion-icon>
-      </div>
-    </button>
-    <button (click)="navigateTo('chat')" class="flex flex-col items-center gap-1 text-secondary hover:text-text active:scale-95 transition-all">
-      <div class="w-10 h-10 rounded-2xl flex items-center justify-center">
-        <ion-icon name="hardware-chip-outline" class="text-xl"></ion-icon>
-      </div>
-    </button>
-  </div>
+
 
   <!-- Status Card (Premium Area Chart) -->
   <div class="bg-surface rounded-[32px] p-6 border border-secondary/20 shadow-card relative overflow-hidden group">
-    <div class="flex justify-between items-end mb-4 relative z-10">
+    <div class="flex flex-row justify-between items-start mb-4 relative z-10 gap-2">
       <div class="flex flex-col">
         <span class="text-[10px] uppercase text-secondary tracking-widest font-bold">Estado Actual</span>
         <div class="flex items-center space-x-3 mt-1">
@@ -53,7 +26,7 @@
         [style.color]="getStatusDetails().color"
         [style.borderColor]="getStatusDetails().color + '33'"
         [style.backgroundColor]="getStatusDetails().color + '11'"
-        class="px-3 py-1 text-[10px] rounded uppercase font-black border transition-all duration-500">
+        class="px-2 py-1 text-[8px] sm:px-3 sm:text-[10px] rounded uppercase font-black border transition-all duration-500 whitespace-normal text-center shrink-1 max-w-[110px] leading-tight flex items-center justify-center">
         {{ getStatusDetails().text }}
       </div>
     </div>
@@ -150,7 +123,7 @@
       } @else if (iaError) {
         <p class="text-xs text-secondary italic">{{ iaError }}</p>
       } @else if (iaAnalysis) {
-        <p class="text-[13px] text-secondary leading-relaxed italic font-medium line-clamp-3" [innerHTML]="formatMarkdown(iaAnalysis.trend_summary) | safeHtml"></p>
+        <p class="text-[13px] text-secondary leading-relaxed italic font-medium" [innerHTML]="formatMarkdown(iaAnalysis.trend_summary) | safeHtml"></p>
       }
     </div>
 
@@ -158,7 +131,7 @@
     <div class="mt-4 flex space-x-6 border-t border-secondary pt-4 relative z-10">
       <div class="flex flex-col">
         <span class="text-[9px] text-secondary uppercase font-black tracking-widest">Alerta Principal</span>
-        <span class="text-xs font-black text-accent-alert uppercase tracking-tighter truncate max-w-[150px]">
+        <span class="text-xs font-black text-accent-alert uppercase tracking-tighter">
           {{ iaAnalysis?.predictive_alerts?.[0]?.type?.replace('_', ' ') || 'Ninguna' }}
         </span>
       </div>

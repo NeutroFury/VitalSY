@@ -20,7 +20,7 @@ public class UsuarioResponse {
     private Double ratioIc;
     private Double factorIs;
     private Boolean alertasGlucosa;
-    private Boolean recordatorioComidas;
+
     private Integer rangoGlucosaMin;
     private Integer rangoGlucosaMax;
     private Integer glicemiaObjetivo;

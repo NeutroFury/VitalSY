@@ -56,9 +56,6 @@ public class Usuario {
     @Column(name = "alertas_glucosa")
     private Boolean alertasGlucosa = true;
     
-    @Column(name = "recordatorio_comidas")
-    private Boolean recordatorioComidas = false;
-
     @Column(name = "rango_glucosa_min")
     private Integer rangoGlucosaMin;
     

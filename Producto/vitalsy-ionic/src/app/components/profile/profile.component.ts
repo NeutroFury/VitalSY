@@ -26,11 +26,15 @@ import {
   refreshOutline,
   closeOutline,
   checkmarkOutline,
-  cameraOutline
+  cameraOutline,
+  medicalOutline,
+  scanOutline,
+  hardwareChipOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
 import { AlertSettingsComponent } from '../alert-settings/alert-settings.component';
+import { RecordatoriosComponent } from '../recordatorios/recordatorios.component';
 import { UserService, UserProfile } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
@@ -42,7 +46,7 @@ import { PushNotificationsService } from '../../services/push-notifications.serv
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent, AlertSettingsComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent, AlertSettingsComponent, RecordatoriosComponent]
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
@@ -92,7 +96,10 @@ export class ProfileComponent implements OnInit {
       refreshOutline,
       closeOutline,
       checkmarkOutline,
-      cameraOutline
+      cameraOutline,
+      medicalOutline,
+      scanOutline,
+      hardwareChipOutline
     });
 
     this.username = this.authService.getUsername();
@@ -106,8 +113,7 @@ export class ProfileComponent implements OnInit {
       ratioIc: [10, [Validators.required, Validators.min(0.1)]],
       factorIs: [40, [Validators.required, Validators.min(1)]],
       glicemiaObjetivo: [100, [Validators.required, Validators.min(50)]],
-      alertasGlucosa: [true],
-      recordatorioComidas: [false]
+      alertasGlucosa: [true]
     });
   }
 
@@ -131,7 +137,6 @@ export class ProfileComponent implements OnInit {
           factorIs: profile.factorIs || this.profileForm.get('factorIs')?.value || 40,
           glicemiaObjetivo: profile.glicemiaObjetivo || this.profileForm.get('glicemiaObjetivo')?.value || 100,
           alertasGlucosa: profile.alertasGlucosa !== null && profile.alertasGlucosa !== undefined ? profile.alertasGlucosa : true,
-          recordatorioComidas: profile.recordatorioComidas !== null && profile.recordatorioComidas !== undefined ? profile.recordatorioComidas : false,
           // Evitar que null sobreescriba los valores con vacíos si el usuario ya tenía uno seleccionado
           insulinaLenta: profile.insulinaLenta || this.profileForm.get('insulinaLenta')?.value || 'Tresiba (Degludec)',
           insulinaRapida: profile.insulinaRapida || this.profileForm.get('insulinaRapida')?.value || 'Humalog (Lispro)'
@@ -175,10 +180,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  recordatorioComidasToggle() {
-    const currentValue = this.profileForm.get('recordatorioComidas')?.value;
-    this.profileForm.get('recordatorioComidas')?.setValue(!currentValue);
-  }
+
 
   saveProfile() {
     if (this.profileForm.valid) {

@@ -1,0 +1,110 @@
+<div class="flex items-center justify-between mb-4 mt-2 px-2">
+  <div class="flex items-center gap-2">
+    <ion-icon name="alarm-outline" class="text-primary text-xl"></ion-icon>
+    <h3 class="text-[11px] font-black uppercase tracking-widest text-text m-0">Mis Alarmas</h3>
+  </div>
+  <button (click)="openModal()" class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary active:scale-90 transition-transform">
+    <ion-icon name="add-outline" class="text-xl"></ion-icon>
+  </button>
+</div>
+
+@if (isLoading && recordatorios.length === 0) {
+  <div class="flex justify-center p-4">
+    <ion-spinner name="crescent" class="text-primary"></ion-spinner>
+  </div>
+} @else if (recordatorios.length === 0) {
+  <div class="p-6 text-center text-secondary border border-dashed border-secondary/30 rounded-2xl">
+    <p class="text-xs font-bold uppercase tracking-widest opacity-60 m-0">No tienes alarmas activas</p>
+  </div>
+} @else {
+  <div class="flex flex-col gap-3">
+    @for (rec of recordatorios; track rec.id) {
+      <div class="bg-background rounded-2xl p-4 border border-secondary/20 shadow-soft flex items-center justify-between transition-all">
+        <div class="flex items-center gap-4 flex-1" (click)="openModal(rec)">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+               [ngClass]="rec.tipo === 'MEDICION_GLUCOSA' ? 'bg-primary/10 text-primary' : 
+                          rec.tipo === 'APLICACION_INSULINA' ? 'bg-accent-primary/10 text-accent-primary' : 'bg-green-500/10 text-green-500'">
+            <ion-icon [name]="getIcon(rec.tipo)" class="text-xl"></ion-icon>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-2xl font-black text-text italic tracking-tighter">{{ rec.hora.substring(0,5) }}</span>
+            <span class="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">{{ getDiasStr(rec.diasRepeticion) }}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button (click)="deleteRecordatorio(rec.id)"
+                  class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 active:scale-90 transition-transform flex-shrink-0">
+            <ion-icon name="trash-outline" class="text-lg"></ion-icon>
+          </button>
+          <button (click)="toggleActivo(rec)"
+                  class="w-12 h-6 rounded-full relative transition-all duration-300 flex-shrink-0"
+                  [ngClass]="rec.activo ? 'bg-primary shadow-soft' : 'bg-secondary/30'">
+            <div class="absolute top-1 w-4 h-4 rounded-full transition-transform duration-300 bg-background"
+                 [ngClass]="rec.activo ? 'translate-x-7' : 'translate-x-1'"></div>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" class="recordatorio-modal" style="--background: transparent;">
+  <ng-template>
+    <div class="flex flex-col h-full bg-background p-6 pt-8 overflow-y-auto" [formGroup]="recordatorioForm">
+      
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-sm font-black text-text uppercase tracking-widest m-0 flex items-center gap-2">
+          <ion-icon name="alarm-outline" class="text-primary text-xl"></ion-icon>
+          {{ editingId ? 'Editar Alarma' : 'Nueva Alarma' }}
+        </h2>
+        @if (editingId) {
+          <button (click)="deleteRecordatorio(editingId)" class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 active:scale-90 transition-transform">
+            <ion-icon name="trash-outline" class="text-lg"></ion-icon>
+          </button>
+        }
+      </div>
+
+      <div class="flex justify-center mb-6">
+        <ion-datetime presentation="time" formControlName="hora" class="bg-surface rounded-[24px] shadow-soft border border-secondary/20"></ion-datetime>
+      </div>
+
+      <div class="mb-6">
+        <label class="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3 px-1">Categoría</label>
+        <div class="grid grid-cols-3 gap-2">
+          @for (tipo of tipos; track tipo.id) {
+            <div (click)="recordatorioForm.patchValue({tipo: tipo.id})"
+                 class="flex flex-col items-center justify-center p-3 rounded-2xl border transition-all cursor-pointer"
+                 [ngClass]="recordatorioForm.get('tipo')?.value === tipo.id ? 'bg-primary/10 border-primary text-primary' : 'bg-surface border-secondary/20 text-secondary'">
+              <ion-icon [name]="tipo.icon" class="text-2xl mb-1"></ion-icon>
+              <span class="text-[8px] font-black uppercase text-center leading-tight">{{ tipo.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <label class="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3 px-1">Días de Repetición</label>
+        <div class="flex justify-between gap-1">
+          @for (dia of diasSemana; track dia.id) {
+            <button (click)="toggleDia(dia.id)"
+                    class="w-10 h-10 rounded-full flex items-center justify-center font-black text-xs transition-all border"
+                    [ngClass]="recordatorioForm.get('diasRepeticion')?.value.includes(dia.id) ? 'bg-primary text-background border-primary shadow-soft' : 'bg-surface text-secondary border-secondary/20'">
+              {{ dia.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="mt-auto flex flex-col gap-3">
+        <button (click)="saveRecordatorio()" [disabled]="isSaving || recordatorioForm.invalid"
+                class="w-full h-14 bg-primary text-background rounded-2xl flex items-center justify-center font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-elevated">
+          {{ isSaving ? 'Guardando...' : 'Guardar Alarma' }}
+        </button>
+        <button (click)="closeModal()" class="w-full py-4 text-[10px] font-black text-text uppercase tracking-[0.3em] bg-transparent">
+          CANCELAR
+        </button>
+      </div>
+
+    </div>
+  </ng-template>
+</ion-modal>
