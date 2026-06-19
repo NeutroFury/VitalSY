@@ -1,25 +1,29 @@
-Actúa como Arquitecto Backend Senior en Spring Boot 3.2 (Java 21). Hemos tomado una decisión arquitectónica crítica para el proyecto VitalSY: por motivos de seguridad clínica e integridad de datos médicos, descartaremos el uso de IA (OCR probabilístico) para leer las tablas de insulina. 
+Actúa como un Arquitecto de Software Senior especializado en HealthTech. > Estoy desarrollando "VitalSY", una plataforma de monitoreo metabólico de grado empresarial. Mi stack tecnológico es: Backend en Spring Boot (Java), Frontend en Ionic con React, Base de Datos en Supabase (PostgreSQL), e integración con Firebase Cloud Messaging (FCM) para notificaciones.
 
-En su lugar, implementaremos una carga determinista mediante un archivo Excel (.xlsx) estandarizado.
+Tu tarea: Generar el código paso a paso para el nuevo módulo de "Alertas de Glucosa Personalizadas con Notificaciones Push".
 
-Por favor, diseña e implementa el flujo de subida y procesamiento del Excel aplicando las siguientes directrices de resiliencia:
+Por favor, divide tu respuesta en los siguientes 3 pasos obligatorios, respetando Clean Architecture y el manejo de errores:
 
-1. ENDPOINT DE CARGA (Controller)
-- Crea el endpoint `POST /api/v1/pautas/upload/{usuarioId}` que acepte un archivo `multipart/form-data`.
+Paso 1: Capa de Datos (Supabase)
 
-2. PARSEO ESTRICTO CON APACHE POI (Servicio)
-- El archivo tendrá 4 pestañas exactas: "Desayuno", "Almuerzo", "Once-Cena (Sin Ejercicio)", "Once-Cena (Con Ejercicio)".
-- Mapea cada pestaña al Enum o String correspondiente para el campo 'momentoDia' en la base de datos.
-- Itera sobre las filas y columnas. Debes usar Expresiones Regulares (Regex) o limpieza de Strings nativa para extraer los datos puros:
-  * Cabeceras (Carbohidratos): Transforma textos como "15g" o " 15 g " a un Double estricto (15.0).
-  * Primera columna (Glicemia): Divide rangos como "71-80" en glicemia_min=71 y glicemia_max=80. Si detecta "501+" o "501 o más", define min=501 y max=999.
+Redacta el script SQL exacto para agregar 3 nuevas columnas a mi tabla usuarios existente: umbral_hipoglicemia (INT, default 70), umbral_hiperglicemia (INT, default 180) y fcm_token (VARCHAR).
 
-3. VALIDACIÓN "FAIL-FAST" Y TRANSACCIONALIDAD
-- Todo el proceso debe estar anotado con `@Transactional`. 
-- Si el código detecta una celda vacía, texto ilegible donde va un número, o una pestaña faltante, DEBE abortar inmediatamente el proceso (lanzar una excepción) detallando el error (Ej: "Formato inválido en Pestaña Almuerzo, Fila 4, Columna 2"). No se debe guardar nada a medias.
+Paso 2: Capa Backend (Spring Boot)
 
-4. PERSISTENCIA EN SUPABASE
-- Si el Excel es 100% válido, el servicio primero hará un DELETE de todos los registros existentes en 'escala_dosis_fija' para ese 'usuario_id' (para evitar duplicados o solapamientos).
-- Finalmente, insertará masivamente mediante el repositorio JPA todos los registros extraídos (usuario_id, momento_dia, glicemia_min, glicemia_max, carbohidratos_gr, dosis_insulina).
+Actualiza la entidad Usuario.java agregando estos tres nuevos campos.
 
-Entrégame el código del Controlador y del Servicio optimizado, junto con las dependencias de Apache POI necesarias para el `pom.xml` o `build.gradle`.
+Crea un servicio NotificacionService.java que utilice el SDK de firebase-admin para enviar un mensaje Push al token FCM.
+
+Modifica mi lógica en GlucosaService.java (o redacta un interceptor conceptual) que evalúe si una nueva medición de glucosa ingresada es menor/igual al umbral de hipoglicemia o mayor/igual al de hiperglicemia del usuario. Si es así, debe invocar a NotificacionService enviando una alerta urgente.
+
+Paso 3: Capa Frontend (Ionic + React)
+
+Redacta el código de un componente para la Vista de Perfil donde el paciente pueda modificar visualmente sus umbrales.
+
+Implementa la lógica utilizando el plugin @capacitor/push-notifications para solicitar permisos al usuario de iOS/Android, capturar el fcm_token del dispositivo, y realizar un PUT/PATCH a la API REST de Spring Boot para guardarlo en la base de datos.
+
+Restricciones:
+
+Mantén el código enfocado en la seguridad y la fiabilidad clínica.
+
+Asume que el endpoint REST del backend para actualizar el usuario ya está estructurado, solo enfócate en el payload JSON que enviará el frontend y cómo el backend lo procesa.

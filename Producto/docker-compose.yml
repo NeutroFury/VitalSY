@@ -48,9 +48,14 @@ services:
       MAIL_USERNAME: ${MAIL_USERNAME:-}
       MAIL_PASSWORD: ${MAIL_PASSWORD:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8100}
+      # --- Firebase Admin SDK (Push Notifications) ---
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH:-/app/config/firebase-service-account.json}
       # --- Integridad de Timestamps (defensa en profundidad) ---
       TZ: UTC                                                    # Zona del contenedor Linux
       JAVA_TOOL_OPTIONS: "-Duser.timezone=UTC -Dfile.encoding=UTF-8" # Zona de la JVM
+    volumes:
+      # Monta el JSON de credenciales Firebase como solo lectura dentro del contenedor
+      - ./vitalsy-backend/firebase-service-account.json:/app/config/firebase-service-account.json:ro
     ports:
       - "${BACKEND_PORT:-8080}:8080"
     depends_on:

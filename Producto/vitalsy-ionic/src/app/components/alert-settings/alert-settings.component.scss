@@ -1,0 +1,29 @@
+// Sólo overrides específicos para el Shadow DOM de Ionic
+// El layout y colores base ahora se manejan con clases Tailwind en el HTML
+
+ion-range.ionic-range-custom-warning {
+  --bar-background: rgba(217, 119, 6, 0.2); // accent-alert / 20%
+  --bar-background-active: #D97706; // accent-alert
+  --bar-height: 4px;
+  --bar-border-radius: 8px;
+  --knob-background: #D97706;
+  --knob-size: 20px;
+  --pin-background: #D97706;
+  --pin-color: #fff;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+ion-range.ionic-range-custom-danger {
+  --bar-background: rgba(231, 111, 81, 0.2); // accent-primary / 20%
+  --bar-background-active: #E76F51; // accent-primary
+  --bar-height: 4px;
+  --bar-border-radius: 8px;
+  --knob-background: #E76F51;
+  --knob-size: 20px;
+  --pin-background: #E76F51;
+  --pin-color: #fff;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+

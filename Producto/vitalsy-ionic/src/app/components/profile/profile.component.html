@@ -131,22 +131,9 @@
     <!-- PREFERENCES SECTION -->
     <h3 class="text-[10px] font-black uppercase tracking-widest text-secondary mb-0 mt-4 px-2">Preferencias de Sistema</h3>
     <div class="bg-surface rounded-[32px] p-6 flex flex-col gap-6 border border-secondary/30 shadow-card">
-      
-      <!-- Glucose Alerts -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="w-9 h-9 rounded-xl bg-background flex items-center justify-center border border-secondary/30">
-            <ion-icon name="notifications-outline" class="text-base text-primary"></ion-icon>
-          </div>
-          <span class="text-[11px] font-black text-text uppercase tracking-widest italic">Alertas de Glucosa</span>
-        </div>
-        <button (click)="profileForm.get('alertasGlucosa')?.setValue(!profileForm.get('alertasGlucosa')?.value)" 
-                class="w-14 h-7 rounded-full relative transition-all duration-300"
-                [ngClass]="profileForm.get('alertasGlucosa')?.value ? 'bg-primary shadow-soft' : 'bg-secondary/30'">
-          <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-background"
-               [ngClass]="profileForm.get('alertasGlucosa')?.value ? 'translate-x-8' : 'translate-x-1.5'"></div>
-        </button>
-      </div>
+
+      <!-- Glucose Alert Settings — Componente dedicado con sliders de umbral -->
+      <app-alert-settings (alertasSaved)="loadProfile()"></app-alert-settings>
 
       <div class="w-full h-[1px] bg-secondary/30"></div>
 
@@ -158,7 +145,7 @@
           </div>
           <span class="text-[11px] font-black text-text uppercase tracking-widest italic">Recordatorio Comidas</span>
         </div>
-        <button (click)="recordatorioComidasToggle()" 
+        <button (click)="recordatorioComidasToggle()"
                 class="w-14 h-7 rounded-full relative transition-all duration-300"
                 [ngClass]="profileForm.get('recordatorioComidas')?.value ? 'bg-primary shadow-soft' : 'bg-secondary/30'">
           <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-background"
@@ -169,13 +156,13 @@
     </div>
 
     <!-- MOTOR COGNITIVO INTEGRATION -->
-    <h3 class="text-[10px] font-black uppercase tracking-widest text-secondary mb-0 mt-4 px-2">Digitalización de Pauta Médica (IA)</h3>
+    <h3 class="text-[10px] font-black uppercase tracking-widest text-secondary mb-0 mt-4 px-2">Digitalización de Pauta Médica</h3>
     <div class="bg-surface rounded-[32px] p-6 flex flex-col gap-4 border border-secondary/30 shadow-card relative overflow-hidden">
       <!-- Glow Effect -->
       <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 blur-[40px] rounded-full pointer-events-none"></div>
 
       <p class="text-[11px] text-secondary leading-relaxed relative z-10">
-        Usa la Inteligencia Artificial de <strong>Gemini</strong> para escanear tu receta médica. Extraeremos automáticamente tu matriz de dosis fijas.
+        Sube tu archivo PDF o excel de tu receta médica aquí para escanearla. Extraeremos automáticamente tu matriz de dosis fijas.
       </p>
 
       <div class="flex items-center gap-4 relative z-10 mt-2">

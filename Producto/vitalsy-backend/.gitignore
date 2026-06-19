@@ -39,3 +39,9 @@ out/
 ### Logs ###
 *.log
 logs/
+
+### Secretos y Credenciales (NUNCA subir a Git) ###
+firebase-service-account.json
+*-service-account.json
+*.p12
+*.jks
