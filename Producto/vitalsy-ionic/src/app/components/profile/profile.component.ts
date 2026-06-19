@@ -26,7 +26,10 @@ import {
   refreshOutline,
   closeOutline,
   checkmarkOutline,
-  cameraOutline
+  cameraOutline,
+  medicalOutline,
+  scanOutline,
+  hardwareChipOutline
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
@@ -93,7 +96,10 @@ export class ProfileComponent implements OnInit {
       refreshOutline,
       closeOutline,
       checkmarkOutline,
-      cameraOutline
+      cameraOutline,
+      medicalOutline,
+      scanOutline,
+      hardwareChipOutline
     });
 
     this.username = this.authService.getUsername();

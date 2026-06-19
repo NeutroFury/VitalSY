@@ -170,9 +170,19 @@ export class RecordatoriosComponent implements OnInit {
   }
 
   toggleActivo(rec: RecordatorioResponse) {
+    let finalHora = rec.hora;
+    if (finalHora && finalHora.length === 5) {
+      finalHora = finalHora + ':00';
+    } else if (finalHora.includes('T')) {
+      const date = new Date(finalHora);
+      const h = String(date.getHours()).padStart(2, '0');
+      const m = String(date.getMinutes()).padStart(2, '0');
+      finalHora = `${h}:${m}:00`;
+    }
+
     const req: RecordatorioRequest = {
       tipo: rec.tipo,
-      hora: rec.hora,
+      hora: finalHora,
       diasRepeticion: rec.diasRepeticion,
       activo: !rec.activo
     };

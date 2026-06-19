@@ -1,9 +1,10 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, NavController, ModalController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { pulse, chevronBackOutline, notificationsOutline, settingsOutline } from 'ionicons/icons';
 import { AuthService } from '../../services/auth.service';
+import { NotificationHistoryComponent } from '../notification-history/notification-history.component';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ export class HeaderComponent {
   @Input() title: string = '';
 
   private authService = inject(AuthService);
+  private modalCtrl = inject(ModalController);
   username: string = '';
 
   constructor(private navCtrl: NavController) {
@@ -31,5 +33,15 @@ export class HeaderComponent {
 
   navigateTo(route: string) {
     this.navCtrl.navigateForward(`/${route}`);
+  }
+
+  async openAlertSettings() {
+    const modal = await this.modalCtrl.create({
+      component: NotificationHistoryComponent,
+      initialBreakpoint: 0.85,
+      breakpoints: [0, 0.85, 1],
+      handle: true
+    });
+    await modal.present();
   }
 }

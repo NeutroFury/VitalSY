@@ -28,7 +28,7 @@
   <!-- Derecha: Acciones Rápidas -->
   <div class="flex items-center gap-2">
     @if (showActions) {
-      <button class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-accent-alert hover:text-accent-alert/80 active:scale-95 transition-colors">
+      <button (click)="openAlertSettings()" class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-accent-alert hover:text-accent-alert/80 active:scale-95 transition-colors">
         <ion-icon name="notifications-outline" class="text-base"></ion-icon>
       </button>
       <button (click)="navigateTo('profile')" class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-secondary hover:text-text active:scale-95 transition-colors">
