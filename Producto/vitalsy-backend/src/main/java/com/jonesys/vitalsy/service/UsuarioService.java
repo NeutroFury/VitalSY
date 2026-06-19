@@ -54,9 +54,7 @@ public class UsuarioService {
         if (request.getAlertasGlucosa() != null) {
             usuario.setAlertasGlucosa(request.getAlertasGlucosa());
         }
-        if (request.getRecordatorioComidas() != null) {
-            usuario.setRecordatorioComidas(request.getRecordatorioComidas());
-        }
+
         if (request.getGlicemiaObjetivo() != null) {
             usuario.setGlicemiaObjetivo(request.getGlicemiaObjetivo());
         }

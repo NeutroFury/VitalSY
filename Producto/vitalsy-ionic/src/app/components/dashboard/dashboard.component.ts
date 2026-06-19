@@ -246,14 +246,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.iaError = 'No hay lecturas recientes para analizar';
         } else {
           this.iaAnalysis = analysis;
-          // Validación de riesgo para notificaciones proactivas
-          if (analysis.risk_level === 'ALTO' || analysis.risk_level === 'CRITICO') {
-            this.notificationService.scheduleUrgentNotification(
-              '🚨 Alerta Predictiva IA',
-              analysis.trend_summary,
-              'warning'
-            );
-          }
+          // Se eliminó la notificación proactiva de IA a petición del usuario para evitar spam.
         }
         this.isIaLoading = false;
       },

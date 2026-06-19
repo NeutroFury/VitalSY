@@ -1,0 +1,11 @@
+CREATE TABLE recordatorios (
+    id BIGSERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    tipo VARCHAR(50) NOT NULL,
+    hora TIME NOT NULL,
+    dias_repeticion VARCHAR(100) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    fecha_creacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE usuarios DROP COLUMN IF EXISTS recordatorio_comidas;

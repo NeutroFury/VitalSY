@@ -22,7 +22,7 @@ public class UsuarioMapper {
                 .ratioIc(u.getRatioIc())
                 .factorIs(u.getFactorIs())
                 .alertasGlucosa(u.getAlertasGlucosa())
-                .recordatorioComidas(u.getRecordatorioComidas())
+
                 .rangoGlucosaMin(u.getRangoGlucosaMin())
                 .rangoGlucosaMax(u.getRangoGlucosaMax())
                 .zonaHoraria(u.getZonaHoraria())

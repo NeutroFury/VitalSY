@@ -1,37 +1,204 @@
-POST http://localhost/api/v1/auth/login 502 (Bad Gateway)
-
-205.e8bd6842aebbc62b.js:1 Login failed 
-it {headers: Me, status: 502, statusText: 'Bad Gateway', url: 'http://localhost/api/v1/auth/login', ok: false, …}
-error
-: 
-"<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx/1.31.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
-headers
-: 
-Me {headers: undefined, normalizedNames: Map(0), lazyUpdate: null, lazyInit: ƒ}
-message
-: 
-"Http failure response for http://localhost/api/v1/auth/login: 502 Bad Gateway"
-name
-: 
-"HttpErrorResponse"
-ok
-: 
-false
-redirected
-: 
-undefined
-status
-: 
-502
-statusText
-: 
-"Bad Gateway"
-type
-: 
-undefined
-url
-: 
-"http://localhost/api/v1/auth/login"
-[[Prototype]]
-: 
-vt
+ET http://localhost/api/v1/api/v1/recordatorios 500 (Internal Server Error)
+y @ polyfills.06cbf0422dbf6c09.js:1
+scheduleTask @ polyfills.06cbf0422dbf6c09.js:1
+onScheduleTask @ polyfills.06cbf0422dbf6c09.js:1
+scheduleTask @ polyfills.06cbf0422dbf6c09.js:1
+scheduleTask @ polyfills.06cbf0422dbf6c09.js:1
+scheduleMacroTask @ polyfills.06cbf0422dbf6c09.js:1
+He @ polyfills.06cbf0422dbf6c09.js:1
+(anonymous) @ polyfills.06cbf0422dbf6c09.js:1
+t.`<computed>` @ polyfills.06cbf0422dbf6c09.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+xe.subscribe.je @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+Me @ main.ef3b452cca79a872.js:1
+ft @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+V @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+loadRecordatorios @ 114.290e2e7d09fd3081.js:1
+ngOnInit @ 114.290e2e7d09fd3081.js:1
+ue @ main.ef3b452cca79a872.js:1
+Pe @ main.ef3b452cca79a872.js:1
+Zn @ main.ef3b452cca79a872.js:1
+Lt @ main.ef3b452cca79a872.js:1
+Wf @ main.ef3b452cca79a872.js:1
+nd @ main.ef3b452cca79a872.js:1
+template @ 114.290e2e7d09fd3081.js:1
+bd @ main.ef3b452cca79a872.js:1
+hh @ main.ef3b452cca79a872.js:1
+Ad @ main.ef3b452cca79a872.js:1
+gh @ main.ef3b452cca79a872.js:1
+mm @ main.ef3b452cca79a872.js:1
+mh @ main.ef3b452cca79a872.js:1
+hh @ main.ef3b452cca79a872.js:1
+Ad @ main.ef3b452cca79a872.js:1
+pm @ main.ef3b452cca79a872.js:1
+eu @ main.ef3b452cca79a872.js:1
+detectChanges @ main.ef3b452cca79a872.js:1
+setActive @ main.ef3b452cca79a872.js:1
+activateWith @ main.ef3b452cca79a872.js:1
+activateRoutes @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+activateChildRoutes @ main.ef3b452cca79a872.js:1
+activate @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+he.subscribe.et @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+subscribe.at @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+xe.subscribe.je @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+subscribe.at @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+xe.subscribe.je @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+subscribe.at @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+he.subscribe.et @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+We @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+We @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+_trySubscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F @ main.ef3b452cca79a872.js:1
+subscribe @ main.ef3b452cca79a872.js:1
+xe.subscribe.je @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+subscribe.at @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+(anonymous) @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+he.subscribe.et @ main.ef3b452cca79a872.js:1
+F._next @ main.ef3b452cca79a872.js:1
+next @ main.ef3b452cca79a872.js:1
+main.ef3b452cca79a872.js:1 INTERCEPTOR: Petición saliente a: /api/v1/api/v1/recordatorios
+main.ef3b452cca79a872.js:1 INTERCEPTOR: Token encontrado, inyectando header...
+polyfills.06cbf0422dbf6c09.js:1  POST http://localhost/api/v1/api/v1/recordatorios 500 (Internal Server Error)

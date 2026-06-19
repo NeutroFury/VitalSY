@@ -135,23 +135,10 @@
       <!-- Glucose Alert Settings — Componente dedicado con sliders de umbral -->
       <app-alert-settings (alertasSaved)="loadProfile()"></app-alert-settings>
 
-      <div class="w-full h-[1px] bg-secondary/30"></div>
+      <div class="w-full h-[1px] bg-secondary/30 mt-4"></div>
 
-      <!-- Meal Reminders -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="w-9 h-9 rounded-xl bg-background flex items-center justify-center border border-secondary/30">
-            <ion-icon name="alarm-outline" class="text-base text-primary"></ion-icon>
-          </div>
-          <span class="text-[11px] font-black text-text uppercase tracking-widest italic">Recordatorio Comidas</span>
-        </div>
-        <button (click)="recordatorioComidasToggle()"
-                class="w-14 h-7 rounded-full relative transition-all duration-300"
-                [ngClass]="profileForm.get('recordatorioComidas')?.value ? 'bg-primary shadow-soft' : 'bg-secondary/30'">
-          <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-background"
-               [ngClass]="profileForm.get('recordatorioComidas')?.value ? 'translate-x-8' : 'translate-x-1.5'"></div>
-        </button>
-      </div>
+      <!-- Gestor Avanzado de Recordatorios (Fase 2) -->
+      <app-recordatorios></app-recordatorios>
 
     </div>
 
