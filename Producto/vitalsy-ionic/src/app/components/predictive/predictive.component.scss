@@ -5,22 +5,20 @@
 }
 
 .glass-toolbar {
-  --background: rgba(18, 18, 20, 0.7);
+  --background: #DAF1DE;
   --border-color: transparent;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
 
 .predictive-content {
-  --background: linear-gradient(180deg, #0f0f11 0%, #151518 100%);
+  --background: #DAF1DE;
 }
 
 // Glassmorphism Common Classes
 .glass-card {
-  background: rgba(30, 30, 35, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
@@ -30,7 +28,6 @@
   align-items: center;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #a1a1aa; // zinc-400
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 12px;
@@ -72,7 +69,6 @@
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 8px;
 }
 
@@ -80,28 +76,26 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin: 0;
-  color: #fff;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 // Dynamic Risk Colors
 .risk-low {
-  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.4) 0%, rgba(30, 30, 35, 0.6) 100%);
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.4) 0%, transparent 100%);
   border-color: rgba(16, 185, 129, 0.2);
 }
 
 .risk-medium {
-  background: radial-gradient(circle at center, rgba(234, 179, 8, 0.4) 0%, rgba(30, 30, 35, 0.6) 100%);
+  background: radial-gradient(circle at center, rgba(234, 179, 8, 0.4) 0%, transparent 100%);
   border-color: rgba(234, 179, 8, 0.2);
 }
 
 .risk-high {
-  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.4) 0%, rgba(30, 30, 35, 0.6) 100%);
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.4) 0%, transparent 100%);
   border-color: rgba(249, 115, 22, 0.2);
 }
 
 .risk-critical {
-  background: radial-gradient(circle at center, rgba(239, 68, 68, 0.4) 0%, rgba(30, 30, 35, 0.6) 100%);
+  background: radial-gradient(circle at center, rgba(239, 68, 68, 0.4) 0%, transparent 100%);
   border-color: rgba(239, 68, 68, 0.2);
   animation: pulse-critical 2s infinite;
 }

@@ -28,7 +28,7 @@
   <!-- Error State -->
   <div *ngIf="error && !loading" class="error-state glass-card bg-surface">
     <ion-icon name="warning-outline" class="text-accent-alert text-4xl mb-3"></ion-icon>
-    <p class="text-text text-center">{{ error }}</p>
+    <p class="text-secondary text-center">{{ error }}</p>
     <ion-button fill="outline" color="primary" class="mt-4" (click)="loadAnalysis()">Reintentar</ion-button>
   </div>
 
@@ -38,7 +38,7 @@
     <!-- Risk Badge Header -->
     <div class="risk-header-container mb-6">
       <div class="glass-card risk-card bg-surface" [ngClass]="getRiskColorClass(analysis.risk_level)">
-        <p class="risk-label text-secondary">NIVEL DE RIESGO</p>
+        <p class="risk-label text-text">NIVEL DE RIESGO</p>
         <h1 class="risk-value text-text">{{ analysis.risk_level }}</h1>
       </div>
     </div>
@@ -68,7 +68,7 @@
 
       <div *ngFor="let alert of analysis.predictive_alerts" class="glass-card bg-surface alert-card p-4 mb-3">
         <div class="flex justify-between items-center mb-2">
-          <span class="font-bold text-text text-sm tracking-wide">{{ alert.type.replace('_', ' ') }}</span>
+          <span class="font-bold text-accent-alert text-sm tracking-wide">{{ alert.type.replace('_', ' ') }}</span>
           <span class="text-xs px-2 py-1 rounded-full font-medium bg-accent-alert/20 text-accent-alert">
             {{ getProbabilityPercentage(alert.probability) }}% Probabilidad
           </span>
@@ -91,20 +91,20 @@
     
     <div class="glass-card bg-surface p-0 mb-6 overflow-hidden">
       <ul class="recommendations-list">
-        <li *ngFor="let rec of analysis.recommendations" class="recommendation-item border-b border-secondary/20 last:border-0 p-4 flex items-start">
+        <li *ngFor="let rec of analysis.recommendations" class="recommendation-item border-b border-secondary last:border-0 p-4 flex items-start">
           <div class="bullet mt-1 mr-3 min-w-[8px] h-[8px] rounded-full bg-primary"></div>
-          <span class="text-text text-sm">{{ rec }}</span>
+          <span class="text-secondary text-sm">{{ rec }}</span>
         </li>
       </ul>
     </div>
 
     <!-- Data Context Notes -->
-    <div *ngIf="analysis.data_quality_notes && analysis.data_quality_notes.length > 0" class="glass-card bg-surface/50 p-4 mb-8 border border-secondary/30">
-      <h4 class="flex items-center text-secondary text-xs font-semibold uppercase tracking-wider mb-2">
-        <ion-icon name="information-circle-outline" class="mr-1 text-secondary text-base"></ion-icon>
+    <div *ngIf="analysis.data_quality_notes && analysis.data_quality_notes.length > 0" class="glass-card bg-surface p-4 mb-8 border border-secondary">
+      <h4 class="flex items-center text-text text-xs font-semibold uppercase tracking-wider mb-2">
+        <ion-icon name="information-circle-outline" class="mr-1 text-primary text-base"></ion-icon>
         Notas de Calidad de Datos
       </h4>
-      <ul class="text-secondary/80 text-xs space-y-1.5 ml-1">
+      <ul class="text-secondary text-xs space-y-1.5 ml-1">
         <li *ngFor="let note of analysis.data_quality_notes" class="flex items-start">
           <span class="mr-1.5 mt-0.5">•</span>
           <span>{{ note }}</span>
