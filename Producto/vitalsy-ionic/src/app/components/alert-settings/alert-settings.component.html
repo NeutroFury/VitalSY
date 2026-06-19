@@ -1,0 +1,103 @@
+<div class="flex flex-col gap-6 w-full">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="w-9 h-9 rounded-xl bg-background flex items-center justify-center border border-secondary/30">
+        <ion-icon name="notifications-outline" class="text-base text-primary"></ion-icon>
+      </div>
+      <span class="text-[11px] font-black text-text uppercase tracking-widest italic">Alertas de Glucosa</span>
+    </div>
+  </div>
+
+  <form [formGroup]="alertForm" (ngSubmit)="guardarAlertas()" class="flex flex-col gap-4">
+
+    <!-- Toggle global de alertas -->
+    <div class="flex items-center justify-between bg-background border border-secondary/30 rounded-2xl p-4">
+      <div class="flex items-center gap-3">
+        <ion-icon name="pulse-outline" class="text-primary text-xl"></ion-icon>
+        <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Activar alertas push</span>
+      </div>
+      <!-- Reutilizando la lógica de toggle custom estilo iOS de las otras preferencias -->
+      <button type="button"
+              (click)="alertForm.get('alertasGlucosa')?.setValue(!alertForm.get('alertasGlucosa')?.value)"
+              class="w-14 h-7 rounded-full relative transition-all duration-300"
+              [ngClass]="alertForm.get('alertasGlucosa')?.value ? 'bg-primary shadow-soft' : 'bg-secondary/30'">
+        <div class="absolute top-1.5 w-4 h-4 rounded-full transition-transform duration-300 bg-background"
+             [ngClass]="alertForm.get('alertasGlucosa')?.value ? 'translate-x-8' : 'translate-x-1.5'"></div>
+      </button>
+    </div>
+
+    <!-- Contenedor de Umbrales -->
+    <div class="flex flex-col transition-opacity duration-300" [class.opacity-40]="!alertForm.get('alertasGlucosa')?.value" [class.pointer-events-none]="!alertForm.get('alertasGlucosa')?.value">
+
+      <!-- Umbral MÍNIMO (Hipoglicemia) -->
+      <div class="bg-background border-l-4 border-l-accent-alert border-y border-r border-secondary/30 rounded-2xl p-4 mb-2 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between">
+          <span class="text-[9px] font-bold text-accent-alert uppercase tracking-widest bg-accent-alert/10 px-2 py-1 rounded-full border border-accent-alert/30">
+            ⬇ Hipoglicemia
+          </span>
+          <span class="text-xl font-black text-text italic">{{ alertForm.get('rangoGlucosaMin')?.value }} mg/dL</span>
+        </div>
+        
+        <div class="flex items-center gap-3 mt-2">
+          <span class="text-[10px] font-bold text-secondary">50</span>
+          <ion-range
+            class="flex-1 ionic-range-custom-warning"
+            formControlName="rangoGlucosaMin"
+            [min]="50" [max]="120" [step]="5"
+            [pin]="true" [pinFormatter]="formatPin">
+          </ion-range>
+          <span class="text-[10px] font-bold text-secondary">120</span>
+        </div>
+        <p class="text-[10px] text-secondary/80 leading-relaxed mt-1">
+          Alerta cuando tu glucosa sea ≤ {{ alertForm.get('rangoGlucosaMin')?.value }} mg/dL
+        </p>
+      </div>
+
+      <!-- Separador visual -->
+      <div class="flex items-center gap-3 my-2">
+        <div class="flex-1 h-[1px] bg-secondary/20"></div>
+        <span class="text-[8px] font-black text-secondary/60 uppercase tracking-[0.2em]">Rango Objetivo</span>
+        <div class="flex-1 h-[1px] bg-secondary/20"></div>
+      </div>
+
+      <!-- Umbral MÁXIMO (Hiperglicemia) -->
+      <div class="bg-background border-l-4 border-l-accent-primary border-y border-r border-secondary/30 rounded-2xl p-4 mt-2 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between">
+          <span class="text-[9px] font-bold text-accent-primary uppercase tracking-widest bg-accent-primary/10 px-2 py-1 rounded-full border border-accent-primary/30">
+            ⬆ Hiperglicemia
+          </span>
+          <span class="text-xl font-black text-text italic">{{ alertForm.get('rangoGlucosaMax')?.value }} mg/dL</span>
+        </div>
+        
+        <div class="flex items-center gap-3 mt-2">
+          <span class="text-[10px] font-bold text-secondary">120</span>
+          <ion-range
+            class="flex-1 ionic-range-custom-danger"
+            formControlName="rangoGlucosaMax"
+            [min]="120" [max]="300" [step]="5"
+            [pin]="true" [pinFormatter]="formatPin">
+          </ion-range>
+          <span class="text-[10px] font-bold text-secondary">300</span>
+        </div>
+        <p class="text-[10px] text-secondary/80 leading-relaxed mt-1">
+          Alerta cuando tu glucosa sea ≥ {{ alertForm.get('rangoGlucosaMax')?.value }} mg/dL
+        </p>
+      </div>
+
+      <!-- Error Validación -->
+      <div *ngIf="alertForm.errors?.['rangeInvalid']" class="mt-3 flex items-center gap-2 bg-accent-primary/10 border border-accent-primary/30 rounded-xl p-3 text-accent-primary">
+        <ion-icon name="warning-outline" class="text-base"></ion-icon>
+        <span class="text-[10px] font-bold uppercase tracking-widest">El mínimo debe ser menor al máximo.</span>
+      </div>
+      
+    </div>
+
+    <!-- Botón Guardar -->
+    <button type="submit" [disabled]="alertForm.invalid || isSaving"
+            class="mt-2 w-full h-14 bg-primary text-background rounded-2xl flex items-center justify-center gap-2 font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-elevated disabled:opacity-50">
+      <span *ngIf="!isSaving" class="text-[10px] italic tracking-[0.2em]">Guardar Alertas</span>
+      <ion-spinner *ngIf="isSaving" name="crescent" class="w-5 h-5 text-background"></ion-spinner>
+    </button>
+  </form>
+</div>
+

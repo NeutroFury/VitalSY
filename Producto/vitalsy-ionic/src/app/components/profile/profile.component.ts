@@ -30,17 +30,19 @@ import {
 } from 'ionicons/icons';
 
 import { HeaderComponent } from '../header/header.component';
+import { AlertSettingsComponent } from '../alert-settings/alert-settings.component';
 import { UserService, UserProfile } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { LibreLinkUpService } from '../../services/librelinkup.service';
 import { CognitivoService } from '../../services/cognitivo.service';
+import { PushNotificationsService } from '../../services/push-notifications.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, HeaderComponent, AlertSettingsComponent]
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
@@ -65,6 +67,7 @@ export class ProfileComponent implements OnInit {
   private toastCtrl = inject(ToastController);
   private libreService = inject(LibreLinkUpService);
   private cognitivoService = inject(CognitivoService);
+  private pushNotificationsService = inject(PushNotificationsService);
 
   constructor() {
     addIcons({
@@ -111,6 +114,9 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.loadProfile();
     this.loadLibreStatus();
+    // Inicializar push notifications al entrar al perfil
+    // (si el usuario aún no ha otorgado permisos, se les pedirá aquí)
+    this.pushNotificationsService.initialize();
   }
 
   loadProfile() {
