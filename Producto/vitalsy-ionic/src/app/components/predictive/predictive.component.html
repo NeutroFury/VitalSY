@@ -1,35 +1,35 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="glass-toolbar">
+  <ion-toolbar class="glass-toolbar bg-background">
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
-        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        <ion-icon name="chevron-back-outline" slot="icon-only" class="text-text"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Análisis Predictivo</ion-title>
+    <ion-title class="text-text">Análisis Predictivo</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="loadAnalysis()">
-        <ion-icon name="analyticsOutline" slot="icon-only"></ion-icon>
+        <ion-icon name="analyticsOutline" slot="icon-only" class="text-primary"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding predictive-content">
+<ion-content class="ion-padding predictive-content bg-background">
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner-container">
       <div class="pulse-ring"></div>
-      <ion-icon name="pulse-outline" class="pulse-icon"></ion-icon>
+      <ion-icon name="pulse-outline" class="pulse-icon text-primary"></ion-icon>
     </div>
-    <h3 class="text-zinc-200 mt-6 text-xl font-medium tracking-wide">Analizando historial...</h3>
-    <p class="text-zinc-400 mt-2 text-sm max-w-xs text-center">Nuestro motor causal está evaluando tus últimos 7 días de datos biométricos.</p>
+    <h3 class="text-text mt-6 text-xl font-medium tracking-wide">Analizando historial...</h3>
+    <p class="text-secondary mt-2 text-sm max-w-xs text-center">Nuestro motor causal está evaluando tus últimos 7 días de datos biométricos.</p>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error && !loading" class="error-state glass-card">
-    <ion-icon name="warning-outline" color="danger" class="text-4xl mb-3"></ion-icon>
-    <p class="text-zinc-300 text-center">{{ error }}</p>
-    <ion-button fill="outline" color="light" class="mt-4" (click)="loadAnalysis()">Reintentar</ion-button>
+  <div *ngIf="error && !loading" class="error-state glass-card bg-surface">
+    <ion-icon name="warning-outline" class="text-accent-alert text-4xl mb-3"></ion-icon>
+    <p class="text-text text-center">{{ error }}</p>
+    <ion-button fill="outline" color="primary" class="mt-4" (click)="loadAnalysis()">Reintentar</ion-button>
   </div>
 
   <!-- Success State -->
@@ -37,76 +37,74 @@
     
     <!-- Risk Badge Header -->
     <div class="risk-header-container mb-6">
-      <div class="glass-card risk-card" [ngClass]="getRiskColorClass(analysis.risk_level)">
-        <p class="risk-label">NIVEL DE RIESGO</p>
-        <h1 class="risk-value">{{ analysis.risk_level }}</h1>
+      <div class="glass-card risk-card bg-surface" [ngClass]="getRiskColorClass(analysis.risk_level)">
+        <p class="risk-label text-secondary">NIVEL DE RIESGO</p>
+        <h1 class="risk-value text-text">{{ analysis.risk_level }}</h1>
       </div>
     </div>
 
     <!-- Trend Summary -->
-    <div class="glass-card mb-6 p-5 relative overflow-hidden">
+    <div class="glass-card bg-surface mb-6 p-5 relative overflow-hidden">
       <div class="decorative-blob"></div>
-      <h3 class="flex items-center text-zinc-100 font-semibold text-lg mb-3">
-        <ion-icon name="analytics-outline" class="mr-2 text-blue-400"></ion-icon>
+      <h3 class="flex items-center text-text font-semibold text-lg mb-3">
+        <ion-icon name="analytics-outline" class="mr-2 text-primary"></ion-icon>
         Tendencia Glucémica
       </h3>
-      <p class="text-zinc-300 leading-relaxed text-sm">
+      <p class="text-secondary leading-relaxed text-sm">
         {{ analysis.trend_summary }}
       </p>
     </div>
 
     <!-- Predictive Alerts -->
-    <h3 class="section-title">
-      <ion-icon name="alert-circle-outline" class="mr-2 text-orange-400"></ion-icon>
+    <h3 class="section-title text-text flex items-center mb-4 mt-6">
+      <ion-icon name="alert-circle-outline" class="mr-2 text-accent-alert"></ion-icon>
       Alertas Predictivas (Próx. 4h)
     </h3>
     
     <div class="alerts-container mb-6">
-      <div *ngIf="analysis.predictive_alerts.length === 0" class="glass-card p-4 text-center">
-        <p class="text-zinc-400 text-sm">No se detectaron alertas predictivas inminentes.</p>
+      <div *ngIf="analysis.predictive_alerts.length === 0" class="glass-card bg-surface p-4 text-center">
+        <p class="text-secondary text-sm">No se detectaron alertas predictivas inminentes.</p>
       </div>
 
-      <div *ngFor="let alert of analysis.predictive_alerts" class="glass-card alert-card p-4 mb-3">
+      <div *ngFor="let alert of analysis.predictive_alerts" class="glass-card bg-surface alert-card p-4 mb-3">
         <div class="flex justify-between items-center mb-2">
-          <span class="font-bold text-zinc-100 text-sm tracking-wide">{{ alert.type.replace('_', ' ') }}</span>
-          <span class="text-xs px-2 py-1 rounded-full font-medium" 
-                [ngClass]="getProbabilityPercentage(alert.probability) >= 70 ? 'bg-red-500/20 text-red-400' : 'bg-orange-500/20 text-orange-400'">
+          <span class="font-bold text-text text-sm tracking-wide">{{ alert.type.replace('_', ' ') }}</span>
+          <span class="text-xs px-2 py-1 rounded-full font-medium bg-accent-alert/20 text-accent-alert">
             {{ getProbabilityPercentage(alert.probability) }}% Probabilidad
           </span>
         </div>
-        <p class="text-zinc-400 text-sm leading-relaxed">{{ alert.description }}</p>
+        <p class="text-secondary text-sm leading-relaxed">{{ alert.description }}</p>
         
         <!-- Probability bar -->
-        <div class="w-full bg-zinc-800 rounded-full h-1.5 mt-3 overflow-hidden">
-          <div class="h-1.5 rounded-full" 
-               [ngClass]="getProbabilityPercentage(alert.probability) >= 70 ? 'bg-red-500' : 'bg-orange-500'"
+        <div class="w-full bg-secondary/20 rounded-full h-1.5 mt-3 overflow-hidden">
+          <div class="h-1.5 rounded-full bg-accent-alert" 
                [style.width.%]="getProbabilityPercentage(alert.probability)"></div>
         </div>
       </div>
     </div>
 
     <!-- Recommendations -->
-    <h3 class="section-title">
-      <ion-icon name="checkmark-circle-outline" class="mr-2 text-emerald-400"></ion-icon>
+    <h3 class="section-title text-text flex items-center mb-4 mt-6">
+      <ion-icon name="checkmark-circle-outline" class="mr-2 text-primary"></ion-icon>
       Acciones Recomendadas
     </h3>
     
-    <div class="glass-card p-0 mb-6 overflow-hidden">
+    <div class="glass-card bg-surface p-0 mb-6 overflow-hidden">
       <ul class="recommendations-list">
-        <li *ngFor="let rec of analysis.recommendations" class="recommendation-item border-b border-zinc-800/50 last:border-0 p-4 flex items-start">
-          <div class="bullet mt-1 mr-3 min-w-[8px] h-[8px] rounded-full bg-emerald-400"></div>
-          <span class="text-zinc-300 text-sm">{{ rec }}</span>
+        <li *ngFor="let rec of analysis.recommendations" class="recommendation-item border-b border-secondary/20 last:border-0 p-4 flex items-start">
+          <div class="bullet mt-1 mr-3 min-w-[8px] h-[8px] rounded-full bg-primary"></div>
+          <span class="text-text text-sm">{{ rec }}</span>
         </li>
       </ul>
     </div>
 
     <!-- Data Context Notes -->
-    <div *ngIf="analysis.data_quality_notes && analysis.data_quality_notes.length > 0" class="glass-card p-4 mb-8 bg-zinc-900/40 border border-zinc-800/50">
-      <h4 class="flex items-center text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">
-        <ion-icon name="information-circle-outline" class="mr-1 text-zinc-500 text-base"></ion-icon>
+    <div *ngIf="analysis.data_quality_notes && analysis.data_quality_notes.length > 0" class="glass-card bg-surface/50 p-4 mb-8 border border-secondary/30">
+      <h4 class="flex items-center text-secondary text-xs font-semibold uppercase tracking-wider mb-2">
+        <ion-icon name="information-circle-outline" class="mr-1 text-secondary text-base"></ion-icon>
         Notas de Calidad de Datos
       </h4>
-      <ul class="text-zinc-500 text-xs space-y-1.5 ml-1">
+      <ul class="text-secondary/80 text-xs space-y-1.5 ml-1">
         <li *ngFor="let note of analysis.data_quality_notes" class="flex items-start">
           <span class="mr-1.5 mt-0.5">•</span>
           <span>{{ note }}</span>

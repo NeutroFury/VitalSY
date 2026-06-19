@@ -1,4 +1,4 @@
-<ion-content class="bg-black">
+<ion-content class="bg-background">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content
       [pullingIcon]="'chevron-down-circle-outline'"
@@ -8,7 +8,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div class="min-h-full bg-black p-6 flex flex-col gap-6 pt-2 relative">
+  <div class="min-h-full bg-background p-6 flex flex-col gap-6 pt-2 relative">
     <app-header [showBack]="true" [showGreeting]="false" title="Historial"></app-header>
 
     <!-- Logs Container -->
@@ -19,35 +19,35 @@
           <ion-accordion [value]="group.dateLabel" class="history-day-accordion">
             
             <!-- Accordion Header -->
-            <ion-item slot="header" lines="none" class="history-day-header">
+            <ion-item slot="header" lines="none" class="history-day-header rounded-2xl mb-2 shadow-soft" style="--background: #235347; --color: #DAF1DE;">
               <div class="flex items-center gap-3 w-full py-2">
-                <div class="w-8 h-8 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center">
-                  <ion-icon name="calendar-outline" class="text-neon-green text-sm"></ion-icon>
+                <div class="w-8 h-8 rounded-xl bg-background/20 border border-background/30 flex items-center justify-center">
+                  <ion-icon name="calendar-outline" class="text-background text-sm"></ion-icon>
                 </div>
                 <div class="flex flex-col flex-1">
-                  <span class="text-xs font-black uppercase tracking-[0.15em] text-white">{{ group.dateLabel }}</span>
-                  <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-600">{{ group.readings.length }} {{ group.readings.length === 1 ? 'registro' : 'registros' }}</span>
+                  <span class="text-xs font-black uppercase tracking-[0.15em] text-background">{{ group.dateLabel }}</span>
+                  <span class="text-[9px] font-bold uppercase tracking-widest text-surface">{{ group.readings.length }} {{ group.readings.length === 1 ? 'registro' : 'registros' }}</span>
                 </div>
               </div>
             </ion-item>
             
             <!-- Accordion Content: Reading Cards -->
-            <div slot="content" class="space-y-4 px-1 pt-3 pb-4">
+            <div slot="content" class="space-y-4 px-3 pt-4 pb-5 bg-primary/10 rounded-b-2xl mb-2">
               @for (reading of group.readings; track reading.id; let i = $index) {
                 <div 
-                  class="border border-zinc-900 rounded-[24px] hover:border-zinc-700 transition-all p-5 group bg-zinc-900/10 active:scale-[0.98]"
+                  class="border border-secondary/30 rounded-[24px] hover:border-secondary transition-all p-5 group bg-surface active:scale-[0.98] shadow-card"
                 >
                   <!-- Card Header -->
                   <div class="flex items-center justify-between mb-4">
                     <div class="flex flex-col">
-                      <span class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0.5">
+                      <span class="text-[10px] font-black uppercase tracking-widest text-secondary mb-0.5">
                         {{ formatDateShort(reading.fechaHora) }}
                       </span>
-                      <span class="text-xs font-black text-zinc-200 italic uppercase tracking-wider">
+                      <span class="text-xs font-black text-text italic uppercase tracking-wider">
                         {{ reading.tipoRegistro }}
                       </span>
                     </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-zinc-800">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-secondary">
                       {{ formatTime(reading.fechaHora) }}
                     </span>
                   </div>
@@ -55,36 +55,36 @@
                   <!-- Card Content: Glucose & Carbs -->
                   <div class="flex gap-4">
                     <!-- Box Glucosa -->
-                    <div class="flex-1 flex items-center gap-3 bg-zinc-900/50 p-3 rounded-2xl border border-zinc-800/50">
-                      <ion-icon name="water-outline" class="text-neon-green text-lg"></ion-icon>
+                    <div class="flex-1 flex items-center gap-3 bg-background p-3 rounded-2xl border border-secondary/30">
+                      <ion-icon name="water-outline" class="text-primary text-lg"></ion-icon>
                       <div class="flex items-baseline gap-1">
-                        <span class="font-black text-white text-xl">{{ reading.valorMgdl }}</span>
-                        <span class="text-[8px] font-black uppercase text-neon-green/60">mg/dL</span>
+                        <span class="font-black text-text text-xl">{{ reading.valorMgdl }}</span>
+                        <span class="text-[8px] font-black uppercase text-primary/80">mg/dL</span>
                       </div>
                     </div>
 
                     <!-- Box Carbs -->
-                    <div class="flex-1 flex items-center gap-3 bg-zinc-900/50 p-3 rounded-2xl border border-zinc-800/50">
-                      <ion-icon name="fast-food-outline" class="text-zinc-600 text-lg"></ion-icon>
+                    <div class="flex-1 flex items-center gap-3 bg-background p-3 rounded-2xl border border-secondary/30">
+                      <ion-icon name="fast-food-outline" class="text-secondary text-lg"></ion-icon>
                       <div class="flex items-baseline gap-1">
-                        <span class="font-black text-white text-xl">{{ reading.carbohidratos || 0 }}</span>
-                        <span class="text-[8px] font-black uppercase text-zinc-700">gramos</span>
+                        <span class="font-black text-text text-xl">{{ reading.carbohidratos || 0 }}</span>
+                        <span class="text-[8px] font-black uppercase text-secondary">gramos</span>
                       </div>
                     </div>
 
                     <!-- Action Button (Hidden until hover/active) -->
-                    <button class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity">
-                      <ion-icon name="arrow-forward-outline" class="text-zinc-600 text-xl"></ion-icon>
+                    <button class="w-12 h-12 rounded-2xl bg-background border border-secondary flex items-center justify-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity">
+                      <ion-icon name="arrow-forward-outline" class="text-secondary text-xl"></ion-icon>
                     </button>
                   </div>
 
                   <!-- Nota / Comentario / Análisis IA -->
                   @if (reading.analisisIa || reading.comentarios) {
-                    <div class="mt-4 pt-4 border-t border-zinc-800/30">
+                    <div class="mt-4 pt-4 border-t border-secondary/30">
                       <div class="flex gap-2">
                         <ion-icon [name]="reading.analisisIa ? 'hardware-chip-outline' : 'chatbubble-outline'" 
-                                  class="text-zinc-700 text-xs mt-0.5"></ion-icon>
-                        <p class="text-[10px] text-zinc-500 italic font-medium leading-relaxed">
+                                  class="text-secondary text-xs mt-0.5"></ion-icon>
+                        <p class="text-[10px] text-secondary italic font-medium leading-relaxed">
                           " {{ reading.analisisIa || reading.comentarios }} "
                         </p>
                       </div>
@@ -101,10 +101,10 @@
       <!-- Empty State -->
       @if (groupedHistory.length === 0 && !isLoading) {
         <div class="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
-          <div class="w-16 h-16 bg-zinc-900 rounded-3xl flex items-center justify-center border border-zinc-800">
-            <ion-icon name="calendar-outline" class="text-3xl text-zinc-700"></ion-icon>
+          <div class="w-16 h-16 bg-surface rounded-3xl flex items-center justify-center border border-secondary">
+            <ion-icon name="calendar-outline" class="text-3xl text-secondary"></ion-icon>
           </div>
-          <p class="text-xs text-zinc-500 font-black uppercase tracking-widest italic">No hay registros aún</p>
+          <p class="text-xs text-secondary font-black uppercase tracking-widest italic">No hay registros aún</p>
         </div>
       }
     </div>
@@ -112,7 +112,7 @@
 
   <!-- FAB: Export PDF -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="history-fab">
-    <ion-fab-button (click)="exportData()" class="export-fab-btn">
+    <ion-fab-button (click)="exportData()" class="export-fab-btn shadow-elevated" style="--background: #E76F51; --color: #DAF1DE;">
       <ion-icon name="download-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -1,5 +1,5 @@
 ion-content {
-  --background: #000000;
+  --background: transparent;
 }
 
 .shadow-neon {
@@ -16,7 +16,7 @@ ion-content {
 }
 
 input[type="date"], input[type="time"] {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 input::placeholder {

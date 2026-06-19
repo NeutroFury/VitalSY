@@ -1,80 +1,80 @@
-<ion-content [fullscreen]="true" class="bg-black" style="--background: #000;">
+<ion-content [fullscreen]="true" class="bg-background" style="--background: #DAF1DE;">
   <div class="px-5 py-4 flex flex-col gap-4 min-h-full pb-8">
     
     <app-header [showBack]="true" [showGreeting]="false" title="Calculadora"></app-header>
 
     <!-- BLOQUE DE ENTRADA: PARÁMETROS DEL PACIENTE -->
-    <section class="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 relative shadow-lg">
+    <section class="bg-surface border border-secondary/30 rounded-3xl p-4 relative shadow-card">
       
       <!-- Overlay Sincronizando Sensor -->
       @if (isSyncing || isCalculating) {
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md z-20 flex flex-col items-center justify-center gap-4 rounded-3xl">
-          <div class="w-16 h-16 rounded-full border-2 border-neon-green flex items-center justify-center neon-glow animate-pulse">
-            <ion-icon name="radio-outline" class="text-3xl text-neon-green"></ion-icon>
+        <div class="absolute inset-0 bg-background/90 backdrop-blur-md z-20 flex flex-col items-center justify-center gap-4 rounded-3xl">
+          <div class="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center animate-pulse">
+            <ion-icon name="radio-outline" class="text-3xl text-primary"></ion-icon>
           </div>
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-neon-green m-0">Procesando...</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary m-0">Procesando...</p>
         </div>
       }
 
       <!-- Encabezado de Parámetros -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="bg-neon-green w-8 h-8 rounded-xl flex items-center justify-center shadow-neon">
-            <ion-icon name="calculator-outline" class="text-lg text-black"></ion-icon>
+          <div class="bg-primary/20 w-8 h-8 rounded-xl flex items-center justify-center">
+            <ion-icon name="calculator-outline" class="text-lg text-primary"></ion-icon>
           </div>
-          <span class="text-[10px] font-black uppercase tracking-widest text-zinc-300">Variables de Comida</span>
+          <span class="text-[10px] font-black uppercase tracking-widest text-text">Variables de Comida</span>
         </div>
         <button 
           type="button"
           (click)="handleSyncSensor()"
           [disabled]="isSyncing"
-          class="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg hover:bg-zinc-700 transition-all active:scale-95 group disabled:opacity-50"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 bg-background border border-secondary/50 rounded-lg hover:bg-surface transition-all active:scale-95 group disabled:opacity-50"
         >
-          <ion-icon name="radio-outline" class="text-[12px] text-neon-green group-hover:animate-pulse"></ion-icon>
-          <span class="text-[8px] font-bold text-zinc-300 uppercase tracking-wider">Rescatar Glicemia</span>
+          <ion-icon name="radio-outline" class="text-[12px] text-primary group-hover:animate-pulse"></ion-icon>
+          <span class="text-[8px] font-bold text-text uppercase tracking-wider">Rescatar Glicemia</span>
         </button>
       </div>
 
       <div class="space-y-3">
         <!-- Campo 1: GLICEMIA ACTUAL -->
         <div class="flex flex-col gap-1 w-full">
-          <label class="text-zinc-500 text-[9px] ml-1 uppercase font-bold tracking-widest">Glicemia Actual</label>
-          <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
+          <label class="text-secondary text-[9px] ml-1 uppercase font-bold tracking-widest">Glicemia Actual</label>
+          <div class="flex items-center justify-between bg-background border border-secondary rounded-2xl px-4 py-2 focus-within:border-primary focus-within:bg-background transition-all">
             <input
               type="number"
               [(ngModel)]="currentGlucose"
               placeholder="0"
-              class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-xl font-black w-full"
+              class="bg-transparent border-none text-text focus:outline-none focus:ring-0 text-xl font-black w-full"
             />
-            <div class="bg-neutral-800 rounded-lg px-2 py-1 shrink-0">
-              <span class="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">mg/dL</span>
+            <div class="bg-surface rounded-lg px-2 py-1 shrink-0">
+              <span class="text-secondary text-[10px] font-bold uppercase tracking-widest">mg/dL</span>
             </div>
           </div>
         </div>
 
         <!-- Campo 2: CARBOHIDRATOS A CONSUMIR -->
         <div class="flex flex-col gap-1 w-full">
-          <label class="text-zinc-500 text-[9px] ml-1 uppercase font-bold tracking-widest">Carbohidratos</label>
-          <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
+          <label class="text-secondary text-[9px] ml-1 uppercase font-bold tracking-widest">Carbohidratos</label>
+          <div class="flex items-center justify-between bg-background border border-secondary rounded-2xl px-4 py-2 focus-within:border-primary focus-within:bg-background transition-all">
             <input
               type="number"
               [(ngModel)]="carbsToConsume"
               placeholder="0"
-              class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-xl font-black w-full"
+              class="bg-transparent border-none text-text focus:outline-none focus:ring-0 text-xl font-black w-full"
             />
-            <div class="bg-neutral-800 rounded-lg px-2 py-1 shrink-0">
-              <span class="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">g</span>
+            <div class="bg-surface rounded-lg px-2 py-1 shrink-0">
+              <span class="text-secondary text-[10px] font-bold uppercase tracking-widest">g</span>
             </div>
           </div>
         </div>
 
         <!-- Campo 3: NOMBRE COMIDA -->
         <div class="flex flex-col gap-1 w-full">
-          <label class="text-zinc-500 text-[9px] ml-1 uppercase font-bold tracking-widest">Comida / Momento del Día</label>
-          <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
-            <select [(ngModel)]="selectedComida" class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-sm font-black w-full appearance-none">
-              <option *ngFor="let comida of comidasDisponibles" [value]="comida" class="bg-zinc-900 text-white">{{ comida }}</option>
-              <option value="otra" class="bg-zinc-900 text-white italic">Otra (Ingreso manual)</option>
+          <label class="text-secondary text-[9px] ml-1 uppercase font-bold tracking-widest">Comida / Momento del Día</label>
+          <div class="flex items-center justify-between bg-background border border-secondary rounded-2xl px-4 py-2 focus-within:border-primary focus-within:bg-background transition-all">
+            <select [(ngModel)]="selectedComida" class="bg-transparent border-none text-text focus:outline-none focus:ring-0 text-sm font-black w-full appearance-none">
+              <option *ngFor="let comida of comidasDisponibles" [value]="comida" class="bg-background text-text">{{ comida }}</option>
+              <option value="otra" class="bg-background text-text italic">Otra (Ingreso manual)</option>
             </select>
           </div>
         </div>
@@ -82,12 +82,12 @@
         <!-- OTRA COMIDA INPUT -->
         @if (selectedComida === 'otra') {
           <div class="flex flex-col gap-1 w-full animate-fade-in">
-            <div class="flex items-center justify-between bg-black border border-zinc-800 rounded-2xl px-4 py-2 focus-within:border-neon-green/50 focus-within:bg-zinc-800 transition-all">
+            <div class="flex items-center justify-between bg-background border border-secondary rounded-2xl px-4 py-2 focus-within:border-primary focus-within:bg-background transition-all">
               <input
                 type="text"
                 [(ngModel)]="customComida"
                 placeholder="Nombre de la comida"
-                class="bg-transparent border-none text-white focus:outline-none focus:ring-0 text-sm font-black w-full"
+                class="bg-transparent border-none text-text focus:outline-none focus:ring-0 text-sm font-black w-full"
               />
             </div>
           </div>
@@ -100,7 +100,7 @@
         <button 
           (click)="generateDose()"
           [disabled]="currentGlucose === null || carbsToConsume === null || (selectedComida === 'otra' && !customComida)"
-          class="w-full py-3 text-xs font-bold uppercase tracking-widest bg-neon-green text-black rounded-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:bg-zinc-700 disabled:text-zinc-500"
+          class="w-full py-3 text-xs font-bold uppercase tracking-widest bg-accent-primary text-background rounded-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:bg-secondary disabled:text-text shadow-elevated"
         >
           Calcular Dosis Inteligente
         </button>
@@ -110,16 +110,16 @@
 
     <!-- BLOQUE DE RESULTADO: DOSIS RECOMENDADA -->
     @if (isCalculated) {
-      <div class="bg-zinc-900 border border-neon-green rounded-3xl p-5 relative overflow-hidden shadow-neon animate-fade-in-up">
+      <div class="bg-surface border border-primary/50 rounded-3xl p-5 relative overflow-hidden shadow-card animate-fade-in-up mt-4">
         
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
-            <ion-icon name="medkit-outline" class="text-lg text-neon-green"></ion-icon>
-            <span class="text-[10px] font-black uppercase tracking-widest text-neon-green">Dosis Recomendada</span>
+            <ion-icon name="medkit-outline" class="text-lg text-primary"></ion-icon>
+            <span class="text-[10px] font-black uppercase tracking-widest text-primary">Dosis Recomendada</span>
           </div>
           
-          <div class="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1">
-            <span class="text-[8px] font-bold uppercase tracking-wider" [ngClass]="resultado?.metodoAplicado === 'TABLA_MEDICA_FIJA' ? 'text-sky-400' : 'text-amber-400'">
+          <div class="bg-background border border-secondary/30 rounded-lg px-2 py-1">
+            <span class="text-[8px] font-bold uppercase tracking-wider text-accent-alert">
               {{ resultado?.metodoAplicado === 'TABLA_MEDICA_FIJA' ? 'PAUTA MÉDICA EXACTA' : 'ALGORITMO ESTÁNDAR' }}
             </span>
           </div>
@@ -127,16 +127,16 @@
         
         <ion-list class="bg-transparent" lines="none">
           <ion-item color="transparent">
-            <ion-label class="text-zinc-300">Dosis por Carbohidratos</ion-label>
-            <ion-note slot="end" color="primary" class="font-bold">{{ resultado?.dosisCarbohidratos }} U</ion-note>
+            <ion-label class="text-text">Dosis por Carbohidratos</ion-label>
+            <ion-note slot="end" class="font-bold text-text">{{ resultado?.dosisCarbohidratos }} U</ion-note>
           </ion-item>
           <ion-item color="transparent">
-            <ion-label class="text-zinc-300">Dosis por Glicemia</ion-label>
-            <ion-note slot="end" color="primary" class="font-bold">{{ resultado?.dosisGlicemia }} U</ion-note>
+            <ion-label class="text-text">Dosis por Glicemia</ion-label>
+            <ion-note slot="end" class="font-bold text-text">{{ resultado?.dosisGlicemia }} U</ion-note>
           </ion-item>
-          <ion-item color="transparent" class="total-row mt-2 border-t border-zinc-700 pt-2">
-            <ion-label class="text-white text-lg"><strong>Dosis Total:</strong></ion-label>
-            <ion-note slot="end" color="success" class="text-2xl"><strong>{{ resultado?.dosisTotal }} U</strong></ion-note>
+          <ion-item color="transparent" class="total-row mt-2 border-t border-secondary/30 pt-2">
+            <ion-label class="text-text text-lg"><strong>Dosis Total:</strong></ion-label>
+            <ion-note slot="end" class="text-2xl text-accent-primary font-black">{{ resultado?.dosisTotal }} U</ion-note>
           </ion-item>
         </ion-list>
 
@@ -144,9 +144,9 @@
     }
 
     <!-- PIE DE PÁGINA: NOTA DE ADVERTENCIA -->
-    <div class="flex items-start gap-2 p-3 bg-zinc-900 rounded-2xl border border-zinc-800 mt-auto">
-      <ion-icon name="information-circle-outline" class="text-lg text-zinc-500 shrink-0 mt-0.5"></ion-icon>
-      <p class="text-[9px] leading-relaxed text-zinc-400 font-medium m-0">
+    <div class="flex items-start gap-2 p-3 bg-surface rounded-2xl border border-secondary/30 mt-auto">
+      <ion-icon name="information-circle-outline" class="text-lg text-secondary shrink-0 mt-0.5"></ion-icon>
+      <p class="text-[9px] leading-relaxed text-secondary font-medium m-0">
         Cálculo estimativo. Si utiliza Pauta Médica, el cálculo es exacto basado en la tabla indicada por su médico. Si utiliza Algoritmo Estándar, se basa en su sensibilidad a la insulina (ISF) y ratio de carbohidratos (IC).
       </p>
     </div>

@@ -1,15 +1,15 @@
-<div class="min-h-svh flex flex-col items-center justify-center p-6 bg-[#050505]">
-  <div class="w-full max-w-sm space-y-12 animate-fade-in-up">
+<div class="min-h-svh flex flex-col items-center justify-center p-6 bg-background">
+  <div class="w-full max-w-sm space-y-12 animate-fade-in-up bg-surface p-8 rounded-3xl shadow-card">
     
     <!-- Logo y Título -->
     <div class="flex flex-col items-center gap-4">
-      <div class="w-20 h-20 bg-neon-green rounded-[2.5rem] flex items-center justify-center neon-glow rotate-12 transition-transform hover:rotate-0 duration-500">
-        <ion-icon name="pulse" class="text-[40px] text-black font-black"></ion-icon>
+      <div class="w-20 h-20 bg-primary rounded-[2.5rem] flex items-center justify-center shadow-soft rotate-12 transition-transform hover:rotate-0 duration-500">
+        <ion-icon name="pulse" class="text-[40px] text-background font-black"></ion-icon>
       </div>
-      <h1 class="text-5xl font-black tracking-tighter text-white uppercase italic m-0">
-        VITAL<span class="text-neon-green">SY</span>
+      <h1 class="text-5xl font-black tracking-tighter text-text uppercase italic m-0">
+        VITAL<span class="text-primary">SY</span>
       </h1>
-      <p class="text-zinc-600 text-xs font-bold tracking-[0.2em] uppercase m-0 text-center">Gestión Inteligente de Diabetes</p>
+      <p class="text-secondary text-xs font-bold tracking-[0.2em] uppercase m-0 text-center">Gestión Inteligente de Diabetes</p>
     </div>
 
     <!-- Formulario -->
@@ -24,7 +24,7 @@
 
         <!-- Input Email -->
         <div class="flex flex-col gap-1.5 w-full">
-          <label class="text-zinc-500 text-[10px] ml-1 uppercase font-bold tracking-widest">Correo Electrónico</label>
+          <label class="text-secondary text-[10px] ml-1 uppercase font-bold tracking-widest">Correo Electrónico</label>
           <input
             type="email"
             name="email"
@@ -32,13 +32,13 @@
             (input)="clearError()"
             placeholder="correo@ejemplo.com"
             required
-            class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-sm w-full"
+            class="bg-background border border-secondary rounded-xl px-4 py-3 text-text placeholder:text-secondary/60 focus:outline-none focus:border-primary focus:bg-background transition-all text-sm w-full"
           />
         </div>
 
         <!-- Input Password -->
         <div class="flex flex-col gap-1.5 w-full">
-          <label class="text-zinc-500 text-[10px] ml-1 uppercase font-bold tracking-widest">Contraseña</label>
+          <label class="text-secondary text-[10px] ml-1 uppercase font-bold tracking-widest">Contraseña</label>
           <input
             type="password"
             name="password"
@@ -46,7 +46,7 @@
             (input)="clearError()"
             placeholder="••••••••"
             required
-            class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-700 focus:outline-none focus:border-neon-green focus:bg-zinc-800 transition-all text-sm w-full"
+            class="bg-background border border-secondary rounded-xl px-4 py-3 text-text placeholder:text-secondary/60 focus:outline-none focus:border-primary focus:bg-background transition-all text-sm w-full"
           />
         </div>
       </div>
@@ -55,7 +55,7 @@
       <button 
         type="submit" 
         [disabled]="!loginForm.valid"
-        class="w-full h-16 text-base font-black bg-neon-green text-black uppercase tracking-wider rounded-2xl hover:opacity-90 active:scale-95 transition-all neon-glow disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full h-16 text-base font-black bg-primary text-background uppercase tracking-wider rounded-2xl hover:opacity-90 active:scale-95 transition-all shadow-soft disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Iniciar Sesión
       </button>
@@ -66,7 +66,7 @@
           <button 
             type="button"
             (click)="goToSignup()"
-            class="w-full h-14 text-xs font-black uppercase tracking-[0.2em] border border-zinc-900 text-zinc-400 rounded-xl hover:border-neon-green hover:text-white hover:bg-neon-green/10 active:scale-95 transition-all bg-transparent"
+            class="w-full h-14 text-xs font-black uppercase tracking-[0.2em] border border-secondary text-secondary rounded-xl hover:border-primary hover:text-text hover:bg-primary/10 active:scale-95 transition-all bg-transparent"
           >
             Crear cuenta
           </button>
@@ -75,27 +75,27 @@
             role="button"
             tabindex="0"
             (click)="promptForgotPassword()"
-            class="cursor-pointer text-[10px] text-zinc-400 hover:text-neon-green transition-colors font-black uppercase tracking-widest underline underline-offset-4 decoration-zinc-700 hover:decoration-neon-green">
+            class="cursor-pointer text-[10px] text-accent-primary hover:brightness-110 transition-colors font-black uppercase tracking-widest underline underline-offset-4 decoration-accent-primary/50 hover:decoration-accent-primary">
             ¿Olvidaste tu contraseña?
           </span>
         </div>
         
-        <div class="flex items-center gap-4 text-[10px] text-zinc-500 font-black uppercase tracking-widest w-full">
-          <div class="h-px flex-1 bg-zinc-800"></div>
+        <div class="flex items-center gap-4 text-[10px] text-secondary font-black uppercase tracking-widest w-full">
+          <div class="h-px flex-1 bg-secondary/30"></div>
           <span>O continúa con</span>
-          <div class="h-px flex-1 bg-zinc-800"></div>
+          <div class="h-px flex-1 bg-secondary/30"></div>
         </div>
         
         <div class="w-full">
-          <button type="button" class="w-full h-12 text-[10px] font-black bg-zinc-900 text-white border border-zinc-800 rounded-xl hover:bg-zinc-800 active:scale-95 transition-all uppercase tracking-wider">
+          <button type="button" class="w-full h-12 text-[10px] font-black bg-background text-text border border-secondary rounded-xl hover:bg-background/80 active:scale-95 transition-all uppercase tracking-wider">
             GOOGLE
           </button>
         </div>
       </div>
     </form>
 
-    <p class="text-center text-[10px] text-zinc-700 px-8 leading-relaxed uppercase tracking-[0.15em] font-bold">
-      Al continuar, aceptas nuestros <span class="text-zinc-500">Términos</span> y <span class="text-zinc-500">Privacidad</span>.
+    <p class="text-center text-[10px] text-secondary/80 px-8 leading-relaxed uppercase tracking-[0.15em] font-bold">
+      Al continuar, aceptas nuestros <span class="text-secondary">Términos</span> y <span class="text-secondary">Privacidad</span>.
     </p>
     
   </div>

@@ -3,24 +3,24 @@
   <!-- Izquierda: Logo Integrado con Saludo -->
   <div class="flex items-center gap-3">
     @if (showBack) {
-      <button (click)="goBack()" class="w-9 h-9 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-400 active:scale-95 transition-all mr-1">
+      <button (click)="goBack()" class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-secondary active:scale-95 transition-all mr-1">
         <ion-icon name="chevron-back-outline" class="text-lg"></ion-icon>
       </button>
     }
 
     <!-- Logo VitalSY -->
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-neon-green rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(212,255,0,0.3)]">
-        <ion-icon name="pulse" class="text-xl text-black font-black"></ion-icon>
+      <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-soft">
+        <ion-icon name="pulse" class="text-xl text-background font-black"></ion-icon>
       </div>
       
       @if (showGreeting) {
         <div class="flex flex-col">
-          <p class="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600 m-0 leading-none">Bienvenido,</p>
-          <h2 class="text-base font-black text-white italic uppercase tracking-wider m-0 leading-tight">{{ username }}</h2>
+          <p class="text-[9px] font-black uppercase tracking-[0.2em] text-secondary m-0 leading-none">Bienvenido,</p>
+          <h2 class="text-base font-black text-text italic uppercase tracking-wider m-0 leading-tight">{{ username }}</h2>
         </div>
       } @else if (title) {
-        <h2 class="text-sm font-black text-white uppercase tracking-[0.15em] m-0 leading-none">{{ title }}</h2>
+        <h2 class="text-sm font-black text-text uppercase tracking-[0.15em] m-0 leading-none">{{ title }}</h2>
       }
     </div>
   </div>
@@ -28,10 +28,10 @@
   <!-- Derecha: Acciones Rápidas -->
   <div class="flex items-center gap-2">
     @if (showActions) {
-      <button class="w-9 h-9 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-500 hover:text-white active:scale-95 transition-colors">
+      <button class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-accent-alert hover:text-accent-alert/80 active:scale-95 transition-colors">
         <ion-icon name="notifications-outline" class="text-base"></ion-icon>
       </button>
-      <button (click)="navigateTo('profile')" class="w-9 h-9 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-500 hover:text-white active:scale-95 transition-colors">
+      <button (click)="navigateTo('profile')" class="w-9 h-9 rounded-full bg-surface border border-secondary/30 flex items-center justify-center text-secondary hover:text-text active:scale-95 transition-colors">
         <ion-icon name="settings-outline" class="text-base"></ion-icon>
       </button>
     }

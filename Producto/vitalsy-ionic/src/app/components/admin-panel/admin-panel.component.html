@@ -1,10 +1,5 @@
 <ion-content [fullscreen]="true" class="admin-bg">
-
-  <!-- ══════════════════════════════════════════
-       SIDEBAR
-  ══════════════════════════════════════════ -->
   <div class="admin-layout">
-
     <aside class="admin-sidebar">
       <!-- Logo -->
       <div class="sidebar-logo">
@@ -108,17 +103,17 @@
                   <th>
                     <div class="th-icon-wrap">
                       <ion-icon name="time-outline" class="text-sky-400"></ion-icon>
-                      Insulina Lenta (Basal)
+                      Basal
                     </div>
                   </th>
                   <th>
                     <div class="th-icon-wrap">
                       <ion-icon name="flash-outline" class="text-amber-400"></ion-icon>
-                      Insulina Rápida (Bolus)
+                      Bolus
                     </div>
                   </th>
                   <th>Estado</th>
-                  <th>Acciones</th>
+                  <th style="text-align: center;">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -152,14 +147,17 @@
                       </span>
                     </td>
                     <td>
-                      <div class="actions-cell">
-                        <button class="action-btn toggle-btn" [title]="p.activo ? 'Suspender' : 'Activar'" (click)="onToggleStatus(p)">
+                      <div class="actions-cell" style="justify-content: center;">
+                        <button class="action-btn toggle-btn" 
+                                [title]="p.activo ? 'Bloquear Usuario' : 'Activar Usuario'" (click)="onToggleStatus(p)">
                           <ion-icon [name]="p.activo ? 'ban-outline' : 'checkmark-circle-outline'"></ion-icon>
                         </button>
-                        <button class="action-btn reset-btn" title="Enviar Enlace de Recuperación" (click)="onTriggerPasswordReset(p)">
-                          <ion-icon name="mail-outline"></ion-icon>
+                        <button class="action-btn reset-btn" 
+                                title="Forzar Reseteo de Contraseña" (click)="onTriggerPasswordReset(p)">
+                          <ion-icon name="key-outline"></ion-icon>
                         </button>
-                        <button class="action-btn detail-btn" title="Ver Expediente" (click)="goToDetalle(p.id)">
+                        <button class="action-btn detail-btn" 
+                                title="Ver Detalle" (click)="goToDetalle(p.id)">
                           <ion-icon name="eye-outline"></ion-icon>
                         </button>
                       </div>

@@ -2,17 +2,17 @@
 // VitalSY Admin Panel — Dark Premium Styles
 // ══════════════════════════════════════════════════════════
 
-$neon: #d4ff00;
-$neon-dim: rgba(212, 255, 0, 0.15);
-$bg: #050505;
-$surface: #0e0e0e;
-$surface-2: #161616;
-$border: rgba(255, 255, 255, 0.06);
-$text: #ffffff;
-$text-muted: #52525b;
-$sky: #38bdf8;
-$amber: #fbbf24;
-$emerald: #34d399;
+$neon: #235347;
+$neon-dim: rgba(35, 83, 71, 0.1);
+$bg: #DAF1DE;
+$surface: #FFFFFF;
+$surface-2: #F9FDF9;
+$border: rgba(35, 83, 71, 0.15);
+$text: #051F20;
+$text-muted: rgba(5, 31, 32, 0.6);
+$sky: #235347;
+$amber: #E76F51;
+$emerald: #163B32;
 
 ion-content.admin-bg {
   --background: #{$bg};
@@ -172,11 +172,11 @@ ion-content.admin-bg {
   gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid $border;
-  background: transparent;
-  color: #ef4444;
+  border: none;
+  background: $amber;
+  color: #FFFFFF;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   width: 100%;
   transition: all 0.2s;
@@ -185,8 +185,13 @@ ion-content.admin-bg {
   ion-icon { font-size: 16px; }
 
   &:hover {
-    background: rgba(239, 68, 68, 0.08);
-    border-color: rgba(239, 68, 68, 0.3);
+    background: darken(#E76F51, 8%);
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 }
 

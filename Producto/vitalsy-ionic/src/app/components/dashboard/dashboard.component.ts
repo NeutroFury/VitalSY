@@ -68,11 +68,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       {
         data: [],
         label: 'Glucosa (mg/dL)',
-        borderColor: '#ccff00',
-        pointBackgroundColor: '#ccff00',
-        pointBorderColor: '#000',
-        pointHoverBackgroundColor: '#ccff00',
-        pointHoverBorderColor: '#000',
+        borderColor: '#235347',
+        pointBackgroundColor: '#235347',
+        pointBorderColor: '#DAF1DE',
+        pointHoverBackgroundColor: '#051F20',
+        pointHoverBorderColor: '#8EB69B',
         borderWidth: 3,
         pointRadius: 0, // Ocultamos puntos por defecto para look limpio
         pointHoverRadius: 4,
@@ -81,10 +81,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         backgroundColor: (context) => {
           const chart = context.chart;
           const chartArea = chart.chartArea;
-          if (!chartArea) return 'rgba(204, 255, 0, 0.1)';
+          if (!chartArea) return 'rgba(35, 83, 71, 0.1)';
           const gradient = chart.ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          gradient.addColorStop(0, 'rgba(204, 255, 0, 0.15)');
-          gradient.addColorStop(1, 'rgba(204, 255, 0, 0)');
+          gradient.addColorStop(0, 'rgba(35, 83, 71, 0.20)');
+          gradient.addColorStop(1, 'rgba(35, 83, 71, 0)');
           return gradient;
         }
       }
@@ -97,10 +97,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#121212',
-        titleColor: '#52525b',
-        bodyColor: '#ccff00',
-        borderColor: '#1E1E1E',
+        backgroundColor: '#051F20',
+        titleColor: '#8EB69B',
+        bodyColor: '#DAF1DE',
+        borderColor: '#235347',
         borderWidth: 1,
         cornerRadius: 12,
         padding: 10,
@@ -111,7 +111,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       x: {
         grid: { display: false },
         ticks: {
-          color: '#3f3f46',
+          color: '#163B32',
           font: { size: 9, weight: 'bold' }
         }
       },
@@ -119,7 +119,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         grid: { display: false },
         border: { display: false },
         ticks: {
-          color: '#3f3f46',
+          color: '#163B32',
           font: { size: 9, weight: 'bold' }
         }
       }
@@ -295,12 +295,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const range = this.rangoGlucosaMax - this.rangoGlucosaMin;
       const thresholdHigh = this.rangoGlucosaMin + (range * 0.7);
       if (this.currentReading <= thresholdHigh) {
-        return { text: 'ESTABLE', color: '#d4ff00' };
+        return { text: 'ESTABLE', color: '#235347' };
       } else {
-        return { text: 'ALTA', color: '#ffae00' };
+        return { text: 'ALTA', color: '#163B32' };
       }
     } else {
-      return { text: 'HIPERGLUCEMIA', color: '#ff00ff' };
+      return { text: 'HIPERGLUCEMIA', color: '#D97706' };
     }
   }
 
@@ -308,7 +308,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!text) return '';
     return text
       // 1. Aplicar el color neón a las negritas
-      .replace(/\*\*([\s\S]+?)\*\*/g, '<strong style="color: #c6ff00; font-weight: 900;">$1</strong>')
+      .replace(/\*\*([\s\S]+?)\*\*/g, '<strong style="color: #235347; font-weight: 900;">$1</strong>')
       // 2. Si el texto empieza exactamente con un guion, cambiarlo por viñeta
       .replace(/^-\s/, '• ')
       // 3. Convertir los guiones sueltos entre palabras en saltos de línea + viñeta
@@ -395,17 +395,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getTrendArrowSymbol(): { icon: string, symbol: string, color: string } {
     switch (this.currentTendency) {
       case 'RisingFast':
-        return { icon: 'arrow-up-outline', symbol: '↑↑', color: '#ff00ff' };
+        return { icon: 'arrow-up-outline', symbol: '↑↑', color: '#cc0000' };
       case 'Rising':
-        return { icon: 'trending-up-outline', symbol: '↑', color: '#ccff00' };
+        return { icon: 'trending-up-outline', symbol: '↑', color: '#163B32' };
       case 'Stable':
-        return { icon: 'arrow-forward-outline', symbol: '→', color: '#ccff00' };
+        return { icon: 'arrow-forward-outline', symbol: '→', color: '#235347' };
       case 'Falling':
-        return { icon: 'trending-down-outline', symbol: '↓', color: '#ffae00' };
+        return { icon: 'trending-down-outline', symbol: '↓', color: '#d97706' };
       case 'FallingFast':
         return { icon: 'arrow-down-outline', symbol: '↓↓', color: '#ff0000' };
       default:
-        return { icon: 'arrow-forward-outline', symbol: '→', color: '#a1a1aa' };
+        return { icon: 'arrow-forward-outline', symbol: '→', color: '#163B32' };
     }
   }
 
