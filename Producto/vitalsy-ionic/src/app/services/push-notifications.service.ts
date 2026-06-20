@@ -27,20 +27,24 @@ export class PushNotificationsService {
    * No hace nada si la plataforma es web (no soportada por Capacitor Push).
    */
   async initialize(): Promise<void> {
-    // Capacitor Push solo funciona en dispositivos nativos (iOS/Android)
-    if (!Capacitor.isNativePlatform()) {
-      console.log('[PushNotifications] Plataforma web detectada. Push notifications deshabilitadas.');
-      return;
-    }
+    try {
+      // Capacitor Push solo funciona en dispositivos nativos (iOS/Android)
+      if (!Capacitor.isNativePlatform()) {
+        console.log('[PushNotifications] Plataforma web detectada. Push notifications deshabilitadas.');
+        return;
+      }
 
-    const permResult = await PushNotifications.requestPermissions();
+      const permResult = await PushNotifications.requestPermissions();
 
-    if (permResult.receive === 'granted') {
-      console.log('[PushNotifications] Permisos otorgados. Registrando con FCM...');
-      await PushNotifications.register();
-      this.registerListeners();
-    } else {
-      console.warn('[PushNotifications] El usuario denegó los permisos de notificación.');
+      if (permResult.receive === 'granted') {
+        console.log('[PushNotifications] Permisos otorgados. Registrando con FCM...');
+        await PushNotifications.register();
+        this.registerListeners();
+      } else {
+        console.warn('[PushNotifications] El usuario denegó los permisos de notificación.');
+      }
+    } catch (e) {
+      console.warn('[PushNotifications] Plugin no disponible o sin configurar, ignorando:', e);
     }
   }
 

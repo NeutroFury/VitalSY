@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, AlertController, ToastController } from '@ionic/angular';
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email = '';
   password = '';
   errorMessage: string | null = null;
@@ -27,6 +27,16 @@ export class LoginComponent {
 
   constructor() {
     addIcons({ pulse, alertCircleOutline });
+  }
+
+  ngOnInit() {
+    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+      if (isLoggedIn) {
+        const rol = this.authService.getRol();
+        const destino = rol === 'ADMIN' ? '/admin-panel' : '/dashboard';
+        this.navCtrl.navigateRoot(destino, { animated: false });
+      }
+    });
   }
 
 

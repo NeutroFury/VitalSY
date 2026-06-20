@@ -129,32 +129,38 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (profile) => {
+        if (!profile) {
+          this.isLoading = false;
+          return;
+        }
+        
         this.profileForm.patchValue({
           ...profile,
-          pesoActual: profile.pesoActual || this.profileForm.get('pesoActual')?.value,
-          altura: profile.altura || this.profileForm.get('altura')?.value,
-          ratioIc: profile.ratioIc || this.profileForm.get('ratioIc')?.value || 10,
-          factorIs: profile.factorIs || this.profileForm.get('factorIs')?.value || 40,
-          glicemiaObjetivo: profile.glicemiaObjetivo || this.profileForm.get('glicemiaObjetivo')?.value || 100,
-          alertasGlucosa: profile.alertasGlucosa !== null && profile.alertasGlucosa !== undefined ? profile.alertasGlucosa : true,
+          pesoActual: profile?.pesoActual || this.profileForm.get('pesoActual')?.value,
+          altura: profile?.altura || this.profileForm.get('altura')?.value,
+          ratioIc: profile?.ratioIc || this.profileForm.get('ratioIc')?.value || 10,
+          factorIs: profile?.factorIs || this.profileForm.get('factorIs')?.value || 40,
+          glicemiaObjetivo: profile?.glicemiaObjetivo || this.profileForm.get('glicemiaObjetivo')?.value || 100,
+          alertasGlucosa: profile?.alertasGlucosa !== null && profile?.alertasGlucosa !== undefined ? profile.alertasGlucosa : true,
           // Evitar que null sobreescriba los valores con vacíos si el usuario ya tenía uno seleccionado
-          insulinaLenta: profile.insulinaLenta || this.profileForm.get('insulinaLenta')?.value || 'Tresiba (Degludec)',
-          insulinaRapida: profile.insulinaRapida || this.profileForm.get('insulinaRapida')?.value || 'Humalog (Lispro)'
+          insulinaLenta: profile?.insulinaLenta || this.profileForm.get('insulinaLenta')?.value || 'Tresiba (Degludec)',
+          insulinaRapida: profile?.insulinaRapida || this.profileForm.get('insulinaRapida')?.value || 'Humalog (Lispro)'
         });
 
-        if (profile.nombre) {
+        if (profile?.nombre) {
           localStorage.setItem('username', profile.nombre);
           this.username = profile.nombre;
         }
-        if (profile.rangoGlucosaMin !== undefined) {
+        if (profile?.rangoGlucosaMin !== undefined) {
           localStorage.setItem('rangoGlucosaMin', String(profile.rangoGlucosaMin));
         }
-        if (profile.rangoGlucosaMax !== undefined) {
+        if (profile?.rangoGlucosaMax !== undefined) {
           localStorage.setItem('rangoGlucosaMax', String(profile.rangoGlucosaMax));
         }
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error cargando perfil:', err);
         this.showToast('Error al conectar con la central VitalSY', 'danger');
         this.isLoading = false;
       }

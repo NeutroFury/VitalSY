@@ -1,5 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
@@ -161,16 +164,45 @@ export class HistoryComponent implements OnInit {
   exportData() {
     this.isLoading = true;
     this.glucoseService.exportarPdf().subscribe({
-      next: (blob) => {
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `VitalSY_Reporte_${new Date().toISOString().split('T')[0]}.pdf`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        this.isLoading = false;
+      next: async (blob) => {
+        try {
+          if (Capacitor.isNativePlatform()) {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = async () => {
+              const base64data = reader.result as string;
+              const base64 = base64data.split(',')[1];
+              const fileName = `VitalSY_Reporte_${new Date().toISOString().split('T')[0]}.pdf`;
+              
+              const savedFile = await Filesystem.writeFile({
+                path: fileName,
+                data: base64,
+                directory: Directory.Cache
+              });
+
+              await Share.share({
+                title: 'Reporte Clínico VitalSY',
+                text: 'Adjunto reporte clínico de glucosa de VitalSY',
+                url: savedFile.uri,
+                dialogTitle: 'Compartir o Guardar Reporte PDF'
+              });
+              this.isLoading = false;
+            };
+          } else {
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `VitalSY_Reporte_${new Date().toISOString().split('T')[0]}.pdf`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            this.isLoading = false;
+          }
+        } catch (e) {
+          console.error('Error guardando PDF nativo', e);
+          this.isLoading = false;
+        }
       },
       error: (err) => {
         console.error('HISTORY: Error exporting PDF', err);
