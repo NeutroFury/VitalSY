@@ -7,7 +7,7 @@
 ![JWT](https://img.shields.io/badge/JWT_Auth-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![AI Integration](https://img.shields.io/badge/AI_Cognitive-FF6F00?style=for-the-badge&logo=google-gemini&logoColor=white)
 
-**VitalSY** es una plataforma de monitoreo biométrico y de salud de grado empresarial orientada a revolucionar el manejo metabólico. Este repositorio aloja el **Backend Core** del sistema, construido sobre una arquitectura distribuida que expone una API RESTful de alto rendimiento para integrarse de forma fluida con un frontend desarrollado en Angular e Ionic (nativo para Android vía Capacitor).
+**VitalSY** es una plataforma de monitoreo biométrico y de salud de grado empresarial orientada a revolucionar el manejo metabólico. Este repositorio aloja el **ecosistema completo** del sistema, incluyendo su **Backend Core** construido sobre una arquitectura distribuida que expone una API RESTful de alto rendimiento, y su **Frontend móvil y web** desarrollado en Angular e Ionic (nativo para Android vía Capacitor).
 
 Más que un simple gestor de registros médicos, VitalSY actúa como un **motor cognitivo** que aprovecha la Inteligencia Artificial y una infraestructura Cloud moderna para proporcionar análisis predictivos, mantener un blindaje de seguridad robusto y garantizar alta disponibilidad. Todo el ecosistema está orquestado ágilmente mediante contenedores Docker.
 
@@ -47,14 +47,14 @@ La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a larg
 **Core y Lógica de Negocio:**
 
 - Java 21 LTS (Records, Pattern Matching)
-- Spring Boot 3.2.x
+- Spring Boot 4.0.x
 - Spring Security (Seguridad de Endpoints)
 - Spring Data JPA (Capa de persistencia)
 - Spring Web (Controladores REST)
 
 **Base de Datos y Migraciones:**
 
-- PostgreSQL 16 (Serie de tiempo y alta concurrencia)
+- PostgreSQL 17 (Serie de tiempo y alta concurrencia)
 - Supabase (Plataforma Cloud para hosting de Base de Datos)
 - Flyway (Versionado de esquemas relacionales)
 
@@ -69,6 +69,7 @@ La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a larg
 - Ionic Framework 8 (Componentes UI)
 - Capacitor 8 (Runtime multiplataforma para acceso a API nativa de Android)
 - Tailwind CSS (Estilizado)
+- Chart.js y ng2-charts (Visualización de datos biométricos)
 
 **Inteligencia Artificial:**
 
@@ -85,6 +86,13 @@ La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a larg
 - OpenPDF (Generación de documentos clínicos)
 - Lombok (Reducción de código repetitivo)
 - Jakarta Validation (Desinfección de entrada de datos)
+- Springdoc OpenAPI (Documentación Swagger UI)
+- Apache POI (Procesamiento de pautas médicas Excel)
+- Apache Commons Math & JFreeChart (Cálculo y graficación AGP)
+
+**Integraciones de Hardware/Sensores:**
+
+- Cliente LibreLinkUp Node.js/TypeScript (Extracción de telemetría CGM)
 
 **Infraestructura y Orquestación:**
 
@@ -98,7 +106,7 @@ La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a larg
 
 VitalSY está diseñado para ser agnóstico del proveedor gracias a **Docker Compose**. Sin embargo, la plataforma está optimizada para operar sobre **Supabase** como proveedor de base de datos en la nube.
 
-- **Motor Relacional:** Utilizamos PostgreSQL 16 alojado de forma remota en Supabase (o de forma local para entornos de prueba)
+- **Motor Relacional:** Utilizamos PostgreSQL 17 alojado de forma remota en Supabase (o de forma local para entornos de prueba)
 - **Rendimiento:** La conexión se establece a través de un pooler nativo optimizado para transacciones rápidas
 - **Orquestación Total:** El frontend (Ionic web), el backend (Spring Boot) y la base de datos se despliegan simultáneamente con un único archivo de configuración
 
@@ -188,6 +196,7 @@ Estas variables **reemplazan** la conexión al contenedor local. Úsalas si dese
 | `SPRING_DATASOURCE_URL` | No | URL JDBC completa del servidor remoto (ej. `jdbc:postgresql://<host>:5432/postgres`) |
 | `SPRING_DATASOURCE_USERNAME` | No | Usuario del servidor remoto |
 | `SPRING_DATASOURCE_PASSWORD` | No | Contraseña del servidor remoto |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | No | Estrategia de generación del esquema (por defecto en docker: `validate`) |
 
 ---
 
@@ -220,12 +229,26 @@ Estas variables **reemplazan** la conexión al contenedor local. Úsalas si dese
 
 ---
 
-#### 🌐 Puertos de los Servicios
+---
+
+#### 📧 Servidor de Correo (Mailtrap / SMTP)
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `MAIL_HOST` | `sandbox.smtp.mailtrap.io` | No | Servidor SMTP para envío de correos |
+| `MAIL_PORT` | `2525` | No | Puerto del servidor SMTP |
+| `MAIL_USERNAME` | — | **Sí** | Usuario de la cuenta de correo o Mailtrap |
+| `MAIL_PASSWORD` | — | **Sí** | Contraseña de la cuenta de correo o Mailtrap |
+
+---
+
+#### 🌐 Puertos y URLs de los Servicios
 
 | Variable | Valor por defecto | Requerido | Descripción |
 |---|---|:---:|---|
 | `BACKEND_PORT` | `8080` | No | Puerto del host mapeado al backend Spring Boot |
 | `FRONTEND_PORT` | `80` | No | Puerto del host mapeado al frontend Ionic/Nginx |
+| `FRONTEND_URL` | `http://localhost:8100` | No | URL base del frontend para configurar CORS o enlaces de correo |
 
 ### 2. Levantar el Proyecto
 
