@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "447128538747",
+    "project_id": "vitalsy-5b74c",
+    "storage_bucket": "vitalsy-5b74c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447128538747:android:55c8a20a59343af51b1cde",
+        "android_client_info": {
+          "package_name": "com.vitalsy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALPkdfvqQxmNUaS_uhNbscUzrcbgxkaJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

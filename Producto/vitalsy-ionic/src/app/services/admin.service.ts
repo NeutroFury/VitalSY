@@ -48,7 +48,7 @@ export class AdminService {
   }
 
   getUltimosRegistrosGlucosa(usuarioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8080/api/v1/registros/usuario/${usuarioId}/ultimos`);
+    return this.http.get<any[]>(`${environment.apiUrl}/registros/usuario/${usuarioId}/ultimos`);
   }
 
   getStats(): Observable<AdminStats> {
