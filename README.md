@@ -7,7 +7,7 @@
 ![JWT](https://img.shields.io/badge/JWT_Auth-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![AI Integration](https://img.shields.io/badge/AI_Cognitive-FF6F00?style=for-the-badge&logo=google-gemini&logoColor=white)
 
-**VitalSY** es una plataforma de monitoreo biométrico y de salud de grado empresarial orientada a revolucionar el manejo metabólico. Este repositorio aloja el **Backend Core** del sistema, construido sobre una arquitectura distribuida que expone una API RESTful de alto rendimiento para integrarse de forma fluida con un frontend desarrollado en React e Ionic.
+**VitalSY** es una plataforma de monitoreo biométrico y de salud de grado empresarial orientada a revolucionar el manejo metabólico. Este repositorio aloja el **Backend Core** del sistema, construido sobre una arquitectura distribuida que expone una API RESTful de alto rendimiento para integrarse de forma fluida con un frontend desarrollado en Angular e Ionic (nativo para Android vía Capacitor).
 
 Más que un simple gestor de registros médicos, VitalSY actúa como un **motor cognitivo** que aprovecha la Inteligencia Artificial y una infraestructura Cloud moderna para proporcionar análisis predictivos, mantener un blindaje de seguridad robusto y garantizar alta disponibilidad. Todo el ecosistema está orquestado ágilmente mediante contenedores Docker.
 
@@ -63,10 +63,22 @@ La plataforma se apoya en tecnologías modernas, asegurando mantenimiento a larg
 - JSON Web Tokens (JWT) para autenticación sin estado
 - Bucket4j (Defensa perimetral y Rate Limiting)
 
+**Frontend y Móvil:**
+
+- Angular 20 (Framework SPA)
+- Ionic Framework 8 (Componentes UI)
+- Capacitor 8 (Runtime multiplataforma para acceso a API nativa de Android)
+- Tailwind CSS (Estilizado)
+
 **Inteligencia Artificial:**
 
 - Google Gemini API (Análisis y generación de recomendaciones)
 - Spring AI (Integración abstracta de modelos locales y remotos)
+
+**Notificaciones Push y Analíticas:**
+
+- Firebase Cloud Messaging (FCM) para alertas preventivas móviles
+- Firebase Admin SDK (Backend) & Firebase Analytics (Frontend)
 
 **Utilidades y Reportes:**
 
@@ -198,6 +210,16 @@ Estas variables **reemplazan** la conexión al contenedor local. Úsalas si dese
 
 ---
 
+#### 🔔 Notificaciones Push (Firebase)
+
+| Variable | Valor por defecto | Requerido | Descripción |
+|---|---|:---:|---|
+| `FIREBASE_CREDENTIALS_PATH` | `/app/config/firebase-service-account.json` | No | Ruta al archivo JSON de cuenta de servicio para inicializar Firebase Admin SDK |
+
+> **Nota:** Debes descargar el archivo `firebase-service-account.json` desde Firebase Console y colocarlo en `Producto/vitalsy-backend/` para que Docker lo monte correctamente en el contenedor.
+
+---
+
 #### 🌐 Puertos de los Servicios
 
 | Variable | Valor por defecto | Requerido | Descripción |
@@ -207,9 +229,10 @@ Estas variables **reemplazan** la conexión al contenedor local. Úsalas si dese
 
 ### 2. Levantar el Proyecto
 
-Abre tu terminal en la carpeta raíz y ejecuta el siguiente comando para construir y desplegar todas las capas.
+Abre tu terminal en la carpeta raíz y ejecuta el siguiente comando para construir y desplegar todas las capas (asegúrate de ingresar a la carpeta `Producto` donde reside el archivo `docker-compose.yml`).
 
 ```bash
+cd Producto
 docker-compose up -d --build
 ```
 
@@ -229,7 +252,19 @@ docker-compose down
 
 ## 📂 Estructura de Directorios
 
-Una vista general simplificada del módulo de código fuente.
+El repositorio se organiza de manera integral en las siguientes áreas principales:
+
+- **`Producto/`**: Contiene todo el código fuente y despliegue de la plataforma.
+  - `vitalsy-backend/`: API RESTful construida en Java y Spring Boot.
+  - `vitalsy-ionic/`: Interfaz de usuario desarrollada en Angular e Ionic (compilación móvil para Android).
+  - `libre-link-up-api-client-main/`: Cliente para la integración con sensores continuos de glucosa.
+  - `docker-compose.yml`: Archivo de orquestación de servicios.
+- **`Documentación/`**: Repositorio de artefactos de ingeniería de software, incluyendo Modelo Entidad-Relación, Casos de Uso, Plan y Casos de Pruebas, Matriz de Riesgos, Mockups, BDD scripts y Documentación Técnica.
+- **`Gestión/`**: Contiene documentos de gestión y administración del proyecto, definición del equipo e identificación del proyecto.
+
+### Vista del Backend Core
+
+Una vista general simplificada del módulo de código fuente del backend.
 
 ```text
 vitalsy-backend/src/main/java/com/jonesys/vitalsy/
