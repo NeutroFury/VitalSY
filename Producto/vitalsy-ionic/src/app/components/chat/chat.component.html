@@ -2,12 +2,12 @@
   <div class="flex flex-col h-full bg-background">
 
     <!-- ── Header ── -->
-    <div class="px-6 pt-6 pb-4">
+    <div class="px-5 pt-4 pb-4">
       <app-header [showBack]="true" [showGreeting]="false" title="Asistente IA"></app-header>
     </div>
 
     <!-- ── Messages Area ── -->
-    <div #scrollContainer class="flex-1 overflow-y-auto px-6 pb-4 space-y-4">
+    <div #scrollContainer class="flex-1 overflow-y-auto px-5 pb-4 space-y-4">
 
       <!-- Prompt Starters (solo cuando no hay mensajes) -->
       @if (messages.length === 0) {

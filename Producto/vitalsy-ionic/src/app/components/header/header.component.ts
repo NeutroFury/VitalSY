@@ -1,8 +1,20 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, NavController, ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { pulse, chevronBackOutline, notificationsOutline, settingsOutline } from 'ionicons/icons';
+import { 
+  pulse, 
+  pulseOutline, 
+  timeOutline, 
+  addOutline, 
+  calculatorOutline, 
+  personOutline, 
+  chatbubbleOutline, 
+  chevronBackOutline, 
+  notificationsOutline, 
+  settingsOutline 
+} from 'ionicons/icons';
 import { AuthService } from '../../services/auth.service';
 import { NotificationHistoryComponent } from '../notification-history/notification-history.component';
 
@@ -20,11 +32,34 @@ export class HeaderComponent {
 
   private authService = inject(AuthService);
   private modalCtrl = inject(ModalController);
+  private router = inject(Router);
   username: string = '';
 
   constructor(private navCtrl: NavController) {
-    addIcons({ pulse, chevronBackOutline, notificationsOutline, settingsOutline });
+    addIcons({ 
+      pulse, 
+      pulseOutline, 
+      timeOutline, 
+      addOutline, 
+      calculatorOutline, 
+      personOutline, 
+      chatbubbleOutline, 
+      chevronBackOutline, 
+      notificationsOutline, 
+      settingsOutline 
+    });
     this.username = this.authService.getUsername();
+  }
+
+  getHeaderIcon(): string {
+    const url = this.router.url;
+    if (url.includes('/dashboard')) return 'pulse-outline';
+    if (url.includes('/history')) return 'time-outline';
+    if (url.includes('/registro')) return 'add-outline';
+    if (url.includes('/calculator')) return 'calculator-outline';
+    if (url.includes('/chat')) return 'chatbubble-outline';
+    if (url.includes('/profile')) return 'person-outline';
+    return 'pulse';
   }
 
   goBack() {

@@ -11,7 +11,7 @@
     <!-- Logo VitalSY -->
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-soft">
-        <ion-icon name="pulse" class="text-xl text-background font-black"></ion-icon>
+        <ion-icon [name]="getHeaderIcon()" class="text-xl text-background font-black"></ion-icon>
       </div>
       
       @if (showGreeting) {

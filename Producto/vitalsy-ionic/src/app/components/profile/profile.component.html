@@ -7,7 +7,7 @@
   </ng-container>
 
   <ng-container *ngIf="profileForm && !isLoading">
-    <div class="px-6 py-8 flex flex-col gap-6 min-h-full pb-32 animate-fade-in" [formGroup]="profileForm">
+    <div class="px-5 py-4 flex flex-col gap-6 min-h-full pb-32 animate-fade-in" [formGroup]="profileForm">
 
       <app-header [showBack]="true" [showGreeting]="false" title="Centro de Perfil"></app-header>
 
@@ -52,7 +52,7 @@
             <ion-icon name="medical-outline" slot="start" class="text-primary text-xl mr-4"></ion-icon>
             <ion-label>
               <h3 class="text-[12px] font-black uppercase tracking-widest text-white drop-shadow-md">Parámetros Clínicos</h3>
-              <p class="text-[10px] text-white font-bold mt-1 drop-shadow-sm">Biometría, Insulinas, Ratios y Meta</p>
+              <p class="text-[10px] font-bold mt-1" style="color: #163B32 !important;">Biometría, Insulinas, Ratios y Meta</p>
             </ion-label>
           </ion-item>
 
@@ -172,7 +172,7 @@
             <ion-icon name="settings-outline" slot="start" class="text-primary text-xl mr-4"></ion-icon>
             <ion-label>
               <h3 class="text-[12px] font-black uppercase tracking-widest text-white drop-shadow-md">Preferencias de Sistema</h3>
-              <p class="text-[10px] text-white font-bold mt-1 drop-shadow-sm">Alertas, Hard-stops y Recordatorios</p>
+              <p class="text-[10px] font-bold mt-1" style="color: #163B32 !important;">Alertas, Hard-stops y Recordatorios</p>
             </ion-label>
           </ion-item>
 
@@ -193,7 +193,7 @@
             <ion-icon name="scan-outline" slot="start" class="text-primary text-xl mr-4"></ion-icon>
             <ion-label>
               <h3 class="text-[12px] font-black uppercase tracking-widest text-white drop-shadow-md">Digitalización Médica</h3>
-              <p class="text-[10px] text-white font-bold mt-1 drop-shadow-sm">Escaneo de Pauta</p>
+              <p class="text-[10px] font-bold mt-1" style="color: #163B32 !important;">Escaneo de Pauta</p>
             </ion-label>
           </ion-item>
 
@@ -226,7 +226,7 @@
             <ion-icon name="hardware-chip-outline" slot="start" class="text-primary text-xl mr-4"></ion-icon>
             <ion-label>
               <h3 class="text-[12px] font-black uppercase tracking-widest text-white drop-shadow-md">Integración Sensor</h3>
-              <p class="text-[10px] text-white font-bold mt-1 drop-shadow-sm">Conexión directa con LibreLinkUp</p>
+              <p class="text-[10px] font-bold mt-1" style="color: #163B32 !important;">Conexión directa con LibreLinkUp</p>
             </ion-label>
           </ion-item>
 

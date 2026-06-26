@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
 
   public isLoggedIn$ = this.authService.isLoggedIn$;
   public showTabs = false;
+  public currentRoute = '';
 
   constructor() {
     addIcons({ pulseOutline, timeOutline, addOutline, calculatorOutline, personOutline, chatbubbleOutline });
@@ -34,6 +35,15 @@ export class AppComponent implements OnInit {
     ).subscribe((event: any) => {
       const url = event.urlAfterRedirects || event.url;
       this.showTabs = !url.includes('/login') && !url.includes('/register') && !url.includes('/reset-password');
+      
+      // Determine the active route
+      if (url.includes('/dashboard')) this.currentRoute = 'dashboard';
+      else if (url.includes('/history')) this.currentRoute = 'history';
+      else if (url.includes('/registro')) this.currentRoute = 'registro';
+      else if (url.includes('/calculator')) this.currentRoute = 'calculator';
+      else if (url.includes('/chat')) this.currentRoute = 'chat';
+      else if (url.includes('/profile')) this.currentRoute = 'profile';
+      else this.currentRoute = '';
     });
 
     this.isLoggedIn$.subscribe(isLoggedIn => {
