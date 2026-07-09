@@ -29,6 +29,7 @@ export class HeaderComponent {
   @Input() showGreeting: boolean = true;
   @Input() showActions: boolean = false;
   @Input() title: string = '';
+  @Input() icon: string = '';
 
   private authService = inject(AuthService);
   private modalCtrl = inject(ModalController);

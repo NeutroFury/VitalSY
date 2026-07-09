@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     ).subscribe((event: any) => {
       const url = event.urlAfterRedirects || event.url;
       this.showTabs = !url.includes('/login') && !url.includes('/register') && !url.includes('/reset-password');
-      
+
       // Determine the active route
       if (url.includes('/dashboard')) this.currentRoute = 'dashboard';
       else if (url.includes('/history')) this.currentRoute = 'history';

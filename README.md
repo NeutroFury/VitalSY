@@ -225,7 +225,13 @@ Estas variables **reemplazan** la conexión al contenedor local. Úsalas si dese
 |---|---|:---:|---|
 | `FIREBASE_CREDENTIALS_PATH` | `/app/config/firebase-service-account.json` | No | Ruta al archivo JSON de cuenta de servicio para inicializar Firebase Admin SDK |
 
-> **Nota:** Debes descargar el archivo `firebase-service-account.json` desde Firebase Console y colocarlo en `Producto/vitalsy-backend/` para que Docker lo monte correctamente en el contenedor.
+> **Nota:** El archivo `firebase-service-account.json` contiene credenciales privadas y **nunca se sube a Git** (está en `.gitignore`). Se provee el archivo [`firebase-service-account.example.json`](./Producto/vitalsy-backend/firebase-service-account.example.json) como plantilla de referencia con la estructura esperada.
+>
+> Para activar las notificaciones push:
+> 1. Accede a [Firebase Console](https://console.firebase.google.com) → Configuración del proyecto → Cuentas de servicio
+> 2. Genera una nueva clave privada (descarga el `.json`)
+> 3. Renómbralo a `firebase-service-account.json` y colócalo en `Producto/vitalsy-backend/`
+> 4. Docker lo montará automáticamente dentro del contenedor en la ruta configurada
 
 ---
 

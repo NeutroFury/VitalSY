@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true" class="bg-background" style="--background: #DAF1DE;">
   <div class="px-5 py-4 flex flex-col gap-4 min-h-full pb-[100px]">
     
-    <app-header [showBack]="true" [showGreeting]="false" title="Calculadora"></app-header>
+    <app-header [showBack]="true" [showGreeting]="false" title="Calculadora" icon="calculator-outline"></app-header>
 
     <!-- BLOQUE DE ENTRADA: PARÁMETROS DEL PACIENTE -->
     <section class="bg-surface border border-secondary/30 rounded-3xl p-4 relative shadow-card">
@@ -144,7 +144,7 @@
     }
 
     <!-- PIE DE PÁGINA: NOTA DE ADVERTENCIA -->
-    <div class="flex items-start gap-2 p-3 bg-surface rounded-2xl border border-secondary/30 mt-auto">
+    <div class="flex items-start gap-2 p-3 bg-surface rounded-2xl border border-secondary/30 mt-4">
       <ion-icon name="information-circle-outline" class="text-lg text-secondary shrink-0 mt-0.5"></ion-icon>
       <p class="text-[9px] leading-relaxed text-secondary font-medium m-0">
         Cálculo estimativo. Si utiliza Pauta Médica, el cálculo es exacto basado en la tabla indicada por su médico. Si utiliza Algoritmo Estándar, se basa en su sensibilidad a la insulina (ISF) y ratio de carbohidratos (IC).
